@@ -1,0 +1,17 @@
+/*
+   breakpoints de responsividade:
+   mobile:  até 767px
+   tablet:  768px – 1024px
+   desktop: acima de 1024px
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+@font-face {
+    font-family: "";
+    src: url();
+}
+
+:root{
+    --fonte-padrao: "Roboto", sans-serif;
+}

@@ -1,0 +1,31 @@
+package br.com.tentaculomimico.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+// Fica separado do HomeController (que já cuida só da "/") pra não
+// dar conflito quando o time for juntar as branches.
+@Controller
+public class PaginasController {
+
+    @GetMapping("/cursos")
+    public String cursos() {
+        return "cursos";
+    }
+
+    @GetMapping("/sobre")
+    public String sobre() {
+        return "sobre";
+    }
+
+    @GetMapping("/cadastro")
+    public String cadastro() {
+        return "cadastro";
+    }
+
+    @GetMapping("/contato")
+    public String contato() {
+        return "contato";
+    }
+
+}

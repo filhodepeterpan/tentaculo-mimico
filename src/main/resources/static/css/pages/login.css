@@ -1,2 +1,80 @@
 @import url(../root.css);
 @import url(../global.css);
+
+.login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+}
+
+.login__caixa {
+  width: 100%;
+  max-width: 26rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.login__titulo {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-headline-sm-tamanho);
+  line-height: var(--tipo-headline-sm-altura-linha);
+  font-weight: var(--tipo-headline-sm-peso-enfatizado);
+  color: var(--color-on-surface);
+  margin: 0;
+  text-align: center;
+}
+
+.login__formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.login__esqueci-senha {
+  align-self: flex-end;
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-sm-tamanho);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.login__esqueci-senha:hover {
+  text-decoration: underline;
+}
+
+.login__divisor {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-on-surface-variant);
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-sm-tamanho);
+}
+
+.login__divisor::before,
+.login__divisor::after {
+  content: '';
+  flex: 1;
+  height: 0.0625rem;
+  background-color: var(--color-outline-variant);
+}
+
+.login__cadastro {
+  text-align: center;
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-md-tamanho);
+  color: var(--color-on-surface-variant);
+  margin: 0;
+}
+
+.login__cadastro a {
+  color: var(--color-primary);
+  font-weight: var(--tipo-title-sm-peso-enfatizado);
+  text-decoration: none;
+}
+
+.login__cadastro a:hover {
+  text-decoration: underline;
+}

@@ -8,9 +8,38 @@
 
 <div th:replace="~{fragments/layouts :: header}"></div>
 
-<h1>Funcionando!</h1>
+<main class="login">
+    <div class="login__caixa">
+        <h1 class="login__titulo">Entrar</h1>
+
+        <th:block th:if="${erroGeral != null}">
+            <div th:replace="~{fragments/alert :: alerta(titulo='Não foi possível entrar', mensagem=${erroGeral ?: ''}, variante='erro')}"></div>
+        </th:block>
+
+        <form class="login__formulario" method="post" th:action="@{/login}">
+
+            <div th:replace="~{fragments/inputs :: input(id='email', tipo='email', rotulo='E-mail', placeholder='seu@email.com', valor=${emailPreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroEmail ?: ''}, desabilitado=false)}"></div>
+
+            <div th:replace="~{fragments/senha :: campoSenha(id='senha', rotulo='Senha', placeholder='Digite sua senha', obrigatorio=true, mensagemErro=${erroSenha ?: ''}, desabilitado=false)}"></div>
+
+            <a th:href="@{/recuperar-senha}" class="login__esqueci-senha">Esqueci minha senha</a>
+
+            <div th:replace="~{fragments/buttons :: botao(texto='Entrar', variante='primario', tamanho='grande', tipoBotao='submit')}"></div>
+
+        </form>
+
+        <div class="login__divisor"><span>ou</span></div>
+
+        <a th:href="@{/oauth2/authorization/google}" class="botao botao--neutro botao--grande">Entrar com Google</a>
+
+        <p class="login__cadastro">
+            Ainda não tem conta? <a th:href="@{/cadastro}">Cadastre-se</a>
+        </p>
+    </div>
+</main>
 
 <div th:replace="~{fragments/layouts :: footer}"></div>
 
+<script type="module" th:src="@{/js/pages/login.js}"></script>
 </body>
 </html>

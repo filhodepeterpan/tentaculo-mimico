@@ -1,3 +1,9 @@
+/* COMPONENTES */
+@import url(componentes/buttons.css);
+@import url(componentes/inputs.css);
+@import url(componentes/senha.css);
+
+/* CSS GLOBAL */
 *{
     margin: 0;
     padding: 0;

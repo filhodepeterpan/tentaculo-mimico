@@ -1,0 +1,107 @@
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  font-family: var(--fonte-padrao);
+  white-space: nowrap;
+  text-decoration: none;
+  user-select: none;
+
+  border-style: solid;
+  border-color: var(--color-shadow);
+  cursor: pointer;
+
+  transition:
+    transform 0.08s ease-out,
+    box-shadow 0.08s ease-out,
+    filter 0.15s ease-out;
+}
+
+/* Tamanhos */
+
+.botao--grande {
+  --botao-sombra-offset: 0.25rem; /* 4px */
+
+  padding: 1rem 2rem;
+  border-width: 0.1875rem; /* 3px */
+  border-radius: 9999px;
+  box-shadow: var(--botao-sombra-offset) var(--botao-sombra-offset) 0 0 var(--color-shadow);
+
+  font-size: var(--tipo-title-md-tamanho);
+  line-height: var(--tipo-title-md-altura-linha);
+  letter-spacing: var(--tipo-title-md-espacamento);
+  font-weight: var(--tipo-title-md-peso-enfatizado);
+}
+
+.botao--pequeno {
+  --botao-sombra-offset: 0.1875rem; /* 3px */
+
+  padding: 0.625rem 1.25rem;
+  border-width: 0.125rem; /* 2px */
+  border-radius: 9999px;
+  box-shadow: var(--botao-sombra-offset) var(--botao-sombra-offset) 0 0 var(--color-shadow);
+
+  font-size: var(--tipo-label-lg-tamanho);
+  line-height: var(--tipo-label-lg-altura-linha);
+  letter-spacing: var(--tipo-label-lg-espacamento);
+  font-weight: var(--tipo-label-lg-peso-enfatizado);
+}
+
+/* Cores */
+
+.botao--primario {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.botao--secundario {
+  background-color: var(--color-secondary);
+  color: var(--color-on-secondary);
+}
+
+.botao--neutro {
+  background-color: var(--color-surface-container-lowest);
+  color: var(--color-on-surface);
+}
+
+/* Interação */
+
+.botao:hover {
+  filter: brightness(1.05);
+}
+
+.botao:active {
+  transform: translate(var(--botao-sombra-offset), var(--botao-sombra-offset));
+  box-shadow: none;
+}
+
+.botao:focus-visible {
+  outline: 0.1875rem solid var(--color-outline);
+  outline-offset: 0.125rem;
+}
+
+.botao:disabled,
+.botao[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
+  transform: none;
+  filter: none;
+}
+
+/* */
+
+@media (prefers-reduced-motion: reduce) {
+  .botao {
+    transition: none;
+  }
+}
+
+/* */
+@media (max-width: 767px) {
+  .botao--grande {
+    padding: 0.875rem 1.5rem;
+  }
+}

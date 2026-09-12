@@ -1,0 +1,43 @@
+<!--
+  Componente: Campo de Input
+
+  Parâmetros:
+    id            -> usado como id do <input>, name do <input> e ligação com o <label>
+    tipo          -> 'text' | 'email' | 'password' | 'tel' | 'date' etc.
+    rotulo        -> texto do <label> visível acima do campo
+    placeholder   -> dica exibida dentro do campo vazio
+    valor         -> valor pré-preenchido (ex: reexibir formulário após erro, ou edição)
+    obrigatorio   -> true/false -> adiciona o atributo required
+    mensagemErro  -> se não vazia, aplica o estilo de erro e mostra a mensagem
+                     abaixo do campo (o valor digitado continua visível)
+    desabilitado  -> true/false -> adiciona o atributo disabled
+
+-->
+<div th:fragment="input(id, tipo, rotulo, placeholder, valor, obrigatorio, mensagemErro, desabilitado)"
+     th:with="temErro=${mensagemErro != null and !mensagemErro.isEmpty()}"
+     class="campo">
+
+  <label th:for="${id}" class="campo__rotulo" th:text="${rotulo}">Rótulo</label>
+
+  <input
+    th:id="${id}"
+    th:name="${id}"
+    th:type="${tipo}"
+    th:placeholder="${placeholder}"
+    th:value="${valor}"
+    th:required="${obrigatorio}"
+    th:disabled="${desabilitado}"
+    class="campo__input"
+    th:classappend="${temErro} ? 'campo__input--erro' : ''"
+    th:aria-invalid="${temErro}"
+    th:aria-describedby="${temErro} ? (${id} + '-erro') : _"
+  />
+
+  <p th:if="${temErro}"
+     th:id="${id} + '-erro'"
+     class="campo__mensagem-erro"
+     th:text="${mensagemErro}">
+    Mensagem de erro
+  </p>
+
+</div>

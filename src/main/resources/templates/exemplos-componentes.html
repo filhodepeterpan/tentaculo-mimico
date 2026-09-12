@@ -20,6 +20,9 @@
 <div th:replace="~{fragments/buttons :: botao(texto='Botão', variante='neutro', tamanho='grande', tipoBotao='button')}"></div>
 <div th:replace="~{fragments/buttons :: botao(texto='Botão', variante='neutro', tamanho='pequeno', tipoBotao='button')}"></div>
 
+<div th:replace="~{fragments/buttons :: botao(texto='Botão', variante='perigo', tamanho='grande', tipoBotao='button')}"></div>
+<div th:replace="~{fragments/buttons :: botao(texto='Botão', variante='perigo', tamanho='pequeno', tipoBotao='button')}"></div>
+
 <br><br><br>
 
 <h3>INPUTS</h3>
@@ -41,10 +44,76 @@
 
     <div th:replace="~{fragments/senha :: campoSenha(id='senha-erro', rotulo='Senha', placeholder='Digite sua senha', obrigatorio=true, mensagemErro='Senha incorreta', desabilitado=false)}"></div>
 
+    <br>
+    <h3>Select</h3>
+    <br>
+
+    <div th:with="opcoesNivel=${T(java.util.List).of('Iniciante','Intermediário','Avançado')}">
+        <div th:replace="~{fragments/select :: select(id='select-basico', rotulo='Categoria', placeholder='Selecione uma opção', opcoes=${opcoesNivel}, valorSelecionado='', obrigatorio=true, desabilitado=false)}"></div>
+
+        <div th:replace="~{fragments/select :: select(id='select-nivel', rotulo='Nível do curso', placeholder='Selecione uma opção', opcoes=${opcoesNivel}, valorSelecionado='Intermediário', obrigatorio=true, desabilitado=false)}"></div>
+    </div>
+
 </div>
 
 <br><br><br>
 
-<script type="module" th:src="@{/js/pages/login.js}"></script>
+<h3>ALERT</h3>
+<br>
+
+<div style="display:flex; flex-direction:column; gap:1rem; max-width:500px;">
+    <div th:replace="~{fragments/alert :: alerta(titulo='Aviso informativo', mensagem='Use para comunicar algo neutro que o usuário precisa saber.', variante='informativo')}"></div>
+    <div th:replace="~{fragments/alert :: alerta(titulo='Ação concluída', mensagem='Use para confirmar que algo deu certo.', variante='sucesso')}"></div>
+    <div th:replace="~{fragments/alert :: alerta(titulo='Atenção necessária', mensagem='Use para alertar sobre algo que precisa de cuidado.', variante='atencao')}"></div>
+    <div th:replace="~{fragments/alert :: alerta(titulo='Algo deu errado', mensagem='Use para erros que bloqueiam o usuário de continuar.', variante='erro')}"></div>
+</div>
+
+<br><br><br>
+
+<h3>CHECKBOX</h3>
+<br>
+
+<div style="display:flex; gap:1.5rem;">
+    <div th:replace="~{fragments/checkbox :: checkbox(id='check-1', rotulo='Opção', marcado=false, desabilitado=false)}"></div>
+    <div th:replace="~{fragments/checkbox :: checkbox(id='check-2', rotulo='Opção', marcado=true, desabilitado=false)}"></div>
+    <div th:replace="~{fragments/checkbox :: checkbox(id='check-3', rotulo='Opção', marcado=false, desabilitado=true)}"></div>
+</div>
+
+<br><br><br>
+
+<h3>RADIO</h3>
+<br>
+
+<div style="display:flex; gap:1.5rem;">
+    <div th:replace="~{fragments/radio :: radio(id='radio-1', name='radio-teste', valor='1', rotulo='Opção', marcado=false, desabilitado=false)}"></div>
+    <div th:replace="~{fragments/radio :: radio(id='radio-2', name='radio-teste', valor='2', rotulo='Opção', marcado=true, desabilitado=false)}"></div>
+    <div th:replace="~{fragments/radio :: radio(id='radio-3', name='radio-teste', valor='3', rotulo='Opção', marcado=false, desabilitado=true)}"></div>
+</div>
+
+<br><br><br>
+
+<h3>TOGGLE SWITCH</h3>
+<br>
+
+<div style="display:flex; gap:1.5rem;">
+    <div th:replace="~{fragments/toggle :: toggle(id='toggle-1', rotulo='', marcado=false, desabilitado=false)}"></div>
+    <div th:replace="~{fragments/toggle :: toggle(id='toggle-2', rotulo='', marcado=true, desabilitado=false)}"></div>
+    <div th:replace="~{fragments/toggle :: toggle(id='toggle-3', rotulo='', marcado=false, desabilitado=true)}"></div>
+</div>
+
+<br><br><br>
+
+<h3>MODAL</h3>
+<br>
+
+<button type="button" data-modal-abrir="modal-cancelar-matricula">Abrir modal de teste</button>
+
+<div th:replace="~{fragments/modal :: modal(id='modal-cancelar-matricula', titulo='Cancelar matrícula?', mensagem='Você vai perder o acesso ao curso e ao seu progresso salvo. Essa ação não pode ser desfeita.', textoCancelar='Cancelar', textoConfirmar='Confirmar', varianteConfirmar='perigo')}"></div>
+
+<br><br><br>
+
+<script type="module" th:src="@{/js/componentes/senha.js}"></script>
+<script type="module" th:src="@{/js/componentes/modal.js}"></script>
+<script type="module" th:src="@{/js/componentes/alert.js}"></script>
 </body>
 </html>

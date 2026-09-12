@@ -1,0 +1,15 @@
+<!-- alerta(titulo, mensagem, variante) -->
+<div th:fragment="alerta(titulo, mensagem, variante)" th:class="'alerta alerta--' + ${variante}" role="status">
+  <span class="alerta__icone" aria-hidden="true"
+        th:text="${variante == 'informativo'} ? 'i' : (${variante == 'sucesso'} ? '✓' : (${variante == 'atencao'} ? '!' : '✕'))">i</span>
+  <div class="alerta__conteudo">
+    <p class="alerta__titulo" th:text="${titulo}">Título</p>
+    <p class="alerta__mensagem" th:text="${mensagem}">Mensagem</p>
+  </div>
+  <button type="button" class="alerta__fechar" aria-label="Fechar alerta">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <line x1="4" y1="4" x2="20" y2="20"/>
+      <line x1="20" y1="4" x2="4" y2="20"/>
+    </svg>
+  </button>
+</div>

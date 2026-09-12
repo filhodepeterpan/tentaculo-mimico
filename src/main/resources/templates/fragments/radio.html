@@ -1,0 +1,7 @@
+<!-- radio(id, name, valor, rotulo, marcado, desabilitado) -->
+<label th:fragment="radio(id, name, valor, rotulo, marcado, desabilitado)" class="radio-wrapper">
+  <span class="radio-circulo">
+    <input type="radio" th:id="${id}" th:name="${name}" th:value="${valor}" class="radio-input" th:checked="${marcado}" th:disabled="${desabilitado}"/>
+  </span>
+  <span th:text="${rotulo}">Rótulo</span>
+</label>

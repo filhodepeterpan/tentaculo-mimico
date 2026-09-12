@@ -2,6 +2,12 @@
 @import url(componentes/buttons.css);
 @import url(componentes/inputs.css);
 @import url(componentes/senha.css);
+@import url(componentes/modal.css);
+@import url(componentes/alert.css);
+@import url(componentes/checkbox.css);
+@import url(componentes/radio.css);
+@import url(componentes/toggle.css);
+@import url(componentes/select.css);
 
 /* CSS GLOBAL */
 *{

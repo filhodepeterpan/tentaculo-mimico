@@ -1,0 +1,13 @@
+<!-- select(id, rotulo, placeholder, opcoes, valorSelecionado, obrigatorio, desabilitado) -->
+<div th:fragment="select(id, rotulo, placeholder, opcoes, valorSelecionado, obrigatorio, desabilitado)" class="campo">
+  <label th:for="${id}" class="campo__rotulo" th:text="${rotulo}">Rótulo</label>
+  <div class="campo-select-wrapper">
+    <select th:id="${id}" th:name="${id}" class="campo__input campo-select" th:required="${obrigatorio}" th:disabled="${desabilitado}">
+      <option value="" th:text="${placeholder}" th:selected="${valorSelecionado == null or valorSelecionado.isEmpty()}">Selecione uma opção</option>
+      <option th:each="opcao : ${opcoes}" th:value="${opcao}" th:text="${opcao}" th:selected="${opcao == valorSelecionado}">Opção</option>
+    </select>
+    <svg class="campo-select-seta" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 6l4 4 4-4"/>
+    </svg>
+  </div>
+</div>

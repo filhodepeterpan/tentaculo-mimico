@@ -1,0 +1,47 @@
+<!-- Componente: Campo de Senha (com botão de mostrar/ocultar) -->
+
+<div th:fragment="campoSenha(id, rotulo, placeholder, obrigatorio, mensagemErro, desabilitado)"
+     th:with="temErro=${mensagemErro != null and !mensagemErro.isEmpty()}"
+     class="campo campo-senha">
+
+  <label th:for="${id}" class="campo__rotulo" th:text="${rotulo}">Senha</label>
+
+  <div class="campo-senha__wrapper">
+    <input
+      th:id="${id}"
+      th:name="${id}"
+      type="password"
+      th:placeholder="${placeholder}"
+      th:required="${obrigatorio}"
+      th:disabled="${desabilitado}"
+      class="campo__input campo-senha__input"
+      th:classappend="${temErro} ? 'campo__input--erro' : ''"
+      th:aria-invalid="${temErro}"
+      th:aria-describedby="${temErro} ? (${id} + '-erro') : _"
+    />
+
+    <button type="button"
+            class="campo-senha__toggle"
+            th:aria-controls="${id}"
+            aria-pressed="false"
+            aria-label="Mostrar senha">
+      <svg class="campo-senha__icone campo-senha__icone--mostrar" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <ellipse cx="12" cy="12" rx="9" ry="6"/>
+        <circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"/>
+      </svg>
+      <svg class="campo-senha__icone campo-senha__icone--ocultar" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <ellipse cx="12" cy="12" rx="9" ry="6"/>
+        <circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"/>
+        <line x1="3" y1="21" x2="21" y2="3"/>
+      </svg>
+    </button>
+  </div>
+
+  <p th:if="${temErro}"
+     th:id="${id} + '-erro'"
+     class="campo__mensagem-erro"
+     th:text="${mensagemErro}">
+    Mensagem de erro
+  </p>
+
+</div>

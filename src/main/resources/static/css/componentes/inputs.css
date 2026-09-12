@@ -26,7 +26,7 @@
   background-color: var(--color-primary-container);
 
   font-family: var(--fonte-padrao);
-  font-size: var(--tipo-body-lg-tamanho); /* 16px: evita zoom automático no Safari iOS ao focar */
+  font-size: var(--tipo-body-lg-tamanho);
   line-height: var(--tipo-body-lg-altura-linha);
   letter-spacing: var(--tipo-body-lg-espacamento);
   color: var(--color-on-primary-container);
@@ -38,21 +38,20 @@
   color: var(--color-on-surface-variant);
 }
 
-/* Foco ----------------------------------------------------------------- */
+/* Foco */
 
 .campo__input:focus {
   outline: none; /* substituída pela borda roxa + anel abaixo pra teclado */
   border-color: var(--color-primary);
 }
 
-/* Anel extra só quando o foco vem do teclado (Tab), não de clique do mouse —
-   reforça a visibilidade pra navegação por teclado sem poluir o clique comum */
+/* Anel extra só quando o foco vem do teclado (Tab) */
 .campo__input:focus-visible {
   outline: 0.1875rem solid var(--color-outline);
   outline-offset: 0.125rem;
 }
 
-/* Erro ------------------------------------------------------------------- */
+/* Erro */
 
 .campo__input--erro {
   border-color: var(--color-error);
@@ -71,7 +70,7 @@
   margin: 0;
 }
 
-/* Desabilitado -------------------------------------------------------------- */
+/* Desabilitado */
 
 .campo__input:disabled {
   border-color: var(--color-outline);
@@ -84,7 +83,7 @@
   color: var(--color-outline);
 }
 
-/* Acessibilidade: respeita quem pediu menos animação no sistema --------------- */
+/* Acessibilidade: respeita quem pediu menos animação no sistema */
 
 @media (prefers-reduced-motion: reduce) {
   .campo__input {

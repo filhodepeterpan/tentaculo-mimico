@@ -1,0 +1,68 @@
+/* COMPONENTE: Campo de Senha */
+
+.campo-senha__wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* espaço à direita pro texto digitado não ficar embaixo do botão */
+.campo-senha__wrapper .campo__input {
+  padding-right: 3rem;
+}
+
+.campo-senha__toggle {
+  position: absolute;
+  right: 0.75rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+
+  color: var(--color-on-primary-container);
+  transition: color 0.12s ease-out;
+}
+
+.campo-senha__toggle:hover {
+  color: var(--color-primary);
+}
+
+.campo-senha__toggle:focus-visible {
+  outline: 0.1875rem solid var(--color-outline);
+  outline-offset: 0.125rem;
+}
+
+/* Troca de ícone */
+.campo-senha__icone {
+  display: block;
+}
+
+.campo-senha__icone--ocultar {
+  display: none;
+}
+
+.campo-senha__toggle[aria-pressed="true"] .campo-senha__icone--mostrar {
+  display: none;
+}
+
+.campo-senha__toggle[aria-pressed="true"] .campo-senha__icone--ocultar {
+  display: block;
+}
+
+/* Campo desabilitado desativa também o botão de alternar visibilidade */
+.campo-senha__input:disabled ~ .campo-senha__toggle {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campo-senha__toggle {
+    transition: none;
+  }
+}

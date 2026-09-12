@@ -1,3 +1,7 @@
+/* COMPONENTES */
+@import url(components/buttons.css);
+
+/* CSS GLOBAL */
 *{
     margin: 0;
     padding: 0;

@@ -1,0 +1,19 @@
+<!--
+  Componente: Botão
+
+  Uso em qualquer página:
+    <div th:replace="~{fragments/buttons :: botao('Confirmar', 'primario', 'grande')}"></div>
+
+  Parâmetros (os 3 últimos têm valor padrão, então são opcionais):
+    texto      -> texto exibido no botão
+    variante   -> 'primario' | 'secundario' | 'neutro'    (padrão: 'primario')
+    tamanho    -> 'grande' | 'pequeno'                     (padrão: 'grande')
+    tipoBotao  -> 'button' | 'submit' | 'reset'            (padrão: 'button')
+-->
+
+<button
+        th:fragment="botao(texto, variante, tamanho, tipoBotao)"
+        th:type="${tipoBotao}"
+        th:class="'botao botao--' + ${variante} + ' botao--' + ${tamanho}"
+        th:text="${texto}">
+</button>

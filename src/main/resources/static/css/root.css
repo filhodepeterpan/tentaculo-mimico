@@ -62,6 +62,21 @@
   --color-error-container: #FFDAD6;
   --color-on-error-container: #93000A;
 
+  --color-info: #4C5FD5;
+  --color-on-info: #FFFFFF;
+  --color-info-container: #E1E4FF;
+  --color-on-info-container: #1B237A;
+
+  --color-success: #1E8E5A;
+  --color-on-success: #FFFFFF;
+  --color-success-container: #A8F0C6;
+  --color-on-success-container: #003919;
+
+  --color-warning: #A15C00;
+  --color-on-warning: #FFFFFF;
+  --color-warning-container: #FFE3C2;
+  --color-on-warning-container: #3D2500;
+
   /* Superfície e neutros */
   --color-surface-dim: #DFD8E0;
   --color-surface: #FFF7FF;

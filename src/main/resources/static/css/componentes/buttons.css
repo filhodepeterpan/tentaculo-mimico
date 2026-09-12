@@ -61,6 +61,11 @@
   color: var(--color-on-secondary);
 }
 
+.botao--perigo {
+  background-color: var(--color-error);
+  color: var(--color-on-error);
+}
+
 .botao--neutro {
   background-color: var(--color-surface-container-lowest);
   color: var(--color-on-surface);

@@ -1,0 +1,6 @@
+<!-- toggle(id, rotulo, marcado, desabilitado) -->
+<label th:fragment="toggle(id, rotulo, marcado, desabilitado)" class="toggle-wrapper">
+  <input type="checkbox" th:id="${id}" th:name="${id}" class="toggle-input" th:checked="${marcado}" th:disabled="${desabilitado}"/>
+  <span class="toggle-trilho" aria-hidden="true"></span>
+  <span th:text="${rotulo}">Rótulo</span>
+</label>

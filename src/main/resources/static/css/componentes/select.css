@@ -1,0 +1,27 @@
+.campo-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.campo-select {
+  appearance: none;
+  width: 100%;
+  padding-right: 2.75rem;
+  cursor: pointer;
+}
+
+.campo-select:disabled {
+  cursor: not-allowed;
+}
+
+.campo-select-seta {
+  position: absolute;
+  right: 1rem;
+  color: var(--color-on-surface-variant);
+  pointer-events: none;
+}
+
+.campo-select:disabled ~ .campo-select-seta {
+  opacity: 0.5;
+}

@@ -1,0 +1,67 @@
+.toggle-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.toggle-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.toggle-trilho {
+  width: 2.75rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  background-color: var(--color-outline-variant);
+  position: relative;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease-out;
+}
+
+.toggle-trilho::before {
+  content: '';
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background-color: var(--color-surface);
+  transition: transform 0.15s ease-out;
+}
+
+.toggle-input:checked ~ .toggle-trilho {
+  background-color: var(--color-primary);
+}
+
+.toggle-input:checked ~ .toggle-trilho::before {
+  transform: translateX(1.25rem);
+}
+
+.toggle-input:disabled ~ .toggle-trilho {
+  background-color: var(--color-surface-container-high);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.toggle-input:focus-visible ~ .toggle-trilho {
+  outline: 0.1875rem solid var(--color-outline);
+  outline-offset: 0.125rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle-trilho,
+  .toggle-trilho::before {
+    transition: none;
+  }
+}

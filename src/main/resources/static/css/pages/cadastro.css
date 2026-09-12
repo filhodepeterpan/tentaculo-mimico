@@ -1,14 +1,14 @@
 @import url(../root.css);
 @import url(../global.css);
 
-.login {
+.cadastro {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 3rem 1rem;
 }
 
-.login__caixa {
+.cadastro__caixa {
   width: 100%;
   max-width: 26rem;
   display: flex;
@@ -16,7 +16,7 @@
   gap: 1.25rem;
 }
 
-.login__titulo {
+.cadastro__titulo {
   font-family: var(--fonte-padrao);
   font-size: var(--tipo-headline-sm-tamanho);
   line-height: var(--tipo-headline-sm-altura-linha);
@@ -26,25 +26,27 @@
   text-align: center;
 }
 
-.login__formulario {
+.cadastro__formulario {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
-.login__esqueci-senha {
-  align-self: flex-end;
-  font-family: var(--fonte-padrao);
-  font-size: var(--tipo-body-sm-tamanho);
-  color: var(--color-primary);
-  text-decoration: none;
+.cadastro__tipo-usuario {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.login__esqueci-senha:hover {
-  text-decoration: underline;
+.cadastro__tipo-usuario-opcoes {
+  display: flex;
+  gap: 1.5rem;
 }
 
-.login__divisor {
+.cadastro__divisor {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -53,15 +55,15 @@
   font-size: var(--tipo-body-sm-tamanho);
 }
 
-.login__divisor::before,
-.login__divisor::after {
+.cadastro__divisor::before,
+.cadastro__divisor::after {
   content: '';
   flex: 1;
   height: 0.0625rem;
   background-color: var(--color-outline-variant);
 }
 
-.login__cadastro {
+.cadastro__login {
   text-align: center;
   font-family: var(--fonte-padrao);
   font-size: var(--tipo-body-md-tamanho);
@@ -69,12 +71,12 @@
   margin: 0;
 }
 
-.login__cadastro a {
+.cadastro__login a {
   color: var(--color-primary);
   font-weight: var(--tipo-title-sm-peso-enfatizado);
   text-decoration: none;
 }
 
-.login__cadastro a:hover {
+.cadastro__login a:hover {
   text-decoration: underline;
 }

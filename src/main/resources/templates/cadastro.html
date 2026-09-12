@@ -2,15 +2,58 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" th:href="@{/css/pages/cadastro.css}">
-    <title>Cadastro | Tentáculo Mímico</title>
+    <title>Tentáculo Mímico</title>
 </head>
 <body>
 
-    <div th:replace="~{fragments :: cabecalho}"></div>
+<div th:replace="~{fragments/layouts :: header}"></div>
 
-    <!-- conteudo da pagina cadastro — desenvolvimento fora do escopo deste card -->
+<main class="cadastro">
+  <div class="cadastro__caixa">
+    <h1 class="cadastro__titulo">Criar conta</h1>
 
-    <div th:replace="~{fragments :: rodape}"></div>
+    <th:block th:if="${erroGeral != null}">
+      <div th:replace="~{fragments/alert :: alerta(titulo='Não foi possível criar sua conta', mensagem=${erroGeral ?: ''}, variante='erro')}"></div>
+    </th:block>
 
+    <form class="cadastro__formulario" method="post" th:action="@{/cadastro}">
+
+      <div th:replace="~{fragments/inputs :: input(id='nome', tipo='text', rotulo='Nome completo', placeholder='Seu nome completo', valor=${nomePreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroNome ?: ''}, desabilitado=false)}"></div>
+
+      <div th:replace="~{fragments/inputs :: input(id='email', tipo='email', rotulo='E-mail', placeholder='seu@email.com', valor=${emailPreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroEmail ?: ''}, desabilitado=false)}"></div>
+
+      <div th:replace="~{fragments/inputs :: input(id='cpf', tipo='text', rotulo='CPF', placeholder='000.000.000-00', valor=${cpfPreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroCpf ?: ''}, desabilitado=false)}"></div>
+
+      <div th:replace="~{fragments/inputs :: input(id='data-nascimento', tipo='date', rotulo='Data de nascimento', placeholder='', valor=${dataNascimentoPreenchida ?: ''}, obrigatorio=true, mensagemErro=${erroDataNascimento ?: ''}, desabilitado=false)}"></div>
+
+      <fieldset class="cadastro__tipo-usuario">
+        <legend class="campo__rotulo">Tipo de cadastro</legend>
+        <div class="cadastro__tipo-usuario-opcoes">
+          <div th:replace="~{fragments/radio :: radio(id='tipo-aluno', name='tipoUsuario', valor='aluno', rotulo='Aluno', marcado=${(tipoUsuarioSelecionado ?: 'aluno') == 'aluno'}, desabilitado=false)}"></div>
+          <div th:replace="~{fragments/radio :: radio(id='tipo-professor', name='tipoUsuario', valor='professor', rotulo='Professor', marcado=${(tipoUsuarioSelecionado ?: 'aluno') == 'professor'}, desabilitado=false)}"></div>
+        </div>
+      </fieldset>
+
+      <div th:replace="~{fragments/senha :: campoSenha(id='senha', rotulo='Senha', placeholder='Crie uma senha', obrigatorio=true, mensagemErro=${erroSenha ?: ''}, desabilitado=false)}"></div>
+
+      <div th:replace="~{fragments/senha :: campoSenha(id='confirmar-senha', rotulo='Confirmar senha', placeholder='Digite a senha novamente', obrigatorio=true, mensagemErro=${erroConfirmarSenha ?: ''}, desabilitado=false)}"></div>
+
+      <div th:replace="~{fragments/buttons :: botao(texto='Criar conta', variante='primario', tamanho='grande', tipoBotao='submit')}"></div>
+
+    </form>
+
+    <div class="cadastro__divisor"><span>ou</span></div>
+
+    <a th:href="@{/oauth2/authorization/google}" class="botao botao--neutro botao--grande">Cadastrar com Google</a>
+
+    <p class="cadastro__login">
+      Já tem uma conta? <a th:href="@{/login}">Entrar</a>
+    </p>
+  </div>
+</main>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+<script type="module" th:src="@{/js/pages/cadastro.js}"></script>
 </body>
 </html>

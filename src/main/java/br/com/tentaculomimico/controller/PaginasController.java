@@ -28,4 +28,9 @@ public class PaginasController {
         return "contato";
     }
 
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
 }

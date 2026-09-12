@@ -1,0 +1,93 @@
+/* COMPONENTE: Campo de Input */
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.campo__rotulo {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-label-lg-tamanho);
+  line-height: var(--tipo-label-lg-altura-linha);
+  letter-spacing: var(--tipo-label-lg-espacamento);
+  font-weight: var(--tipo-label-lg-peso-enfatizado);
+  color: var(--color-on-surface);
+}
+
+.campo__input {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 0.875rem 1.25rem;
+  border-radius: 1rem;
+  border: 0.125rem solid var(--color-shadow);
+  background-color: var(--color-primary-container);
+
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-lg-tamanho); /* 16px: evita zoom automático no Safari iOS ao focar */
+  line-height: var(--tipo-body-lg-altura-linha);
+  letter-spacing: var(--tipo-body-lg-espacamento);
+  color: var(--color-on-primary-container);
+
+  transition: border-color 0.12s ease-out, background-color 0.12s ease-out;
+}
+
+.campo__input::placeholder {
+  color: var(--color-on-surface-variant);
+}
+
+/* Foco ----------------------------------------------------------------- */
+
+.campo__input:focus {
+  outline: none; /* substituída pela borda roxa + anel abaixo pra teclado */
+  border-color: var(--color-primary);
+}
+
+/* Anel extra só quando o foco vem do teclado (Tab), não de clique do mouse —
+   reforça a visibilidade pra navegação por teclado sem poluir o clique comum */
+.campo__input:focus-visible {
+  outline: 0.1875rem solid var(--color-outline);
+  outline-offset: 0.125rem;
+}
+
+/* Erro ------------------------------------------------------------------- */
+
+.campo__input--erro {
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.campo__input--erro:focus {
+  border-color: var(--color-error);
+}
+
+.campo__mensagem-erro {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-sm-tamanho);
+  line-height: var(--tipo-body-sm-altura-linha);
+  color: var(--color-error);
+  margin: 0;
+}
+
+/* Desabilitado -------------------------------------------------------------- */
+
+.campo__input:disabled {
+  border-color: var(--color-outline);
+  background-color: var(--color-surface);
+  color: var(--color-outline);
+  cursor: not-allowed;
+}
+
+.campo__input:disabled::placeholder {
+  color: var(--color-outline);
+}
+
+/* Acessibilidade: respeita quem pediu menos animação no sistema --------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .campo__input {
+    transition: none;
+  }
+}

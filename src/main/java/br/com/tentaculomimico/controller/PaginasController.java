@@ -33,4 +33,6 @@ public class PaginasController {
         return "login";
     }
 
+    @GetMapping("/componentes")
+    public String componentes() { return "exemplos-componentes"; }
 }

@@ -1,0 +1,5 @@
+.campo__textarea {
+  resize: vertical;
+  min-height: 6rem;
+  font-family: var(--fonte-padrao);
+}

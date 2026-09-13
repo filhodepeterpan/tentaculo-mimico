@@ -1,0 +1,9 @@
+<!-- card(id, nome, cargaHoraria, vagasDisponiveis, indice) -->
+<div th:fragment="card(id, nome, cargaHoraria, vagasDisponiveis, indice)" class="curso-card" th:attr="data-nome=${nome}">
+  <div class="curso-card__banner" th:classappend="'curso-card__banner--cor-' + ${indice % 6}"></div>
+  <div class="curso-card__conteudo">
+    <h3 class="curso-card__titulo" th:text="${nome}">Nome do curso</h3>
+    <p class="curso-card__info" th:text="${cargaHoraria} + 'h · ' + ${vagasDisponiveis} + ' vagas disponíveis'">Info</p>
+    <a th:href="@{/cursos/{id}(id=${id})}" class="botao botao--primario botao--pequeno">Matricular-se</a>
+  </div>
+</div>

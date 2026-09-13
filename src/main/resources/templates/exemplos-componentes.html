@@ -74,9 +74,9 @@
 <br>
 
 <div style="display:flex; gap:1.5rem;">
-    <div th:replace="~{fragments/checkbox :: checkbox(id='check-1', rotulo='Opção', marcado=false, desabilitado=false)}"></div>
-    <div th:replace="~{fragments/checkbox :: checkbox(id='check-2', rotulo='Opção', marcado=true, desabilitado=false)}"></div>
-    <div th:replace="~{fragments/checkbox :: checkbox(id='check-3', rotulo='Opção', marcado=false, desabilitado=true)}"></div>
+    <div th:replace="~{fragments/checkbox :: checkbox(id='check-1', name='check-1', valor='1', rotulo='Opção', marcado=false, desabilitado=false)}"></div>
+    <div th:replace="~{fragments/checkbox :: checkbox(id='check-2', name='check-2', valor='1', rotulo='Opção', marcado=true, desabilitado=false)}"></div>
+    <div th:replace="~{fragments/checkbox :: checkbox(id='check-3', name='check-3', valor='1', rotulo='Opção', marcado=false, desabilitado=true)}"></div>
 </div>
 
 <br><br><br>
@@ -109,6 +109,13 @@
 <button type="button" data-modal-abrir="modal-cancelar-matricula">Abrir modal de teste</button>
 
 <div th:replace="~{fragments/modal :: modal(id='modal-cancelar-matricula', titulo='Cancelar matrícula?', mensagem='Você vai perder o acesso ao curso e ao seu progresso salvo. Essa ação não pode ser desfeita.', textoCancelar='Cancelar', textoConfirmar='Confirmar', varianteConfirmar='perigo')}"></div>
+
+<br><br><br>
+
+<h3>TEXTAREA</h3>
+<br>
+
+<div th:replace="~{fragments/textarea :: textarea(id='descricao', rotulo='Descrição', placeholder='Descreva o conteúdo, pré-requisitos e objetivos do curso', valor=${descricaoPreenchida ?: ''}, obrigatorio=true, mensagemErro=${erroDescricao ?: ''}, desabilitado=false)}"></div>
 
 <br><br><br>
 

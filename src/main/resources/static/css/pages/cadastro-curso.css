@@ -1,0 +1,56 @@
+@import url(../root.css);
+@import url(../global.css);
+
+.curso-form {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1rem;
+}
+
+.curso-form__caixa {
+  width: 100%;
+  max-width: 32rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.curso-form__titulo {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-headline-sm-tamanho);
+  line-height: var(--tipo-headline-sm-altura-linha);
+  font-weight: var(--tipo-headline-sm-peso-enfatizado);
+  color: var(--color-on-surface);
+  margin: 0;
+  text-align: center;
+}
+
+.curso-form__formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.curso-form__dias-semana {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.curso-form__dias-semana-opcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+}
+
+.curso-form__horario {
+  display: flex;
+  gap: 1rem;
+}
+
+.curso-form__horario > div {
+  flex: 1;
+}

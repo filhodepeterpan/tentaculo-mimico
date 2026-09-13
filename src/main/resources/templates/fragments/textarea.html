@@ -1,0 +1,28 @@
+<!-- textarea(id, rotulo, placeholder, valor, obrigatorio, mensagemErro, desabilitado) -->
+<div th:fragment="textarea(id, rotulo, placeholder, valor, obrigatorio, mensagemErro, desabilitado)"
+     th:with="temErro=${mensagemErro != null and !mensagemErro.isEmpty()}"
+     class="campo">
+
+  <label th:for="${id}" class="campo__rotulo" th:text="${rotulo}">Rótulo</label>
+
+  <textarea
+    th:id="${id}"
+    th:name="${id}"
+    th:placeholder="${placeholder}"
+    th:required="${obrigatorio}"
+    th:disabled="${desabilitado}"
+    class="campo__input campo__textarea"
+    th:classappend="${temErro} ? 'campo__input--erro' : ''"
+    th:aria-invalid="${temErro}"
+    th:aria-describedby="${temErro} ? (${id} + '-erro') : _"
+    th:text="${valor}"
+    rows="4"></textarea>
+
+  <p th:if="${temErro}"
+     th:id="${id} + '-erro'"
+     class="campo__mensagem-erro"
+     th:text="${mensagemErro}">
+    Mensagem de erro
+  </p>
+
+</div>

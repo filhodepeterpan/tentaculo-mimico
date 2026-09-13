@@ -1,7 +1,7 @@
-<!-- checkbox(id, rotulo, marcado, desabilitado) -->
-<label th:fragment="checkbox(id, rotulo, marcado, desabilitado)" class="checkbox-wrapper">
+<!-- checkbox(id, name, valor, rotulo, marcado, desabilitado) -->
+<label th:fragment="checkbox(id, name, valor, rotulo, marcado, desabilitado)" class="checkbox-wrapper">
   <span class="checkbox-caixa">
-    <input type="checkbox" th:id="${id}" th:name="${id}" class="checkbox-input" th:checked="${marcado}" th:disabled="${desabilitado}"/>
+    <input type="checkbox" th:id="${id}" th:name="${name}" th:value="${valor}" class="checkbox-input" th:checked="${marcado}" th:disabled="${desabilitado}"/>
     <svg class="checkbox-check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M3 8l3.5 3.5L13 5"/>
     </svg>

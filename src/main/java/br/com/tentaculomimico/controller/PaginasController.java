@@ -35,4 +35,7 @@ public class PaginasController {
 
     @GetMapping("/componentes")
     public String componentes() { return "exemplos-componentes"; }
+
+    @GetMapping("/cadastro-curso")
+    public String cadastroCursos() { return "cadastro-curso"; }
 }

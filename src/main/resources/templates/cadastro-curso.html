@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/pages/cadastro-curso.css}">
+    <title>Tentáculo Mímico</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layouts :: header}"></div>
+
+<main class="curso-form">
+  <div class="curso-form__caixa">
+    <h1 class="curso-form__titulo">Cadastrar curso</h1>
+
+    <th:block th:if="${erroGeral != null}">
+      <div th:replace="~{fragments/alert :: alerta(titulo='Não foi possível cadastrar o curso', mensagem=${erroGeral ?: ''}, variante='erro')}"></div>
+    </th:block>
+
+    <form class="curso-form__formulario" method="post" th:action="@{/cursos}">
+
+      <div th:replace="~{fragments/inputs :: input(id='nome', tipo='text', rotulo='Nome do curso', placeholder='Ex: Inglês Avançado', valor=${nomePreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroNome ?: ''}, desabilitado=false)}"></div>
+
+      <div th:replace="~{fragments/textarea :: textarea(id='descricao', rotulo='Descrição', placeholder='Descreva o conteúdo, pré-requisitos e objetivos do curso', valor=${descricaoPreenchida ?: ''}, obrigatorio=true, mensagemErro=${erroDescricao ?: ''}, desabilitado=false)}"></div>
+
+      <div th:replace="~{fragments/inputs :: input(id='carga-horaria', tipo='number', rotulo='Carga horária (horas)', placeholder='40', valor=${cargaHorariaPreenchida ?: ''}, obrigatorio=true, mensagemErro=${erroCargaHoraria ?: ''}, desabilitado=false)}"></div>
+
+      <div th:replace="~{fragments/inputs :: input(id='preco', tipo='text', rotulo='Preço mensal (R$)', placeholder='79.90', valor=${precoPreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroPreco ?: ''}, desabilitado=false)}"></div>
+
+      <div th:replace="~{fragments/inputs :: input(id='vagas-totais', tipo='number', rotulo='Número de vagas', placeholder='20', valor=${vagasTotaisPreenchidas ?: ''}, obrigatorio=true, mensagemErro=${erroVagasTotais ?: ''}, desabilitado=false)}"></div>
+
+      <fieldset class="curso-form__dias-semana">
+        <legend class="campo__rotulo">Dias da semana</legend>
+        <div class="curso-form__dias-semana-opcoes">
+          <div th:replace="~{fragments/checkbox :: checkbox(id='dia-segunda', name='diasSemana', valor='SEGUNDA', rotulo='Segunda', marcado=${diasSemanaSelecionados != null and #lists.contains(diasSemanaSelecionados, 'SEGUNDA')}, desabilitado=false)}"></div>
+          <div th:replace="~{fragments/checkbox :: checkbox(id='dia-terca', name='diasSemana', valor='TERCA', rotulo='Terça', marcado=${diasSemanaSelecionados != null and #lists.contains(diasSemanaSelecionados, 'TERCA')}, desabilitado=false)}"></div>
+          <div th:replace="~{fragments/checkbox :: checkbox(id='dia-quarta', name='diasSemana', valor='QUARTA', rotulo='Quarta', marcado=${diasSemanaSelecionados != null and #lists.contains(diasSemanaSelecionados, 'QUARTA')}, desabilitado=false)}"></div>
+          <div th:replace="~{fragments/checkbox :: checkbox(id='dia-quinta', name='diasSemana', valor='QUINTA', rotulo='Quinta', marcado=${diasSemanaSelecionados != null and #lists.contains(diasSemanaSelecionados, 'QUINTA')}, desabilitado=false)}"></div>
+          <div th:replace="~{fragments/checkbox :: checkbox(id='dia-sexta', name='diasSemana', valor='SEXTA', rotulo='Sexta', marcado=${diasSemanaSelecionados != null and #lists.contains(diasSemanaSelecionados, 'SEXTA')}, desabilitado=false)}"></div>
+          <div th:replace="~{fragments/checkbox :: checkbox(id='dia-sabado', name='diasSemana', valor='SABADO', rotulo='Sábado', marcado=${diasSemanaSelecionados != null and #lists.contains(diasSemanaSelecionados, 'SABADO')}, desabilitado=false)}"></div>
+          <div th:replace="~{fragments/checkbox :: checkbox(id='dia-domingo', name='diasSemana', valor='DOMINGO', rotulo='Domingo', marcado=${diasSemanaSelecionados != null and #lists.contains(diasSemanaSelecionados, 'DOMINGO')}, desabilitado=false)}"></div>
+        </div>
+        <p id="erro-dias-semana" class="campo__mensagem-erro" hidden>Selecione ao menos um dia da semana.</p>
+        <p th:if="${erroDiasSemana != null}" class="campo__mensagem-erro" th:text="${erroDiasSemana}">Selecione ao menos um dia</p>
+      </fieldset>
+
+      <div class="curso-form__horario">
+        <div th:replace="~{fragments/inputs :: input(id='hora-inicio', tipo='time', rotulo='Início', placeholder='', valor=${horaInicioPreenchida ?: ''}, obrigatorio=true, mensagemErro=${erroHoraInicio ?: ''}, desabilitado=false)}"></div>
+        <div th:replace="~{fragments/inputs :: input(id='hora-fim', tipo='time', rotulo='Fim', placeholder='', valor=${horaFimPreenchida ?: ''}, obrigatorio=true, mensagemErro=${erroHoraFim ?: ''}, desabilitado=false)}"></div>
+      </div>
+
+      <div th:replace="~{fragments/inputs :: input(id='data-inicio', tipo='date', rotulo='Data de início do curso', placeholder='', valor=${dataInicioPreenchida ?: ''}, obrigatorio=true, mensagemErro=${erroDataInicio ?: ''}, desabilitado=false)}"></div>
+
+      <div th:replace="~{fragments/inputs :: input(id='data-fim', tipo='date', rotulo='Data de término (opcional)', placeholder='', valor=${dataFimPreenchida ?: ''}, obrigatorio=false, mensagemErro=${erroDataFim ?: ''}, desabilitado=false)}"></div>
+
+      <div th:replace="~{fragments/buttons :: botao(texto='Cadastrar curso', variante='primario', tamanho='grande', tipoBotao='submit')}"></div>
+
+    </form>
+  </div>
+</main>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+<script type="module" th:src="@{/js/pages/cadastro-curso.js}"></script>
+</body>
+</html>

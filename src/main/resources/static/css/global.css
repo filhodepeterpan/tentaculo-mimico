@@ -8,6 +8,7 @@
 @import url(componentes/radio.css);
 @import url(componentes/toggle.css);
 @import url(componentes/select.css);
+@import url(componentes/textarea.css);
 
 /* CSS GLOBAL */
 *{

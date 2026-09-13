@@ -112,6 +112,13 @@
 
 <br><br><br>
 
+<h3>TEXTAREA</h3>
+<br>
+
+<div th:replace="~{fragments/textarea :: textarea(id='descricao', rotulo='Descrição', placeholder='Descreva o conteúdo, pré-requisitos e objetivos do curso', valor=${descricaoPreenchida ?: ''}, obrigatorio=true, mensagemErro=${erroDescricao ?: ''}, desabilitado=false)}"></div>
+
+<br><br><br>
+
 <script type="module" th:src="@{/js/componentes/senha.js}"></script>
 <script type="module" th:src="@{/js/componentes/modal.js}"></script>
 <script type="module" th:src="@{/js/componentes/alert.js}"></script>

@@ -1,0 +1,84 @@
+@import url(../root.css);
+@import url(../global.css);
+
+.cursos {
+  padding: 2rem 1.5rem 3rem;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.cursos__titulo {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-headline-sm-tamanho);
+  line-height: var(--tipo-headline-sm-altura-linha);
+  font-weight: var(--tipo-headline-sm-peso-enfatizado);
+  color: var(--color-on-surface);
+  margin: 0 0 1.5rem;
+}
+
+.cursos__busca {
+  max-width: 28rem;
+  margin-bottom: 2rem;
+}
+
+.cursos__vazio {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-lg-tamanho);
+  color: var(--color-on-surface-variant);
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.cursos__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1.5rem;
+}
+
+.curso-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  background-color: var(--color-surface-container-low);
+}
+
+.curso-card__banner {
+  height: 8.75rem;
+}
+
+.curso-card__banner--cor-0 { background-color: var(--color-primary-fixed); }
+.curso-card__banner--cor-1 { background-color: var(--color-secondary-fixed); }
+.curso-card__banner--cor-2 { background-color: var(--color-tertiary-fixed); }
+.curso-card__banner--cor-3 { background-color: var(--color-primary-fixed-dim); }
+.curso-card__banner--cor-4 { background-color: var(--color-secondary-fixed-dim); }
+.curso-card__banner--cor-5 { background-color: var(--color-tertiary-fixed-dim); }
+
+.curso-card__conteudo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 1.25rem;
+}
+
+.curso-card__titulo {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-title-lg-tamanho);
+  line-height: var(--tipo-title-lg-altura-linha);
+  font-weight: var(--tipo-title-md-peso-enfatizado);
+  color: var(--color-on-surface);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.curso-card__info {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-md-tamanho);
+  color: var(--color-on-surface-variant);
+  margin: 0 0 0.5rem;
+}

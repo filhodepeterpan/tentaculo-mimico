@@ -2,15 +2,35 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" th:href="@{/css/pages/cursos.css}">
-    <title>Cursos | Tentáculo Mímico</title>
+    <title>Tentáculo Mímico</title>
 </head>
 <body>
 
-    <div th:replace="~{fragments :: cabecalho}"></div>
+<div th:replace="~{fragments/layouts :: header}"></div>
 
-    <!-- conteudo da pagina cursos — desenvolvimento fora do escopo deste card -->
+<main class="cursos">
+  <h1 class="cursos__titulo">Cursos</h1>
 
-    <div th:replace="~{fragments :: rodape}"></div>
+  <div class="cursos__busca">
+    <div th:replace="~{fragments/inputs :: input(id='busca-cursos', tipo='search', rotulo='Buscar cursos', placeholder='Ex: violão, teatro, fotografia...', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>
+  </div>
 
+  <p id="cursos__vazio" class="cursos__vazio" hidden>Nenhum curso encontrado.</p>
+
+  <div class="cursos__grid">
+    <div class="curso-card" th:each="curso, cursoStat : ${cursos}" th:attr="data-nome=${curso.nome}">
+      <div th:class="'curso-card__banner curso-card__banner--cor-' + ${cursoStat.index % 6}"></div>
+      <div class="curso-card__conteudo">
+        <h3 class="curso-card__titulo" th:text="${curso.nome}">Nome do curso</h3>
+        <p class="curso-card__info" th:text="${curso.cargaHoraria} + 'h · ' + ${curso.vagasDisponiveis} + ' vagas disponíveis'">Info</p>
+        <a th:href="@{/cursos/{id}(id=${curso.id})}" class="botao botao--primario botao--pequeno">Matricular-se</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+<script type="module" th:src="@{/js/pages/cursos.js}"></script>
 </body>
 </html>

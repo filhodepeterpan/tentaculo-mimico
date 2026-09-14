@@ -1,0 +1,56 @@
+@import url(../root.css);
+@import url(../global.css);
+
+.confirmar-email {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 3rem 1.5rem;
+}
+
+.confirmar-email__caixa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-width: 28rem;
+  text-align: center;
+}
+
+.confirmar-email__icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+}
+
+.confirmar-email__icone--sucesso {
+  background-color: var(--color-success-container);
+  color: var(--color-success);
+}
+
+.confirmar-email__icone--erro {
+  background-color: var(--color-error-container);
+  color: var(--color-error);
+}
+
+.confirmar-email__titulo {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-headline-sm-tamanho);
+  line-height: var(--tipo-headline-sm-altura-linha);
+  font-weight: var(--tipo-headline-sm-peso-enfatizado);
+  color: var(--color-on-surface);
+  margin: 0;
+}
+
+.confirmar-email__texto {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-lg-tamanho);
+  line-height: var(--tipo-body-lg-altura-linha);
+  color: var(--color-on-surface-variant);
+  margin: 0 0 0.5rem;
+}

@@ -33,4 +33,9 @@ public class PaginasController {
 
     @GetMapping("/cadastro-curso")
     public String cadastroCursos() { return "cadastro-curso"; }
+
+    @GetMapping("/confirmar-email")
+    public String confirmarEmail() {
+        return "confirmar-email";
+    }
 }

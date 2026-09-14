@@ -1,0 +1,5 @@
+<!-- badge(texto, variante) -->
+<span th:fragment="badge(texto, variante)" th:class="'badge badge--' + ${variante}">
+  <span class="badge__marcador" aria-hidden="true"></span>
+  <span th:text="${texto}">Texto</span>
+</span>

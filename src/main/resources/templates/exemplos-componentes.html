@@ -130,6 +130,14 @@
 
 <br><br><br>
 
+<h3>BADGEs</h3>
+<br>
+<div th:replace="~{fragments/badge :: badge(texto='Matrícula confirmada', variante='sucesso')}"></div>
+<div th:replace="~{fragments/badge :: badge(texto='Turma lotada', variante='erro')}"></div>
+<div th:replace="~{fragments/badge :: badge(texto='Vagas limitadas', variante='atencao')}"></div>
+
+<br><br><br>
+
 <script type="module" th:src="@{/js/componentes/senha.js}"></script>
 <script type="module" th:src="@{/js/componentes/modal.js}"></script>
 <script type="module" th:src="@{/js/componentes/alert.js}"></script>

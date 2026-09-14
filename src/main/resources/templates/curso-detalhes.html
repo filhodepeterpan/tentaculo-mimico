@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/pages/curso-detalhes.css}">
+    <title>Tentáculo Mímico</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layouts :: header}"></div>
+
+<section class="curso-detalhes__topo">
+  <div class="curso-detalhes__topo-texto">
+    <h1 class="curso-detalhes__titulo" th:text="${curso.nome}">Nome do curso</h1>
+
+    <div class="curso-detalhes__status">
+      <th:block th:if="${matriculaConfirmada != null and matriculaConfirmada}">
+        <div th:replace="~{fragments/badge :: badge(texto='Matrícula confirmada', variante='sucesso')}"></div>
+      </th:block>
+      <th:block th:if="${(matriculaConfirmada == null or !matriculaConfirmada) and curso.vagasDisponiveis == 0}">
+        <div th:replace="~{fragments/badge :: badge(texto='Turma lotada', variante='erro')}"></div>
+      </th:block>
+      <th:block th:if="${(matriculaConfirmada == null or !matriculaConfirmada) and curso.vagasDisponiveis > 0 and curso.vagasDisponiveis <= 5}">
+        <div th:replace="~{fragments/badge :: badge(texto='Vagas limitadas', variante='atencao')}"></div>
+      </th:block>
+    </div>
+
+
+  </div>
+
+  <img th:src="@{/img/mascara-teatro.png}" alt="" class="curso-detalhes__ilustracao">
+</section>
+
+<section class="curso-detalhes__conteudo">
+
+  <p class="curso-detalhes__descricao" th:text="${curso.descricao}">Descrição do curso</p>
+
+  <div class="curso-detalhes__professor">
+    <span class="curso-detalhes__professor-rotulo">Professor(a)</span>
+    <span class="curso-detalhes__professor-nome" th:text="${curso.professorNome}">Nome do professor</span>
+  </div>
+
+  <div class="curso-detalhes__chips">
+    <div class="chip-info chip-info--quando">
+      <span class="chip-info__marcador" aria-hidden="true"></span>
+      <span class="chip-info__texto">
+        <span class="chip-info__rotulo">Quando</span>
+        <span class="chip-info__valor" th:text="${curso.quando}">Data</span>
+      </span>
+    </div>
+
+    <div class="chip-info chip-info--onde">
+      <span class="chip-info__marcador" aria-hidden="true"></span>
+      <span class="chip-info__texto">
+        <span class="chip-info__rotulo">Onde</span>
+        <span class="chip-info__valor">Av. Pres. Kennedy, Solemar</span>
+      </span>
+    </div>
+
+    <div class="chip-info chip-info--contato">
+      <span class="chip-info__marcador" aria-hidden="true"></span>
+      <span class="chip-info__texto">
+        <span class="chip-info__rotulo">Contato</span>
+        <span class="chip-info__valor">@tentaculomimico</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="curso-detalhes__acoes">
+    <div class="curso-detalhes__info-extra">
+      <div class="curso-detalhes__info-item">
+        <span class="curso-detalhes__info-rotulo">Carga horária</span>
+        <span class="curso-detalhes__info-valor" th:text="${curso.cargaHoraria} + ' horas'">40 horas</span>
+      </div>
+      <div class="curso-detalhes__info-item">
+        <span class="curso-detalhes__info-rotulo">Vagas</span>
+        <span class="curso-detalhes__info-valor" th:text="${curso.vagasDisponiveis} + ' de ' + ${curso.vagasTotais} + ' disponíveis'">Vagas</span>
+      </div>
+      <div class="curso-detalhes__info-item">
+        <span class="curso-detalhes__info-rotulo">Preço mensal</span>
+        <span class="curso-detalhes__info-valor" th:text="'R$ ' + ${curso.preco}">R$ 0,00</span>
+      </div>
+    </div>
+    <button type="button" class="curso-detalhes__matricular" data-modal-abrir="modal-matricula" th:disabled="${curso.vagasDisponiveis == 0}">
+        <span class="curso-detalhes__matricular-icone" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="7" y1="17" x2="17" y2="7"/>
+            <polyline points="7 7 17 7 17 17"/>
+          </svg>
+        </span>
+      Matricule-se
+    </button>
+  </div>
+</section>
+
+<div th:replace="~{fragments/modal :: modal(id='modal-matricula', titulo='Confirmar matrícula?', mensagem='Sua solicitação será enviada para aprovação do professor. O acesso ao curso só é liberado após a aprovação e a confirmação do pagamento.', textoCancelar='Cancelar', textoConfirmar='Confirmar', varianteConfirmar='primario')}"></div>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+<script type="module" th:src="@{/js/pages/curso-detalhes.js}"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!--
+  modalCpf() — sem parâmetros; controla a própria exibição via
+  precisaCompletarCpf no model (setado pelo back quando o usuário logado
+  não tem CPF salvo, ex: cadastro feito via Google).
+-->
+<div th:fragment="modalCpf()"
+     th:if="${precisaCompletarCpf != null and precisaCompletarCpf}"
+     id="modal-completar-cpf"
+     class="modal modal--bloqueante"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="modal-completar-cpf-titulo">
+
+  <div class="modal__overlay"></div>
+
+  <div class="modal__caixa">
+    <div class="modal__cabecalho">
+      <h2 id="modal-completar-cpf-titulo" class="modal__titulo">Complete seu cadastro</h2>
+    </div>
+
+    <p class="modal__mensagem">Pra continuar usando a plataforma, precisamos do seu CPF.</p>
+
+    <form id="form-completar-cpf" method="post" th:action="@{/perfil/completar-cadastro}">
+      <div th:replace="~{fragments/inputs :: input(id='cpf-completar', tipo='text', rotulo='CPF', placeholder='000.000.000-00', valor='', obrigatorio=true, mensagemErro=${erroCpf ?: ''}, desabilitado=false)}"></div>
+
+      <div class="modal__acoes">
+        <div th:replace="~{fragments/buttons :: botao(texto='Confirmar', variante='primario', tamanho='pequeno', tipoBotao='submit')}"></div>
+      </div>
+    </form>
+  </div>
+</div>

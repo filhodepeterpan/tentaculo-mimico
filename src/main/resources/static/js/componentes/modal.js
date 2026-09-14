@@ -24,7 +24,7 @@ function inicializarModais() {
 
   document.addEventListener('keydown', (evento) => {
     if (evento.key !== 'Escape') return;
-    document.querySelectorAll('.modal:not([hidden])').forEach(fecharModal);
+    document.querySelectorAll('.modal:not([hidden]):not(.modal--bloqueante)').forEach(fecharModal);
   });
 }
 

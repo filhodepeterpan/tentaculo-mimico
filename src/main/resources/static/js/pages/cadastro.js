@@ -1,5 +1,6 @@
 import '../componentes/alert.js';
 import '../componentes/senha.js';
+import '../componentes/modal-cpf.js'
 
 document.getElementById('confirmar-senha')?.addEventListener('input', (evento) => {
   evento.target.setCustomValidity('');

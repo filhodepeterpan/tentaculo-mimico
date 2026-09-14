@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/pages/confirmar-email.css}">
+    <title>Tentáculo Mímico</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layouts :: header}"></div>
+
+<main class="confirmar-email">
+  <div class="confirmar-email__caixa">
+
+    <th:block th:if="${emailConfirmado != null and emailConfirmado}">
+      <div class="confirmar-email__icone confirmar-email__icone--sucesso" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+      <h1 class="confirmar-email__titulo">E-mail confirmado!</h1>
+      <p class="confirmar-email__texto">Sua conta foi verificada com sucesso. Você já pode aproveitar todos os recursos da plataforma.</p>
+      <a th:href="@{/login}" class="botao botao--primario botao--grande">Ir para o login</a>
+    </th:block>
+
+    <th:block th:if="${emailConfirmado == null or !emailConfirmado}">
+      <div class="confirmar-email__icone confirmar-email__icone--erro" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="6" y1="6" x2="18" y2="18"/>
+          <line x1="18" y1="6" x2="6" y2="18"/>
+        </svg>
+      </div>
+      <h1 class="confirmar-email__titulo">Não foi possível confirmar seu e-mail</h1>
+      <p class="confirmar-email__texto" th:text="${mensagemErro ?: 'O link pode ter expirado ou já ter sido utilizado. Tente fazer login para solicitar um novo envio.'}">Mensagem de erro</p>
+      <a th:href="@{/login}" class="botao botao--neutro botao--grande">Voltar para o login</a>
+    </th:block>
+
+  </div>
+</main>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+</body>
+</html>

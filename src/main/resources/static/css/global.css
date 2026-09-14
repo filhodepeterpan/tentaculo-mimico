@@ -9,6 +9,8 @@
 @import url(componentes/toggle.css);
 @import url(componentes/select.css);
 @import url(componentes/textarea.css);
+@import url(componentes/card.css);
+@import url(componentes/badge.css);
 
 /* CSS GLOBAL */
 *{

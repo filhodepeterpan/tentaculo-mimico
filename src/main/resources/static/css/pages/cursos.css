@@ -1,0 +1,36 @@
+@import url(../root.css);
+@import url(../global.css);
+
+.cursos {
+  padding: 2rem 1.5rem 3rem;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.cursos__titulo {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-headline-sm-tamanho);
+  line-height: var(--tipo-headline-sm-altura-linha);
+  font-weight: var(--tipo-headline-sm-peso-enfatizado);
+  color: var(--color-on-surface);
+  margin: 0 0 1.5rem;
+}
+
+.cursos__busca {
+  max-width: 28rem;
+  margin-bottom: 2rem;
+}
+
+.cursos__vazio {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-lg-tamanho);
+  color: var(--color-on-surface-variant);
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.cursos__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1.5rem;
+}

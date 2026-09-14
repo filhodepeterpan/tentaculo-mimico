@@ -8,11 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PaginasController {
 
-    @GetMapping("/cursos")
-    public String cursos() {
-        return "cursos";
-    }
-
     @GetMapping("/sobre")
     public String sobre() {
         return "sobre";

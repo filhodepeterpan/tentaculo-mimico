@@ -1,16 +1,31 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="stylesheet" th:href="@{/css/pages/cursos.css}">
-    <title>Cursos | Tentáculo Mímico</title>
+  <link rel="stylesheet" th:href="@{/css/pages/cursos.css}">
+  <title>Tentáculo Mímico</title>
 </head>
 <body>
 
-    <div th:replace="~{fragments :: cabecalho}"></div>
+<div th:replace="~{fragments/layouts :: header}"></div>
 
-    <!-- conteudo da pagina cursos — desenvolvimento fora do escopo deste card -->
+<main class="cursos">
+  <h1 class="cursos__titulo">Cursos</h1>
 
-    <div th:replace="~{fragments :: rodape}"></div>
+  <div class="cursos__busca">
+    <div th:replace="~{fragments/inputs :: input(id='busca-cursos', tipo='search', rotulo='Buscar cursos', placeholder='Ex: violão, teatro, fotografia...', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>
+  </div>
 
+  <p id="cursos__vazio" class="cursos__vazio" hidden>Nenhum curso encontrado.</p>
+
+  <div class="cursos__grid">
+    <th:block th:each="curso, cursoStat : ${cursos}">
+      <div th:replace="~{fragments/card :: card(id=${curso.id}, nome=${curso.nome}, cargaHoraria=${curso.cargaHoraria}, vagasDisponiveis=${curso.vagasDisponiveis}, indice=${cursoStat.index})}"></div>
+    </th:block>
+  </div>
+</main>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+<script type="module" th:src="@{/js/pages/cursos.js}"></script>
 </body>
 </html>

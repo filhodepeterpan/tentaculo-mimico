@@ -73,6 +73,12 @@
   outline-offset: 0.125rem;
 }
 
+.modal__imagem {
+  width: 100%;
+  border-radius: 1rem;
+  display: block;
+}
+
 .modal__mensagem {
   font-family: var(--fonte-padrao);
   font-size: var(--tipo-body-lg-tamanho);

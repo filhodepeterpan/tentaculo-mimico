@@ -13,7 +13,6 @@
     line-height: var(--tipo-editorial-display-altura-linha);
     font-weight: var(--tipo-editorial-display-peso);
     color: var(--color-on-surface);
-    color: var(--color-on-surface);
     margin: 0 0 1.5rem;
 }
 

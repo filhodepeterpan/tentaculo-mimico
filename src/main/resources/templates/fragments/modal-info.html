@@ -1,0 +1,31 @@
+<!-- modalInfo(id, titulo, imagem, altImagem, mensagem, textoFechar) -->
+<div th:fragment="modalInfo(id, titulo, imagem, altImagem, mensagem, textoFechar)"
+     th:id="${id}"
+     class="modal"
+     hidden
+     role="dialog"
+     aria-modal="true"
+     th:aria-labelledby="${id} + '-titulo'">
+
+  <div class="modal__overlay" th:attr="data-modal-fechar=${id}"></div>
+
+  <div class="modal__caixa">
+    <div class="modal__cabecalho">
+      <h2 th:id="${id} + '-titulo'" class="modal__titulo" th:text="${titulo}">Título</h2>
+      <button type="button" class="modal__fechar" th:attr="data-modal-fechar=${id}" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <line x1="4" y1="4" x2="20" y2="20"/>
+          <line x1="20" y1="4" x2="4" y2="20"/>
+        </svg>
+      </button>
+    </div>
+
+    <img th:src="@{${imagem}}" th:alt="${altImagem}" class="modal__imagem">
+
+    <p class="modal__mensagem" th:text="${mensagem}">Mensagem</p>
+
+    <div class="modal__acoes">
+      <button type="button" class="botao botao--neutro botao--pequeno" th:attr="data-modal-fechar=${id}" th:text="${textoFechar}">Fechar</button>
+    </div>
+  </div>
+</div>

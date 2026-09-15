@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/pages/doacoes.css}">
+    <title>Tentáculo Mímico</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layouts :: header}"></div>
+
+<main class="doacoes">
+
+  <div class="doacoes__info">
+    <h1 class="doacoes__titulo">Ajude a arte a continuar acontecendo</h1>
+    <p class="doacoes__texto">Cada contribuição ajuda o Tentáculo Mímico a manter suas atividades culturais e ampliar o acesso ao teatro, às histórias e à criação artística. Ao doar, você também participa da construção de uma cultura mais próxima da comunidade e acessível a mais pessoas.</p>
+  </div>
+
+  <div class="doacoes__caixa">
+    <h2 class="doacoes__caixa-titulo">Faça sua doação</h2>
+
+    <form class="doacoes__formulario" method="post" th:action="@{/doacoes}">
+
+      <fieldset class="doacoes__valores">
+        <legend class="campo__rotulo">Valor</legend>
+        <div class="doacoes__valores-opcoes">
+          <div th:replace="~{fragments/radio :: radio(id='valor-2', name='valorDoacao', valor='2', rotulo='R$2,00', marcado=false, desabilitado=false)}"></div>
+          <div th:replace="~{fragments/radio :: radio(id='valor-5', name='valorDoacao', valor='5', rotulo='R$5,00', marcado=false, desabilitado=false)}"></div>
+          <div th:replace="~{fragments/radio :: radio(id='valor-10', name='valorDoacao', valor='10', rotulo='R$10,00', marcado=false, desabilitado=false)}"></div>
+          <div th:replace="~{fragments/radio :: radio(id='valor-15', name='valorDoacao', valor='15', rotulo='R$15,00', marcado=false, desabilitado=false)}"></div>
+          <div th:replace="~{fragments/radio :: radio(id='valor-35', name='valorDoacao', valor='35', rotulo='R$35,00', marcado=false, desabilitado=false)}"></div>
+          <div th:replace="~{fragments/radio :: radio(id='valor-75', name='valorDoacao', valor='75', rotulo='R$75,00', marcado=false, desabilitado=false)}"></div>
+        </div>
+      </fieldset>
+
+      <div th:replace="~{fragments/inputs :: input(id='valor-outro', tipo='text', rotulo='Outro', placeholder='R$', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>
+
+      <div th:replace="~{fragments/textarea :: textarea(id='mensagem-doacao', rotulo='Mensagem', placeholder='Dedico essa doação a...', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>
+
+      <div class="doacoes__acoes">
+        <button type="submit" class="botao botao--primario botao--pequeno doacoes__doar">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+            <path d="M12 21s-7-4.5-9.5-9C.7 8.5 2 5 5.5 5c2 0 3.3 1 4.5 2.5C11.2 6 12.5 5 14.5 5 18 5 19.3 8.5 21.5 12c-2.5 4.5-9.5 9-9.5 9z"/>
+          </svg>
+          Doar
+        </button>
+      </div>
+    </form>
+  </div>
+
+</main>
+
+<div th:replace="~{fragments/modal-info :: modalInfo(id='modal-doacao-sucesso', titulo='Agradecemos sua generosidade!', imagem='/img/doacoes.png', altImagem='Ilustração de uma mão humana e a pata de um cachorro alcançando um coração juntos', mensagem='Sua contribuição ajuda o Tentáculo Mímico a continuar criando, ensinando e levando a arte para mais pessoas e espaços. Obrigado por acreditar no nosso trabalho e por fazer parte dessa história.', textoFechar='Fechar')}"></div>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+<script type="module" th:src="@{/js/pages/doacoes.js}"></script>
+</body>
+</html>

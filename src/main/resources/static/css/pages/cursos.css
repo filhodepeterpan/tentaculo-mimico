@@ -8,12 +8,12 @@
 }
 
 .cursos__titulo {
-  font-family: var(--fonte-padrao);
-  font-size: var(--tipo-headline-sm-tamanho);
-  line-height: var(--tipo-headline-sm-altura-linha);
-  font-weight: var(--tipo-headline-sm-peso-enfatizado);
-  color: var(--color-on-surface);
-  margin: 0 0 1.5rem;
+    font-family: var(--fonte-editorial);
+    font-size: var(--tipo-editorial-display-tamanho);
+    line-height: var(--tipo-editorial-display-altura-linha);
+    font-weight: var(--tipo-editorial-display-peso);
+    color: var(--color-on-surface);
+    margin: 0 0 1.5rem;
 }
 
 .cursos__busca {

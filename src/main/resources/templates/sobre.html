@@ -2,15 +2,35 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" th:href="@{/css/pages/sobre.css}">
-    <title>Sobre | Tentáculo Mímico</title>
+    <title>Tentáculo Mímico</title>
 </head>
 <body>
 
-    <div th:replace="~{fragments :: cabecalho}"></div>
+<div th:replace="~{fragments/layouts :: header}"></div>
 
-    <!-- conteudo da pagina sobre — desenvolvimento fora do escopo deste card -->
+<main class="sobre">
 
-    <div th:replace="~{fragments :: rodape}"></div>
+  <div class="sobre__conteudo">
+    <h1 class="sobre__titulo">O que é a Tentáculo Mímico?</h1>
+
+    <p class="sobre__texto">A Tentáculo Mímico é uma Organização Não Governamental (ONG) sem fins lucrativos, localizada no bairro Ribeirópolis, na cidade de Praia Grande - São Paulo. A instituição é um centro cultural com atividades como teatro, violão, canto, yoga a preços populares. O espaço também se descreve como mídia, produzindo entrevistas com artistas e educadores da periferia, cobrindo também eventos na periferia de Praia Grande.</p>
+
+    <p class="sobre__texto">O projeto é idealizado e gerido por Kléber Fernando, artista formado e funcionário público.</p>
+
+    <div class="sobre__redes">
+      <h2 class="sobre__redes-titulo">Nossas redes sociais</h2>
+      <a href="https://www.instagram.com/tentaculomimico/" target="_blank" rel="noopener noreferrer" class="sobre__instagram">
+        <img th:src="@{/img/instagram_icon.png}" alt="Ícone do Instagram" class="sobre__instagram-icone">
+        <span>tentaculomimico</span>
+      </a>
+    </div>
+  </div>
+
+  <img th:src="@{/img/sobre.png}" alt="Logo da Tentáculo Mímico: um tentáculo roxo emergindo de um círculo laranja" class="sobre__imagem">
+
+</main>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
 
 </body>
 </html>

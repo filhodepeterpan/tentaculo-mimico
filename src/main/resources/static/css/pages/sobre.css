@@ -1,0 +1,94 @@
+@import url(../root.css);
+@import url(../global.css);
+
+.sobre {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 3rem;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  align-items: center;
+}
+
+.sobre__conteudo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.sobre__titulo {
+    font-family: var(--fonte-editorial);
+    font-size: var(--tipo-editorial-display-tamanho);
+    line-height: var(--tipo-editorial-display-altura-linha);
+    font-weight: var(--tipo-editorial-display-peso);
+    color: var(--color-on-surface);
+    margin: 0;
+}
+
+.sobre__texto {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-lg-tamanho);
+  line-height: var(--tipo-body-lg-altura-linha);
+  color: var(--color-on-surface-variant);
+  margin: 0;
+}
+
+.sobre__redes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.sobre__redes-titulo {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-title-md-tamanho);
+  font-weight: var(--tipo-title-md-peso-enfatizado);
+  color: var(--color-on-surface);
+  margin: 0;
+}
+
+.sobre__instagram {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: fit-content;
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-md-tamanho);
+  color: var(--color-on-surface);
+  text-decoration: none;
+}
+
+.sobre__instagram:hover {
+  color: var(--color-primary);
+}
+
+.sobre__instagram:focus-visible {
+  outline: 0.1875rem solid var(--color-outline);
+  outline-offset: 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.sobre__instagram-icone {
+  width: 1rem;
+  height: 1rem;
+}
+
+.sobre__imagem {
+  width: 100%;
+  max-width: 26rem;
+  height: auto;
+  justify-self: center;
+}
+
+@media (max-width: 900px) {
+  .sobre {
+    grid-template-columns: 1fr;
+  }
+
+  .sobre__imagem {
+    order: -1;
+    max-width: 18rem;
+  }
+}

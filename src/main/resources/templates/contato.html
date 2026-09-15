@@ -2,15 +2,48 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" th:href="@{/css/pages/contato.css}">
-    <title>Contato | Tentáculo Mímico</title>
+    <title>Tentáculo Mímico</title>
 </head>
 <body>
 
-    <div th:replace="~{fragments :: cabecalho}"></div>
+<div th:replace="~{fragments/layouts :: header}"></div>
 
-    <!-- conteudo da pagina contato — desenvolvimento fora do escopo deste card -->
+<main class="contato">
 
-    <div th:replace="~{fragments :: rodape}"></div>
+    <div class="contato__info">
+        <h1 class="contato__titulo">Vamos conversar?</h1>
+        <p class="contato__texto">Quer saber mais sobre o Tentáculo Mímico, nossas atividades, apresentações ou projetos? Entre em contato com a gente. Teremos prazer em ouvir você e encontrar a melhor forma de ajudar.</p>
+        <img th:src="@{/img/contato.png}" alt="" class="contato__imagem">
+    </div>
 
+    <div class="contato__caixa">
+        <form class="contato__formulario" method="post" th:action="@{/contato}">
+
+            <div th:replace="~{fragments/inputs :: input(id='nome', tipo='text', rotulo='Nome', placeholder='João da Silva', valor='', obrigatorio=true, mensagemErro=${erroNome ?: ''}, desabilitado=false)}"></div>
+
+            <div th:replace="~{fragments/inputs :: input(id='email', tipo='email', rotulo='E-mail', placeholder='aluno@exemplo.com', valor='', obrigatorio=true, mensagemErro=${erroEmail ?: ''}, desabilitado=false)}"></div>
+
+            <div th:replace="~{fragments/inputs :: input(id='telefone', tipo='tel', rotulo='Telefone', placeholder='(00) 00000-0000', valor='', obrigatorio=false, mensagemErro=${erroTelefone ?: ''}, desabilitado=false)}"></div>
+
+            <div th:replace="~{fragments/textarea :: textarea(id='mensagem', rotulo='Mensagem', placeholder='Tenho uma pergunta...', valor='', obrigatorio=true, mensagemErro=${erroMensagem ?: ''}, desabilitado=false)}"></div>
+
+            <div class="contato__acoes">
+                <button type="submit" class="botao botao--primario botao--pequeno contato__enviar">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                        <path d="M3 11l18-8-8 18-2-8-8-2z"/>
+                    </svg>
+                    Enviar
+                </button>
+            </div>
+        </form>
+
+        <div id="contato-sucesso" class="contato__sucesso" hidden th:insert="~{fragments/alert :: alerta(titulo='Mensagem enviada!', mensagem='Obrigado pelo contato — vamos responder o mais rápido possível.', variante='sucesso')}"></div>
+    </div>
+
+</main>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+<script type="module" th:src="@{/js/pages/contato.js}"></script>
 </body>
 </html>

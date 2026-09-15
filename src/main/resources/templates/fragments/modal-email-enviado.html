@@ -1,0 +1,28 @@
+<!--
+  modalEmailEnviado() — sem parâmetros; controla a própria exibição via
+  mostrarModalEmailEnviado no model. Usado em dois momentos:
+    1. cadastro.html — depois que o cadastro é criado com sucesso
+    2. login.html — quando o login é tentado com e-mail ainda não confirmado
+-->
+<div th:fragment="modalEmailEnviado()"
+     th:if="${mostrarModalEmailEnviado != null and mostrarModalEmailEnviado}"
+     id="modal-email-enviado"
+     class="modal modal--bloqueante"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="modal-email-enviado-titulo">
+
+  <div class="modal__overlay"></div>
+
+  <div class="modal__caixa">
+    <div class="modal__cabecalho">
+      <h2 id="modal-email-enviado-titulo" class="modal__titulo">Confirme seu e-mail</h2>
+    </div>
+
+    <p class="modal__mensagem">Enviamos um link de confirmação para o seu e-mail. Verifique sua caixa de entrada (e o spam, só por garantia) e clique no link para ativar sua conta.</p>
+
+    <div class="modal__acoes">
+      <a th:href="@{/login}" class="botao botao--primario botao--pequeno">Entendi</a>
+    </div>
+  </div>
+</div>

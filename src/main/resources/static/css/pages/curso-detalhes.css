@@ -17,18 +17,18 @@
 }
 
 .curso-detalhes__titulo {
-  display: inline;
-  width: fit-content;
-  background-color: var(--color-primary);
-  color: var(--color-on-primary);
-  padding: 0.15em 0.4em;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
-  font-family: var(--fonte-padrao);
-  font-size: var(--tipo-headline-md-tamanho);
-  line-height: 1.6;
-  font-weight: var(--tipo-headline-md-peso-enfatizado);
-  margin: 0;
+    display: inline;
+    width: fit-content;
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    padding: 0.15em 0.4em;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    font-family: var(--fonte-editorial);
+    font-size: var(--tipo-editorial-display-tamanho);
+    line-height: var(--tipo-editorial-display-altura-linha);
+    font-weight: var(--tipo-editorial-display-peso);
+    margin: 0;
 }
 
 .curso-detalhes__status {

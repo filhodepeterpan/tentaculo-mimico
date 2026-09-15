@@ -12,14 +12,14 @@
 
     <div class="contato__info">
         <h1 class="contato__titulo">Vamos conversar?</h1>
-        <p class="contato__texto">Quer saber mais sobre o Tentáculo Mímico, nossas atividades, apresentações ou projetos? Entre em contato com a gente — teremos prazer em ouvir você e encontrar a melhor forma de ajudar.</p>
-        <img th:src="@{/img/tentaculo.png}" alt="" class="contato__imagem">
+        <p class="contato__texto">Quer saber mais sobre o Tentáculo Mímico, nossas atividades, apresentações ou projetos? Entre em contato com a gente. Teremos prazer em ouvir você e encontrar a melhor forma de ajudar.</p>
+        <img th:src="@{/img/contato.png}" alt="" class="contato__imagem">
     </div>
 
     <div class="contato__caixa">
         <form class="contato__formulario" method="post" th:action="@{/contato}">
 
-            <div th:replace="~{fragments/inputs :: input(id='nome', tipo='text', rotulo='Nome', placeholder='', valor='', obrigatorio=true, mensagemErro=${erroNome ?: ''}, desabilitado=false)}"></div>
+            <div th:replace="~{fragments/inputs :: input(id='nome', tipo='text', rotulo='Nome', placeholder='João da Silva', valor='', obrigatorio=true, mensagemErro=${erroNome ?: ''}, desabilitado=false)}"></div>
 
             <div th:replace="~{fragments/inputs :: input(id='email', tipo='email', rotulo='E-mail', placeholder='aluno@exemplo.com', valor='', obrigatorio=true, mensagemErro=${erroEmail ?: ''}, desabilitado=false)}"></div>
 

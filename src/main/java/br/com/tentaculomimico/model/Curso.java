@@ -11,10 +11,11 @@ public class Curso {
     private int vagasDisponiveis;
     private String professorNome;
     private String quando;
+    private String imagemCapa;
 
     public Curso(String id, String nome, int cargaHoraria, String descricao,
                  double preco, int vagasTotais, int vagasDisponiveis,
-                 String professorNome, String quando) {
+                 String professorNome, String quando, String imagemCapa) {
         this.id = id;
         this.nome = nome;
         this.cargaHoraria = cargaHoraria;
@@ -24,6 +25,7 @@ public class Curso {
         this.vagasDisponiveis = vagasDisponiveis;
         this.professorNome = professorNome;
         this.quando = quando;
+        this.imagemCapa = imagemCapa;
     }
 
     public String getId() { return id; }
@@ -35,4 +37,5 @@ public class Curso {
     public int getVagasDisponiveis() { return vagasDisponiveis; }
     public String getProfessorNome() { return professorNome; }
     public String getQuando() { return quando; }
+    public String getImagemCapa() { return imagemCapa; }
 }

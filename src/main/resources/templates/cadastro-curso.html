@@ -16,15 +16,17 @@
       <div th:replace="~{fragments/alert :: alerta(titulo='Não foi possível cadastrar o curso', mensagem=${erroGeral ?: ''}, variante='erro')}"></div>
     </th:block>
 
-    <form class="curso-form__formulario" method="post" th:action="@{/cursos}">
+    <form class="curso-form__formulario" method="post" th:action="@{/cursos}" enctype="multipart/form-data">
 
       <div th:replace="~{fragments/inputs :: input(id='nome', tipo='text', rotulo='Nome do curso', placeholder='Ex: Inglês Avançado', valor=${nomePreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroNome ?: ''}, desabilitado=false)}"></div>
+
+      <div th:replace="~{fragments/imagem :: imagem(id='imagem-capa', rotulo='Imagem de capa (opcional)', obrigatorio=false, mensagemErro=${erroImagemCapa ?: ''}, desabilitado=false)}"></div>
 
       <div th:replace="~{fragments/textarea :: textarea(id='descricao', rotulo='Descrição', placeholder='Descreva o conteúdo, pré-requisitos e objetivos do curso', valor=${descricaoPreenchida ?: ''}, obrigatorio=true, mensagemErro=${erroDescricao ?: ''}, desabilitado=false)}"></div>
 
       <div th:replace="~{fragments/inputs :: input(id='carga-horaria', tipo='number', rotulo='Carga horária (horas)', placeholder='40', valor=${cargaHorariaPreenchida ?: ''}, obrigatorio=true, mensagemErro=${erroCargaHoraria ?: ''}, desabilitado=false)}"></div>
 
-      <div th:replace="~{fragments/inputs :: input(id='preco', tipo='text', rotulo='Preço mensal (R$)', placeholder='79.90', valor=${precoPreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroPreco ?: ''}, desabilitado=false)}"></div>
+      <div th:replace="~{fragments/inputs :: input(id='preco', tipo='text', rotulo='Preço mensal (R$)', placeholder='199.90', valor=${precoPreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroPreco ?: ''}, desabilitado=false)}"></div>
 
       <div th:replace="~{fragments/inputs :: input(id='vagas-totais', tipo='number', rotulo='Número de vagas', placeholder='20', valor=${vagasTotaisPreenchidas ?: ''}, obrigatorio=true, mensagemErro=${erroVagasTotais ?: ''}, desabilitado=false)}"></div>
 

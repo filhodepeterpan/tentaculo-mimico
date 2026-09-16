@@ -1,4 +1,5 @@
 import '../componentes/alert.js';
+import '../componentes/imagem.js';
 
 document.querySelector('.curso-form__formulario')?.addEventListener('submit', (evento) => {
   const diasMarcados = document.querySelectorAll('input[name="diasSemana"]:checked');

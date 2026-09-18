@@ -22,13 +22,23 @@ public class Curso {
     private BigDecimal preco;
     private int vagasTotais;
     private int vagasDisponiveis;
-    private String professorNome;
-    private String quando;
+    private StatusCurso status;
+    private LocalDate dataInicio;
+    private LocalDate dataFim;
+    private LocalDate dataCadastro;
+    private Boolean ativo;
     private String imagemCapa;
 
-    public Curso(String id, String nome, int cargaHoraria, String descricao,
-                 double preco, int vagasTotais, int vagasDisponiveis,
-                 String professorNome, String quando, String imagemCapa) {
+    //private String quando;
+
+
+    public Curso(){}
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -102,19 +112,53 @@ public class Curso {
 
     public void setVagasDisponiveis(int vagasDisponiveis) {
         this.vagasDisponiveis = vagasDisponiveis;
-        this.professorNome = professorNome;
-        this.quando = quando;
-        this.imagemCapa = imagemCapa;
     }
 
-    public String getId() { return id; }
-    public String getNome() { return nome; }
-    public int getCargaHoraria() { return cargaHoraria; }
-    public String getDescricao() { return descricao; }
-    public double getPreco() { return preco; }
-    public int getVagasTotais() { return vagasTotais; }
-    public int getVagasDisponiveis() { return vagasDisponiveis; }
-    public String getProfessorNome() { return professorNome; }
-    public String getQuando() { return quando; }
-    public String getImagemCapa() { return imagemCapa; }
+    public StatusCurso getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusCurso status) {
+        this.status = status;
+    }
+
+    public LocalDate getDataInicio() {
+        return dataInicio;
+    }
+
+    public void setDataInicio(LocalDate dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+
+    public LocalDate getDataFim() {
+        return dataFim;
+    }
+
+    public void setDataFim(LocalDate dataFim) {
+        this.dataFim = dataFim;
+    }
+
+    public LocalDate getDataCadastro() {
+        return dataCadastro;
+    }
+
+    public void setDataCadastro(LocalDate dataCadastro) {
+        this.dataCadastro = dataCadastro;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public String getImagemCapa() {
+        return imagemCapa;
+    }
+
+    public void setImagemCapa(String imagemCapa) {
+        this.imagemCapa = imagemCapa;
+    }
 }

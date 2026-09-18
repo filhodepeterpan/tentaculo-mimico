@@ -123,10 +123,18 @@
 <br>
 
 <div style="display:flex; gap:1.5rem; flex-wrap:wrap; max-width:700px;">
-    <div th:replace="~{fragments/card :: card(id='1', nome='Oficina de Escrita de Peças Teatrais', cargaHoraria=12, vagasDisponiveis=14, indice=0, imagemCapa=null)}"></div>
-    <div th:replace="~{fragments/card :: card(id='2', nome='Violão Popular para Iniciantes', cargaHoraria=16, vagasDisponiveis=3, indice=1, imagemCapa=null)}"></div>
-    <div th:replace="~{fragments/card :: card(id='3', nome='Cerâmica e Modelagem em Argila', cargaHoraria=18, vagasDisponiveis=5, indice=2, imagemCapa=null)}"></div>
+    <div th:replace="~{fragments/card :: card(id='1', nome='Oficina de Escrita de Peças Teatrais', cargaHoraria=12, vagasDisponiveis=14, indice=0)}"></div>
+    <div th:replace="~{fragments/card :: card(id='2', nome='Violão Popular para Iniciantes', cargaHoraria=16, vagasDisponiveis=3, indice=1)}"></div>
+    <div th:replace="~{fragments/card :: card(id='3', nome='Cerâmica e Modelagem em Argila', cargaHoraria=18, vagasDisponiveis=5, indice=2)}"></div>
 </div>
+
+<br><br><br>
+
+<h3>BADGEs</h3>
+<br>
+<div th:replace="~{fragments/badge :: badge(texto='Matrícula confirmada', variante='sucesso')}"></div>
+<div th:replace="~{fragments/badge :: badge(texto='Turma lotada', variante='erro')}"></div>
+<div th:replace="~{fragments/badge :: badge(texto='Vagas limitadas', variante='atencao')}"></div>
 
 <br><br><br>
 

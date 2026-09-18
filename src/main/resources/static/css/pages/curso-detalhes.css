@@ -6,7 +6,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
-  background-color: var(--color-primary);
+  background-color: var(--color-surface-container-low);
   padding: 3rem 2rem;
 }
 
@@ -19,6 +19,7 @@
 .curso-detalhes__titulo {
     display: inline;
     width: fit-content;
+    background-color: var(--color-primary);
     color: var(--color-on-primary);
     padding: 0.15em 0.4em;
     box-decoration-break: clone;

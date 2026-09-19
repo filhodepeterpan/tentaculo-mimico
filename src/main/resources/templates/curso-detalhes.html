@@ -44,7 +44,11 @@
       <span class="chip-info__marcador" aria-hidden="true"></span>
       <span class="chip-info__texto">
         <span class="chip-info__rotulo">Quando</span>
-        <span class="chip-info__valor" th:text="${curso.quando}">Data</span>
+        <span class="chip-info__valor">
+        <span th:each="h, iter : ${curso.horarios}">
+            <span th:text="${h.diaSemana}"></span> <span th:text="${h.inicio} + '-' + ${h.fim}"></span><span th:if="${!iter.last}">, </span>
+        </span>
+        </span>
       </span>
     </div>
 

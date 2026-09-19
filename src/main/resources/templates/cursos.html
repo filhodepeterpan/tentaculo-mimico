@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <link rel="stylesheet" th:href="@{/css/pages/cursos.css}">
-  <title>Tentáculo Mímico</title>
+    <link rel="stylesheet" th:href="@{/css/pages/cursos.css}">
+    <title>Tentáculo Mímico</title>
 </head>
 <body>
 
@@ -19,7 +19,7 @@
 
   <div class="cursos__grid">
     <th:block th:each="curso, cursoStat : ${cursos}">
-      <div th:replace="~{fragments/card :: card(id=${curso.id}, nome=${curso.nome}, cargaHoraria=${curso.cargaHoraria}, vagasDisponiveis=${curso.vagasDisponiveis}, indice=${cursoStat.index})}"></div>
+      <div th:replace="~{fragments/card :: card(id=${curso.id}, nome=${curso.nome}, cargaHoraria=${curso.cargaHoraria}, vagasDisponiveis=${curso.vagasDisponiveis}, indice=${cursoStat.index}, imagemCapa=${curso.imagemCapa})}"></div>
     </th:block>
   </div>
 </main>

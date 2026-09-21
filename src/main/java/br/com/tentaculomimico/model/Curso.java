@@ -1,8 +1,22 @@
 package br.com.tentaculomimico.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Document(collection = "cursos")
 public class Curso {
 
+    @Id
     private String id;
+
     private String nome;
     private int cargaHoraria;
     private String descricao;
@@ -10,32 +24,6 @@ public class Curso {
     private int vagasTotais;
     private int vagasDisponiveis;
     private String professorNome;
-    private String quando;
+    private String horario;
     private String imagemCapa;
-
-    public Curso(String id, String nome, int cargaHoraria, String descricao,
-                 double preco, int vagasTotais, int vagasDisponiveis,
-                 String professorNome, String quando, String imagemCapa) {
-        this.id = id;
-        this.nome = nome;
-        this.cargaHoraria = cargaHoraria;
-        this.descricao = descricao;
-        this.preco = preco;
-        this.vagasTotais = vagasTotais;
-        this.vagasDisponiveis = vagasDisponiveis;
-        this.professorNome = professorNome;
-        this.quando = quando;
-        this.imagemCapa = imagemCapa;
-    }
-
-    public String getId() { return id; }
-    public String getNome() { return nome; }
-    public int getCargaHoraria() { return cargaHoraria; }
-    public String getDescricao() { return descricao; }
-    public double getPreco() { return preco; }
-    public int getVagasTotais() { return vagasTotais; }
-    public int getVagasDisponiveis() { return vagasDisponiveis; }
-    public String getProfessorNome() { return professorNome; }
-    public String getQuando() { return quando; }
-    public String getImagemCapa() { return imagemCapa; }
 }

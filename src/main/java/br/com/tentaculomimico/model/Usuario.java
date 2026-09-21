@@ -19,10 +19,7 @@ public class Usuario {
     private String email;
     private TipoUsuario tipoUsuario;
     private Provedor provedor;
-
     private Autenticacao autenticacao;
-
-
     private int tentativasLoginFalhas = 0;
     private LocalDateTime bloqueadoAte;
 

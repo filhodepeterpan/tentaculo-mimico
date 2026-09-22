@@ -29,7 +29,7 @@
                 <div class="grid-12">
                     <div class="grid-span-5">
                         <img
-                            src="@{img/landing_1.png}"
+                            th:src="@{img/landing_1.png}"
                             alt="Figura ilustrativa mão teatral"
                         />
                     </div>
@@ -62,10 +62,10 @@
                 <h3 class="cto__text-focus">Você</h3>
                 <div class="cto__actions">
                     <div
-                        th:replace="~{fragments/button :: botao(texto='Quero criar minha conta!', variante='primario', tamanho='grande', tipo='button')}"
+                        th:replace="~{fragments/buttons :: botao(texto='Quero criar minha conta!', variante='primario', tamanho='grande', tipoBotao='button')}"
                     />
                     <div
-                        th:replace="~{fragments/button :: botao(texto='Quero criar minha conta!', variante='neutro', tamanho='grande', tipo='button')}"
+                        th:replace="~{fragments/buttons :: botao(texto='Quero criar minha conta!', variante='neutro', tamanho='grande', tipoBotao='button')}"
                     />
                 </div>
             </section>

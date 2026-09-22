@@ -13,408 +13,410 @@
      - Sem atributos = tema claro, contraste normal (padrão).
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Bitter:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Bitter:ital,wght@0,100..900;1,100..900&display=swap");
 
 /* TIPOGRAFIA — Famílias */
 :root {
-  --fonte-padrao: "Roboto", sans-serif;      /* uso geral: UI, formulários, textos de produto */
-  --fonte-editorial: "Bitter", serif;        /* uso restrito: frases de impacto em posts, stories, banners e citações */
+    --fonte-padrao:
+        "Roboto", sans-serif; /* uso geral: UI, formulários, textos de produto */
+    --fonte-editorial:
+        "Bitter", serif; /* uso restrito: frases de impacto em posts, stories, banners e citações */
 }
 
 /* CORES — Tema claro (padrão) · Contraste normal */
 :root,
 :root[data-tema="claro"] {
-  color-scheme: light;
+    color-scheme: light;
 
-  /* Primária */
-  --color-primary: #7D34CD;
-  --color-on-primary: #FFFFFF;
-  --color-primary-container: #EEDBFF;
-  --color-on-primary-container: #650CB5;
-  --color-primary-fixed: #EEDBFF;
-  --color-primary-fixed-dim: #DAB9FF;
-  --color-on-primary-fixed: #2A0053;
-  --color-on-primary-fixed-variant: #640CB4;
+    /* Primária */
+    --color-primary: #7d34cd;
+    --color-on-primary: #ffffff;
+    --color-primary-container: #eedbff;
+    --color-on-primary-container: #650cb5;
+    --color-primary-fixed: #eedbff;
+    --color-primary-fixed-dim: #dab9ff;
+    --color-on-primary-fixed: #2a0053;
+    --color-on-primary-fixed-variant: #640cb4;
 
-  /* Secundária */
-  --color-secondary: #F9C824;
-  --color-on-secondary: #1D1807;
-  --color-secondary-container: #FFF2B1;
-  --color-on-secondary-container: #625200;
-  --color-secondary-fixed: #FFF2B1;
-  --color-secondary-fixed-dim: #FFE149;
-  --color-on-secondary-fixed: #292200;
-  --color-on-secondary-fixed-variant: #625200;
+    /* Secundária */
+    --color-secondary: #f9c824;
+    --color-on-secondary: #1d1807;
+    --color-secondary-container: #fff2b1;
+    --color-on-secondary-container: #625200;
+    --color-secondary-fixed: #fff2b1;
+    --color-secondary-fixed-dim: #ffe149;
+    --color-on-secondary-fixed: #292200;
+    --color-on-secondary-fixed-variant: #625200;
 
-  /* Terciária */
-  --color-tertiary: #B90067;
-  --color-on-tertiary: #FFFFFF;
-  --color-tertiary-container: #FFD9E3;
-  --color-on-tertiary-container: #8D004E;
-  --color-tertiary-fixed: #FFD9E3;
-  --color-tertiary-fixed-dim: #FFB0CA;
-  --color-on-tertiary-fixed: #3E001F;
-  --color-on-tertiary-fixed-variant: #8D004E;
+    /* Terciária */
+    --color-tertiary: #b90067;
+    --color-on-tertiary: #ffffff;
+    --color-tertiary-container: #ffd9e3;
+    --color-on-tertiary-container: #8d004e;
+    --color-tertiary-fixed: #ffd9e3;
+    --color-tertiary-fixed-dim: #ffb0ca;
+    --color-on-tertiary-fixed: #3e001f;
+    --color-on-tertiary-fixed-variant: #8d004e;
 
-  /* Erro */
-  --color-error: #BA1A1A;
-  --color-on-error: #FFFFFF;
-  --color-error-container: #FFDAD6;
-  --color-on-error-container: #93000A;
+    /* Erro */
+    --color-error: #ba1a1a;
+    --color-on-error: #ffffff;
+    --color-error-container: #ffdad6;
+    --color-on-error-container: #93000a;
 
-  --color-info: #4C5FD5;
-  --color-on-info: #FFFFFF;
-  --color-info-container: #E1E4FF;
-  --color-on-info-container: #1B237A;
+    --color-info: #4c5fd5;
+    --color-on-info: #ffffff;
+    --color-info-container: #e1e4ff;
+    --color-on-info-container: #1b237a;
 
-  --color-success: #1E8E5A;
-  --color-on-success: #FFFFFF;
-  --color-success-container: #A8F0C6;
-  --color-on-success-container: #003919;
+    --color-success: #1e8e5a;
+    --color-on-success: #ffffff;
+    --color-success-container: #a8f0c6;
+    --color-on-success-container: #003919;
 
-  --color-warning: #A15C00;
-  --color-on-warning: #FFFFFF;
-  --color-warning-container: #FFE3C2;
-  --color-on-warning-container: #3D2500;
+    --color-warning: #a15c00;
+    --color-on-warning: #ffffff;
+    --color-warning-container: #ffe3c2;
+    --color-on-warning-container: #3d2500;
 
-  /* Superfície e neutros */
-  --color-surface-dim: #DFD8E0;
-  --color-surface: #FFF7FF;
-  --color-surface-bright: #FFF7FF;
-  --color-surface-container-lowest: #FFFFFF;
-  --color-surface-container-low: #F9F1F9;
-  --color-surface-container: #F3EBF3;
-  --color-surface-container-high: #EDE6EE;
-  --color-surface-container-highest: #E8E0E8;
-  --color-on-surface: #1D1A20;
-  --color-on-surface-variant: #4A454E;
-  --color-outline: #7B757F;
-  --color-outline-variant: #CCC4CF;
-  --color-inverse-surface: #332F35;
-  --color-inverse-on-surface: #F6EEF6;
-  --color-inverse-primary: #DAB9FF;
-  --color-scrim: #000000;
-  --color-shadow: #000000;
+    /* Superfície e neutros */
+    --color-surface-dim: #dfd8e0;
+    --color-surface: #fff7ff;
+    --color-surface-bright: #fff7ff;
+    --color-surface-container-lowest: #ffffff;
+    --color-surface-container-low: #f9f1f9;
+    --color-surface-container: #f3ebf3;
+    --color-surface-container-high: #ede6ee;
+    --color-surface-container-highest: #e8e0e8;
+    --color-on-surface: #1d1a20;
+    --color-on-surface-variant: #4a454e;
+    --color-outline: #7b757f;
+    --color-outline-variant: #ccc4cf;
+    --color-inverse-surface: #332f35;
+    --color-inverse-on-surface: #f6eef6;
+    --color-inverse-primary: #dab9ff;
+    --color-scrim: #000000;
+    --color-shadow: #000000;
 }
 
 /* CORES — Tema escuro · Contraste normal */
 :root[data-tema="escuro"] {
-  color-scheme: dark;
+    color-scheme: dark;
 
-  /* Primária */
-  --color-primary: #DAB9FF;
-  --color-on-primary: #460084;
-  --color-primary-container: #640CB4;
-  --color-on-primary-container: #EEDBFF;
-  --color-primary-fixed: #EEDBFF;
-  --color-primary-fixed-dim: #DAB9FF;
-  --color-on-primary-fixed: #2A0053;
-  --color-on-primary-fixed-variant: #640CB4;
+    /* Primária */
+    --color-primary: #dab9ff;
+    --color-on-primary: #460084;
+    --color-primary-container: #640cb4;
+    --color-on-primary-container: #eedbff;
+    --color-primary-fixed: #eedbff;
+    --color-primary-fixed-dim: #dab9ff;
+    --color-on-primary-fixed: #2a0053;
+    --color-on-primary-fixed-variant: #640cb4;
 
-  /* Secundária */
-  --color-secondary: #FFE149;
-  --color-on-secondary: #443900;
-  --color-secondary-container: #625200;
-  --color-on-secondary-container: #FFF2B1;
-  --color-secondary-fixed: #FFF2B1;
-  --color-secondary-fixed-dim: #FFE149;
-  --color-on-secondary-fixed: #292200;
-  --color-on-secondary-fixed-variant: #625200;
+    /* Secundária */
+    --color-secondary: #ffe149;
+    --color-on-secondary: #443900;
+    --color-secondary-container: #625200;
+    --color-on-secondary-container: #fff2b1;
+    --color-secondary-fixed: #fff2b1;
+    --color-secondary-fixed-dim: #ffe149;
+    --color-on-secondary-fixed: #292200;
+    --color-on-secondary-fixed-variant: #625200;
 
-  /* Terciária */
-  --color-tertiary: #FFB0CA;
-  --color-on-tertiary: #640036;
-  --color-tertiary-container: #8D004E;
-  --color-on-tertiary-container: #FFD9E3;
-  --color-tertiary-fixed: #FFD9E3;
-  --color-tertiary-fixed-dim: #FFB0CA;
-  --color-on-tertiary-fixed: #3E001F;
-  --color-on-tertiary-fixed-variant: #8D004E;
+    /* Terciária */
+    --color-tertiary: #ffb0ca;
+    --color-on-tertiary: #640036;
+    --color-tertiary-container: #8d004e;
+    --color-on-tertiary-container: #ffd9e3;
+    --color-tertiary-fixed: #ffd9e3;
+    --color-tertiary-fixed-dim: #ffb0ca;
+    --color-on-tertiary-fixed: #3e001f;
+    --color-on-tertiary-fixed-variant: #8d004e;
 
-  /* Erro */
-  --color-error: #FFB4AB;
-  --color-on-error: #690005;
-  --color-error-container: #93000A;
-  --color-on-error-container: #FFDAD6;
+    /* Erro */
+    --color-error: #ffb4ab;
+    --color-on-error: #690005;
+    --color-error-container: #93000a;
+    --color-on-error-container: #ffdad6;
 
-  /* Superfície e neutros */
-  --color-surface-dim: #151218;
-  --color-surface: #151218;
-  --color-surface-bright: #3C383E;
-  --color-surface-container-lowest: #100D12;
-  --color-surface-container-low: #1D1A20;
-  --color-surface-container: #221E24;
-  --color-surface-container-high: #2C292F;
-  --color-surface-container-highest: #373339;
-  --color-on-surface: #E8E0E8;
-  --color-on-surface-variant: #CCC4CF;
-  --color-outline: #958E98;
-  --color-outline-variant: #4A454E;
-  --color-inverse-surface: #E8E0E8;
-  --color-inverse-on-surface: #332F35;
-  --color-inverse-primary: #7D34CD;
-  --color-scrim: #000000;
-  --color-shadow: #000000;
+    /* Superfície e neutros */
+    --color-surface-dim: #151218;
+    --color-surface: #151218;
+    --color-surface-bright: #3c383e;
+    --color-surface-container-lowest: #100d12;
+    --color-surface-container-low: #1d1a20;
+    --color-surface-container: #221e24;
+    --color-surface-container-high: #2c292f;
+    --color-surface-container-highest: #373339;
+    --color-on-surface: #e8e0e8;
+    --color-on-surface-variant: #ccc4cf;
+    --color-outline: #958e98;
+    --color-outline-variant: #4a454e;
+    --color-inverse-surface: #e8e0e8;
+    --color-inverse-on-surface: #332f35;
+    --color-inverse-primary: #7d34cd;
+    --color-scrim: #000000;
+    --color-shadow: #000000;
 }
 
 /* CORES — Tema claro · Alto contraste (acessibilidade) */
 :root[data-contraste="alto"] {
-  /* Primária */
-  --color-primary: #41007A;
-  --color-on-primary: #FFFFFF;
-  --color-primary-container: #6612B6;
-  --color-on-primary-container: #FFFFFF;
-  --color-primary-fixed: #6612B6;
-  --color-primary-fixed-dim: #4A0089;
-  --color-on-primary-fixed: #FFFFFF;
-  --color-on-primary-fixed-variant: #FFFFFF;
+    /* Primária */
+    --color-primary: #41007a;
+    --color-on-primary: #ffffff;
+    --color-primary-container: #6612b6;
+    --color-on-primary-container: #ffffff;
+    --color-primary-fixed: #6612b6;
+    --color-primary-fixed-dim: #4a0089;
+    --color-on-primary-fixed: #ffffff;
+    --color-on-primary-fixed-variant: #ffffff;
 
-  /* Secundária */
-  --color-secondary: #FBDC74;
-  --color-on-secondary: #000000;
-  --color-secondary-container: #655400;
-  --color-on-secondary-container: #FFFFFF;
-  --color-secondary-fixed: #655400;
-  --color-secondary-fixed-dim: #473B00;
-  --color-on-secondary-fixed: #FFFFFF;
-  --color-on-secondary-fixed-variant: #FFFFFF;
+    /* Secundária */
+    --color-secondary: #fbdc74;
+    --color-on-secondary: #000000;
+    --color-secondary-container: #655400;
+    --color-on-secondary-container: #ffffff;
+    --color-secondary-fixed: #655400;
+    --color-secondary-fixed-dim: #473b00;
+    --color-on-secondary-fixed: #ffffff;
+    --color-on-secondary-fixed-variant: #ffffff;
 
-  /* Terciária */
-  --color-tertiary: #5C0031;
-  --color-on-tertiary: #FFFFFF;
-  --color-tertiary-container: #920050;
-  --color-on-tertiary-container: #FFFFFF;
-  --color-tertiary-fixed: #920050;
-  --color-tertiary-fixed-dim: #680038;
-  --color-on-tertiary-fixed: #FFFFFF;
-  --color-on-tertiary-fixed-variant: #FFFFFF;
+    /* Terciária */
+    --color-tertiary: #5c0031;
+    --color-on-tertiary: #ffffff;
+    --color-tertiary-container: #920050;
+    --color-on-tertiary-container: #ffffff;
+    --color-tertiary-fixed: #920050;
+    --color-tertiary-fixed-dim: #680038;
+    --color-on-tertiary-fixed: #ffffff;
+    --color-on-tertiary-fixed-variant: #ffffff;
 
-  /* Erro */
-  --color-error: #600004;
-  --color-on-error: #FFFFFF;
-  --color-error-container: #98000A;
-  --color-on-error-container: #FFFFFF;
+    /* Erro */
+    --color-error: #600004;
+    --color-on-error: #ffffff;
+    --color-error-container: #98000a;
+    --color-on-error-container: #ffffff;
 
-  /* Superfície e neutros */
-  --color-surface-dim: #BDB7BE;
-  --color-surface: #FFF7FF;
-  --color-surface-bright: #FFF7FF;
-  --color-surface-container-lowest: #FFFFFF;
-  --color-surface-container-low: #F6EEF6;
-  --color-surface-container: #E8E0E8;
-  --color-surface-container-high: #D9D2DA;
-  --color-surface-container-highest: #CBC4CC;
-  --color-on-surface: #000000;
-  --color-on-surface-variant: #000000;
-  --color-outline: #2F2A33;
-  --color-outline-variant: #4C4750;
-  --color-inverse-surface: #332F35;
-  --color-inverse-on-surface: #FFFFFF;
-  --color-inverse-primary: #DAB9FF;
-  --color-scrim: #000000;
-  --color-shadow: #000000;
+    /* Superfície e neutros */
+    --color-surface-dim: #bdb7be;
+    --color-surface: #fff7ff;
+    --color-surface-bright: #fff7ff;
+    --color-surface-container-lowest: #ffffff;
+    --color-surface-container-low: #f6eef6;
+    --color-surface-container: #e8e0e8;
+    --color-surface-container-high: #d9d2da;
+    --color-surface-container-highest: #cbc4cc;
+    --color-on-surface: #000000;
+    --color-on-surface-variant: #000000;
+    --color-outline: #2f2a33;
+    --color-outline-variant: #4c4750;
+    --color-inverse-surface: #332f35;
+    --color-inverse-on-surface: #ffffff;
+    --color-inverse-primary: #dab9ff;
+    --color-scrim: #000000;
+    --color-shadow: #000000;
 }
 
 /* CORES — Tema escuro · Alto contraste (acessibilidade) */
 :root[data-tema="escuro"][data-contraste="alto"] {
-  /* Primária */
-  --color-primary: #F8ECFF;
-  --color-on-primary: #000000;
-  --color-primary-container: #D7B4FF;
-  --color-on-primary-container: #14002D;
-  --color-primary-fixed: #6612B6;
-  --color-primary-fixed-dim: #4A0089;
-  --color-on-primary-fixed: #FFFFFF;
-  --color-on-primary-fixed-variant: #FFFFFF;
+    /* Primária */
+    --color-primary: #f8ecff;
+    --color-on-primary: #000000;
+    --color-primary-container: #d7b4ff;
+    --color-on-primary-container: #14002d;
+    --color-primary-fixed: #6612b6;
+    --color-primary-fixed-dim: #4a0089;
+    --color-on-primary-fixed: #ffffff;
+    --color-on-primary-fixed-variant: #ffffff;
 
-  /* Secundária */
-  --color-secondary: #FFF9D9;
-  --color-on-secondary: #000000;
-  --color-secondary-container: #FFDD33;
-  --color-on-secondary-container: #131000;
-  --color-secondary-fixed: #655400;
-  --color-secondary-fixed-dim: #473B00;
-  --color-on-secondary-fixed: #FFFFFF;
-  --color-on-secondary-fixed-variant: #FFFFFF;
+    /* Secundária */
+    --color-secondary: #fff9d9;
+    --color-on-secondary: #000000;
+    --color-secondary-container: #ffdd33;
+    --color-on-secondary-container: #131000;
+    --color-secondary-fixed: #655400;
+    --color-secondary-fixed-dim: #473b00;
+    --color-on-secondary-fixed: #ffffff;
+    --color-on-secondary-fixed-variant: #ffffff;
 
-  /* Terciária */
-  --color-tertiary: #FFEBEF;
-  --color-on-tertiary: #000000;
-  --color-tertiary-container: #FFAAC7;
-  --color-on-tertiary-container: #20000D;
-  --color-tertiary-fixed: #920050;
-  --color-tertiary-fixed-dim: #680038;
-  --color-on-tertiary-fixed: #FFFFFF;
-  --color-on-tertiary-fixed-variant: #FFFFFF;
+    /* Terciária */
+    --color-tertiary: #ffebef;
+    --color-on-tertiary: #000000;
+    --color-tertiary-container: #ffaac7;
+    --color-on-tertiary-container: #20000d;
+    --color-tertiary-fixed: #920050;
+    --color-tertiary-fixed-dim: #680038;
+    --color-on-tertiary-fixed: #ffffff;
+    --color-on-tertiary-fixed-variant: #ffffff;
 
-  /* Erro */
-  --color-error: #FFECE9;
-  --color-on-error: #000000;
-  --color-error-container: #FFAEA4;
-  --color-on-error-container: #220001;
+    /* Erro */
+    --color-error: #ffece9;
+    --color-on-error: #000000;
+    --color-error-container: #ffaea4;
+    --color-on-error-container: #220001;
 
-  /* Superfície e neutros */
-  --color-surface-dim: #151218;
-  --color-surface: #151218;
-  --color-surface-bright: #534F55;
-  --color-surface-container-lowest: #000000;
-  --color-surface-container-low: #221E24;
-  --color-surface-container: #332F35;
-  --color-surface-container-high: #3E3A40;
-  --color-surface-container-highest: #49454C;
-  --color-on-surface: #FFFFFF;
-  --color-on-surface-variant: #FFFFFF;
-  --color-outline: #F6EDF8;
-  --color-outline-variant: #C8C0CB;
-  --color-inverse-surface: #E8E0E8;
-  --color-inverse-on-surface: #000000;
-  --color-inverse-primary: #650FB5;
-  --color-scrim: #000000;
-  --color-shadow: #000000;
+    /* Superfície e neutros */
+    --color-surface-dim: #151218;
+    --color-surface: #151218;
+    --color-surface-bright: #534f55;
+    --color-surface-container-lowest: #000000;
+    --color-surface-container-low: #221e24;
+    --color-surface-container: #332f35;
+    --color-surface-container-high: #3e3a40;
+    --color-surface-container-highest: #49454c;
+    --color-on-surface: #ffffff;
+    --color-on-surface-variant: #ffffff;
+    --color-outline: #f6edf8;
+    --color-outline-variant: #c8c0cb;
+    --color-inverse-surface: #e8e0e8;
+    --color-inverse-on-surface: #000000;
+    --color-inverse-primary: #650fb5;
+    --color-scrim: #000000;
+    --color-shadow: #000000;
 }
 
 /* TIPOGRAFIA */
 :root {
-  /* Display */
-  --tipo-display-lg-tamanho: 3.5625rem;        /* 57px */
-  --tipo-display-lg-altura-linha: 4rem;        /* 64px */
-  --tipo-display-lg-espacamento: -0.015625rem; /* -0.25px */
-  --tipo-display-lg-peso: 400;
-  --tipo-display-lg-peso-enfatizado: 500;
+    /* Display */
+    --tipo-display-lg-tamanho: 3.5625rem; /* 57px */
+    --tipo-display-lg-altura-linha: 4rem; /* 64px */
+    --tipo-display-lg-espacamento: -0.015625rem; /* -0.25px */
+    --tipo-display-lg-peso: 400;
+    --tipo-display-lg-peso-enfatizado: 500;
 
-  --tipo-display-md-tamanho: 2.8125rem;        /* 45px */
-  --tipo-display-md-altura-linha: 3.25rem;     /* 52px */
-  --tipo-display-md-espacamento: 0rem;
-  --tipo-display-md-peso: 400;
-  --tipo-display-md-peso-enfatizado: 500;
+    --tipo-display-md-tamanho: 2.8125rem; /* 45px */
+    --tipo-display-md-altura-linha: 3.25rem; /* 52px */
+    --tipo-display-md-espacamento: 0rem;
+    --tipo-display-md-peso: 400;
+    --tipo-display-md-peso-enfatizado: 500;
 
-  --tipo-display-sm-tamanho: 2.25rem;          /* 36px */
-  --tipo-display-sm-altura-linha: 2.75rem;     /* 44px */
-  --tipo-display-sm-espacamento: 0rem;
-  --tipo-display-sm-peso: 400;
-  --tipo-display-sm-peso-enfatizado: 500;
+    --tipo-display-sm-tamanho: 2.25rem; /* 36px */
+    --tipo-display-sm-altura-linha: 2.75rem; /* 44px */
+    --tipo-display-sm-espacamento: 0rem;
+    --tipo-display-sm-peso: 400;
+    --tipo-display-sm-peso-enfatizado: 500;
 
-  /* Headline */
-  --tipo-headline-lg-tamanho: 2rem;            /* 32px */
-  --tipo-headline-lg-altura-linha: 2.5rem;     /* 40px */
-  --tipo-headline-lg-espacamento: 0rem;
-  --tipo-headline-lg-peso: 400;
-  --tipo-headline-lg-peso-enfatizado: 500;
+    /* Headline */
+    --tipo-headline-lg-tamanho: 2rem; /* 32px */
+    --tipo-headline-lg-altura-linha: 2.5rem; /* 40px */
+    --tipo-headline-lg-espacamento: 0rem;
+    --tipo-headline-lg-peso: 400;
+    --tipo-headline-lg-peso-enfatizado: 500;
 
-  --tipo-headline-md-tamanho: 1.75rem;         /* 28px */
-  --tipo-headline-md-altura-linha: 2.25rem;    /* 36px */
-  --tipo-headline-md-espacamento: 0rem;
-  --tipo-headline-md-peso: 400;
-  --tipo-headline-md-peso-enfatizado: 500;
+    --tipo-headline-md-tamanho: 1.75rem; /* 28px */
+    --tipo-headline-md-altura-linha: 2.25rem; /* 36px */
+    --tipo-headline-md-espacamento: 0rem;
+    --tipo-headline-md-peso: 400;
+    --tipo-headline-md-peso-enfatizado: 500;
 
-  --tipo-headline-sm-tamanho: 1.5rem;          /* 24px */
-  --tipo-headline-sm-altura-linha: 2rem;       /* 32px */
-  --tipo-headline-sm-espacamento: 0rem;
-  --tipo-headline-sm-peso: 400;
-  --tipo-headline-sm-peso-enfatizado: 500;
+    --tipo-headline-sm-tamanho: 1.5rem; /* 24px */
+    --tipo-headline-sm-altura-linha: 2rem; /* 32px */
+    --tipo-headline-sm-espacamento: 0rem;
+    --tipo-headline-sm-peso: 400;
+    --tipo-headline-sm-peso-enfatizado: 500;
 
-  /* Title */
-  --tipo-title-lg-tamanho: 1.375rem;           /* 22px */
-  --tipo-title-lg-altura-linha: 1.75rem;       /* 28px */
-  --tipo-title-lg-espacamento: 0rem;
-  --tipo-title-lg-peso: 400;
-  --tipo-title-lg-peso-enfatizado: 500;
+    /* Title */
+    --tipo-title-lg-tamanho: 1.375rem; /* 22px */
+    --tipo-title-lg-altura-linha: 1.75rem; /* 28px */
+    --tipo-title-lg-espacamento: 0rem;
+    --tipo-title-lg-peso: 400;
+    --tipo-title-lg-peso-enfatizado: 500;
 
-  --tipo-title-md-tamanho: 1rem;               /* 16px */
-  --tipo-title-md-altura-linha: 1.5rem;        /* 24px */
-  --tipo-title-md-espacamento: 0.009375rem;    /* +0.15px */
-  --tipo-title-md-peso: 500;
-  --tipo-title-md-peso-enfatizado: 700;
+    --tipo-title-md-tamanho: 1rem; /* 16px */
+    --tipo-title-md-altura-linha: 1.5rem; /* 24px */
+    --tipo-title-md-espacamento: 0.009375rem; /* +0.15px */
+    --tipo-title-md-peso: 500;
+    --tipo-title-md-peso-enfatizado: 700;
 
-  --tipo-title-sm-tamanho: 0.875rem;           /* 14px */
-  --tipo-title-sm-altura-linha: 1.25rem;       /* 20px */
-  --tipo-title-sm-espacamento: 0.00625rem;     /* +0.1px */
-  --tipo-title-sm-peso: 500;
-  --tipo-title-sm-peso-enfatizado: 700;
+    --tipo-title-sm-tamanho: 0.875rem; /* 14px */
+    --tipo-title-sm-altura-linha: 1.25rem; /* 20px */
+    --tipo-title-sm-espacamento: 0.00625rem; /* +0.1px */
+    --tipo-title-sm-peso: 500;
+    --tipo-title-sm-peso-enfatizado: 700;
 
-  /* Label */
-  --tipo-label-lg-tamanho: 0.875rem;           /* 14px */
-  --tipo-label-lg-altura-linha: 1.25rem;       /* 20px */
-  --tipo-label-lg-espacamento: 0.00625rem;     /* +0.1px */
-  --tipo-label-lg-peso: 500;
-  --tipo-label-lg-peso-enfatizado: 700;
+    /* Label */
+    --tipo-label-lg-tamanho: 0.875rem; /* 14px */
+    --tipo-label-lg-altura-linha: 1.25rem; /* 20px */
+    --tipo-label-lg-espacamento: 0.00625rem; /* +0.1px */
+    --tipo-label-lg-peso: 500;
+    --tipo-label-lg-peso-enfatizado: 700;
 
-  --tipo-label-md-tamanho: 0.75rem;            /* 12px */
-  --tipo-label-md-altura-linha: 1rem;          /* 16px */
-  --tipo-label-md-espacamento: 0.03125rem;     /* +0.5px */
-  --tipo-label-md-peso: 500;
-  --tipo-label-md-peso-enfatizado: 700;
+    --tipo-label-md-tamanho: 0.75rem; /* 12px */
+    --tipo-label-md-altura-linha: 1rem; /* 16px */
+    --tipo-label-md-espacamento: 0.03125rem; /* +0.5px */
+    --tipo-label-md-peso: 500;
+    --tipo-label-md-peso-enfatizado: 700;
 
-  --tipo-label-sm-tamanho: 0.6875rem;          /* 11px */
-  --tipo-label-sm-altura-linha: 1rem;          /* 16px */
-  --tipo-label-sm-espacamento: 0.03125rem;     /* +0.5px */
-  --tipo-label-sm-peso: 500;
-  --tipo-label-sm-peso-enfatizado: 700;
+    --tipo-label-sm-tamanho: 0.6875rem; /* 11px */
+    --tipo-label-sm-altura-linha: 1rem; /* 16px */
+    --tipo-label-sm-espacamento: 0.03125rem; /* +0.5px */
+    --tipo-label-sm-peso: 500;
+    --tipo-label-sm-peso-enfatizado: 700;
 
-  /* Body */
-  --tipo-body-lg-tamanho: 1rem;                /* 16px */
-  --tipo-body-lg-altura-linha: 1.5rem;         /* 24px */
-  --tipo-body-lg-espacamento: 0.03125rem;      /* +0.5px */
-  --tipo-body-lg-peso: 400;
-  --tipo-body-lg-peso-enfatizado: 500;
+    /* Body */
+    --tipo-body-lg-tamanho: 1rem; /* 16px */
+    --tipo-body-lg-altura-linha: 1.5rem; /* 24px */
+    --tipo-body-lg-espacamento: 0.03125rem; /* +0.5px */
+    --tipo-body-lg-peso: 400;
+    --tipo-body-lg-peso-enfatizado: 500;
 
-  --tipo-body-md-tamanho: 0.875rem;            /* 14px */
-  --tipo-body-md-altura-linha: 1.25rem;        /* 20px */
-  --tipo-body-md-espacamento: 0.015625rem;     /* +0.25px */
-  --tipo-body-md-peso: 400;
-  --tipo-body-md-peso-enfatizado: 500;
+    --tipo-body-md-tamanho: 0.875rem; /* 14px */
+    --tipo-body-md-altura-linha: 1.25rem; /* 20px */
+    --tipo-body-md-espacamento: 0.015625rem; /* +0.25px */
+    --tipo-body-md-peso: 400;
+    --tipo-body-md-peso-enfatizado: 500;
 
-  --tipo-body-sm-tamanho: 0.75rem;             /* 12px */
-  --tipo-body-sm-altura-linha: 1rem;           /* 16px */
-  --tipo-body-sm-espacamento: 0.025rem;        /* +0.4px */
-  --tipo-body-sm-peso: 400;
-  --tipo-body-sm-peso-enfatizado: 500;
+    --tipo-body-sm-tamanho: 0.75rem; /* 12px */
+    --tipo-body-sm-altura-linha: 1rem; /* 16px */
+    --tipo-body-sm-espacamento: 0.025rem; /* +0.4px */
+    --tipo-body-sm-peso: 400;
+    --tipo-body-sm-peso-enfatizado: 500;
 }
 
 /* TIPOGRAFIA — Escala semântica da marca ("Tentáculo") */
 :root {
-  /* Tentáculo Mímico — título único de topo em telas de app/dashboard. */
-  --tipo-titulo-topo-tamanho: var(--tipo-display-sm-tamanho);
-  --tipo-titulo-topo-altura-linha: var(--tipo-display-sm-altura-linha);
-  --tipo-titulo-topo-espacamento: var(--tipo-display-sm-espacamento);
-  --tipo-titulo-topo-peso: 700;
+    /* Tentáculo Mímico — título único de topo em telas de app/dashboard. */
+    --tipo-titulo-topo-tamanho: var(--tipo-display-sm-tamanho);
+    --tipo-titulo-topo-altura-linha: var(--tipo-display-sm-altura-linha);
+    --tipo-titulo-topo-espacamento: var(--tipo-display-sm-espacamento);
+    --tipo-titulo-topo-peso: 700;
 
-  /* Título de seção dentro de uma página */
-  --tipo-titulo-secao-tamanho: var(--tipo-headline-sm-tamanho);
-  --tipo-titulo-secao-altura-linha: var(--tipo-headline-sm-altura-linha);
-  --tipo-titulo-secao-espacamento: var(--tipo-headline-sm-espacamento);
-  --tipo-titulo-secao-peso: 600;
+    /* Título de seção dentro de uma página */
+    --tipo-titulo-secao-tamanho: var(--tipo-headline-sm-tamanho);
+    --tipo-titulo-secao-altura-linha: var(--tipo-headline-sm-altura-linha);
+    --tipo-titulo-secao-espacamento: var(--tipo-headline-sm-espacamento);
+    --tipo-titulo-secao-peso: 600;
 
-  /* Título de card, item de lista ou sub-seção */
-  --tipo-titulo-card-tamanho: 1.125rem;        /* 18px */
-  --tipo-titulo-card-altura-linha: 1.5rem;     /* 24px */
-  --tipo-titulo-card-espacamento: 0rem;
-  --tipo-titulo-card-peso: 600;
+    /* Título de card, item de lista ou sub-seção */
+    --tipo-titulo-card-tamanho: 1.125rem; /* 18px */
+    --tipo-titulo-card-altura-linha: 1.5rem; /* 24px */
+    --tipo-titulo-card-espacamento: 0rem;
+    --tipo-titulo-card-peso: 600;
 
-  /* Texto corrido: parágrafos, descrições, labels de formulário, conteúdo geral */
-  --tipo-corpo-padrao-tamanho: var(--tipo-body-md-tamanho);
-  --tipo-corpo-padrao-altura-linha: var(--tipo-body-md-altura-linha);
-  --tipo-corpo-padrao-espacamento: var(--tipo-body-md-espacamento);
-  --tipo-corpo-padrao-peso: 400;
+    /* Texto corrido: parágrafos, descrições, labels de formulário, conteúdo geral */
+    --tipo-corpo-padrao-tamanho: var(--tipo-body-md-tamanho);
+    --tipo-corpo-padrao-altura-linha: var(--tipo-body-md-altura-linha);
+    --tipo-corpo-padrao-espacamento: var(--tipo-body-md-espacamento);
+    --tipo-corpo-padrao-peso: 400;
 
-  /* Legenda ou texto de apoio: metadados, horários, texto dentro de badges */
-  --tipo-legenda-tamanho: var(--tipo-label-md-tamanho);
-  --tipo-legenda-altura-linha: var(--tipo-label-md-altura-linha);
-  --tipo-legenda-espacamento: var(--tipo-label-md-espacamento);
-  --tipo-legenda-peso: 400;
+    /* Legenda ou texto de apoio: metadados, horários, texto dentro de badges */
+    --tipo-legenda-tamanho: var(--tipo-label-md-tamanho);
+    --tipo-legenda-altura-linha: var(--tipo-label-md-altura-linha);
+    --tipo-legenda-espacamento: var(--tipo-label-md-espacamento);
+    --tipo-legenda-peso: 400;
 }
 
 /* TIPOGRAFIA — Editorial (Bitter) */
 :root {
-  /* Frase de impacto em destaque: hero de página, capa de post/story, banner promocional etc */
-  --tipo-editorial-display-tamanho: 2.5rem;      /* 40px */
-  --tipo-editorial-display-altura-linha: 3rem;   /* 48px */
-  --tipo-editorial-display-espacamento: 0rem;
-  --tipo-editorial-display-peso: 700;
+    /* Frase de impacto em destaque: hero de página, capa de post/story, banner promocional etc */
+    --tipo-editorial-display-tamanho: 2.5rem; /* 40px */
+    --tipo-editorial-display-altura-linha: 3rem; /* 48px */
+    --tipo-editorial-display-espacamento: 0rem;
+    --tipo-editorial-display-peso: 700;
 
-  /* Citação, pergunta-convite ou depoimento */
-  --tipo-editorial-quote-tamanho: 1.5rem;        /* 24px */
-  --tipo-editorial-quote-altura-linha: 2rem;     /* 32px */
-  --tipo-editorial-quote-espacamento: 0rem;
-  --tipo-editorial-quote-peso: 600;
+    /* Citação, pergunta-convite ou depoimento */
+    --tipo-editorial-quote-tamanho: 1.5rem; /* 24px */
+    --tipo-editorial-quote-altura-linha: 2rem; /* 32px */
+    --tipo-editorial-quote-espacamento: 0rem;
+    --tipo-editorial-quote-peso: 600;
 }

@@ -9,21 +9,29 @@
 
         <main class="landing">
             <section class="hero">
-                <h1 class="hero-content__heading">
-                    O palco começa onde você está.
-                </h1>
-                <p class="hero-content__description">
-                    Descubra o teatro como espaço de expressão, criação e
-                    encontro. O Tentáculo Mímico desenvolve atividades culturais
-                    e forma artistas na Baixada Santista, aproximando a arte de
-                    diferentes pessoas, espaços e realidades.
-                </p>
-                <div
-                    th:replace="~{fragments/buttons :: botao(texto='Ver cursos disponíveis', variante='secundario', tamanho='grande', tipoBotao='button')}"
-                ></div>
+                <div class="hero__left">
+                    <h1 class="hero-content__heading editorial-display">
+                        O palco começa onde você está.
+                    </h1>
+                    <p class="hero-content__description body-large">
+                        Descubra o teatro como espaço de expressão, criação e
+                        encontro. O Tentáculo Mímico desenvolve atividades
+                        culturais e forma artistas na Baixada Santista,
+                        aproximando a arte de diferentes pessoas, espaços e
+                        realidades.
+                    </p>
+                    <div
+                        th:replace="~{fragments/buttons :: botao_link(texto='Ver cursos disponíveis', variante='secundario', tamanho='grande', caminho='/cursos')}"
+                    ></div>
+                </div>
+                <div class="hero__right">
+                    <img th:src="@{img/hero.gif}" alt="Tentáculo mímico logo" />
+                </div>
             </section>
             <section class="about">
-                <h1 class="about__heading">
+                <h1
+                    class="about__heading display-small display-small--enfatizado"
+                >
                     Cultura que nasce e circula na comunidade
                 </h1>
                 <div class="grid-12">
@@ -45,7 +53,11 @@
                 </div>
             </section>
             <section class="motivos">
-                <h1 class="motivos__heading"></h1>
+                <h1
+                    class="motivos__heading display-small display-small--enfatizado"
+                >
+                    Mais do que aprender teatro
+                </h1>
                 <div class="motivos__card-container">
                     <!--CARD CONTAINER-->
                     <!--CARD CONTAINER-->
@@ -56,16 +68,20 @@
                 </div>
             </section>
             <section class="cto">
-                <span class="cto__text-muted"
+                <span class="cto__text-muted headline-small"
                     >A nossa história pode começar com</span
                 >
-                <h3 class="cto__text-focus">Você</h3>
+                <h3
+                    class="cto__text-focus display-medium display-medium--enfatizado"
+                >
+                    Você
+                </h3>
                 <div class="cto__actions">
                     <div
-                        th:replace="~{fragments/buttons :: botao(texto='Quero criar minha conta!', variante='primario', tamanho='grande', tipoBotao='button')}"
+                        th:replace="~{fragments/buttons :: botao_link(texto='Quero criar minha conta!', variante='primario', tamanho='grande', caminho='/cadastro')}"
                     />
                     <div
-                        th:replace="~{fragments/buttons :: botao(texto='Quero criar minha conta!', variante='neutro', tamanho='grande', tipoBotao='button')}"
+                        th:replace="~{fragments/buttons :: botao_link(texto='Já tenho uma conta', variante='neutro', tamanho='grande', caminho='/login')}"
                     />
                 </div>
             </section>

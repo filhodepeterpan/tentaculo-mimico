@@ -12,21 +12,27 @@
 @import url(componentes/card.css);
 @import url(componentes/badge.css);
 @import url(componentes/imagem.css);
+@import url(utilitarios/fontes.css);
 
 /* CSS GLOBAL */
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-html{
+html {
     scroll-behavior: smooth;
 }
 
-body{
+body {
     height: 100vh;
     margin: 0;
     padding: 0;
     font-family: var(--fonte-padrao);
+}
+
+img {
+    display: block;
+    width: 100%;
 }

@@ -42,23 +42,7 @@ body {
 }
 
 .about__heading {
-    /**/
-}
-
-.about__grid-12 {
-    /**/
-}
-
-.about__grid-span-5 {
-    /**/
-}
-
-.about__grid-span-7 {
-    /**/
-}
-
-.about__grid-2 {
-    /**/
+    margin-bottom: 0.5rem;
 }
 
 .motivos {
@@ -66,11 +50,13 @@ body {
 }
 
 .motivos__heading {
-    /**/
+    margin-bottom: 0.5rem;
 }
 
 .motivos__card-container {
-    /**/
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(0.25rem, 1vw, 1rem);
 }
 
 .cto {

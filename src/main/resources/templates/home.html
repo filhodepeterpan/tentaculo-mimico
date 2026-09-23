@@ -1,16 +1,117 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <link rel="stylesheet" th:href="@{/css/pages/home.css}">
-    <title>Tentáculo Mímico</title>
-</head>
-<body>
+    <head>
+        <link rel="stylesheet" th:href="@{/css/pages/home.css}" />
+        <title>Tentáculo Mímico</title>
+    </head>
+    <body>
+        <div th:replace="~{fragments/layouts :: header}"></div>
 
-    <div th:replace="~{fragments/layouts :: header}"></div>
+        <main class="landing">
+            <section class="hero">
+                <div class="hero__left">
+                    <h1 class="hero-content__heading editorial-display">
+                        O palco começa onde você está.
+                    </h1>
+                    <p class="hero-content__description body-large">
+                        Descubra o teatro como espaço de expressão, criação e
+                        encontro. O Tentáculo Mímico desenvolve atividades
+                        culturais e forma artistas na Baixada Santista,
+                        aproximando a arte de diferentes pessoas, espaços e
+                        realidades.
+                    </p>
+                    <div
+                        th:replace="~{fragments/buttons :: botao_link(texto='Ver cursos disponíveis', variante='secundario', tamanho='grande', caminho='/cursos')}"
+                    ></div>
+                </div>
+                <div class="hero__right">
+                    <img th:src="@{img/hero.gif}" alt="Tentáculo mímico logo" />
+                </div>
+            </section>
+            <section class="about">
+                <h1
+                    class="about__heading display-small display-small--enfatizado"
+                >
+                    Cultura que nasce e circula na comunidade
+                </h1>
+                <div class="grid-12">
+                    <div class="grid-span-5">
+                        <img
+                            th:src="@{img/landing_1.png}"
+                            alt="Figura ilustrativa mão teatral"
+                        />
+                    </div>
+                    <div class="grid-span-7">
+                        <div class="grid-2">
+                            <div
+                                th:replace="~{fragments/landing-card :: card-simples(titulo='TITULO',descricao='DESCRICAO')}"
+                            ></div>
+                            <div
+                                th:replace="~{fragments/landing-card :: card-simples(titulo='TITULO',descricao='DESCRICAO')}"
+                            ></div>
 
-    <h1>Funcionando!</h1>
+                            <div class="grid-span-2">
+                                <div
+                                    th:replace="~{fragments/landing-card :: card-simples(titulo='TITULO',descricao='DESCRICAO')}"
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="motivos">
+                <h1
+                    class="motivos__heading display-small display-small--enfatizado"
+                >
+                    Mais do que aprender teatro
+                </h1>
+                <div class="motivos__card-container">
+                    <div
+                        th:replace="~{fragments/landing-card :: card-colorido(titulo='TITULO',caminhoImagem='@{img/sobre.png}',descricao='DESCRICAO')}"
+                    ></div>
+                    <div
+                        th:replace="~{fragments/landing-card :: card-colorido(titulo='TITULO',caminhoImagem='@{img/sobre.png}',descricao='DESCRICAO')}"
+                    ></div>
+                    <div
+                        th:replace="~{fragments/landing-card :: card-colorido(titulo='TITULO',caminhoImagem='@{img/sobre.png}',descricao='DESCRICAO')}"
+                    ></div>
+                    <div
+                        th:replace="~{fragments/landing-card :: card-colorido(titulo='TITULO',caminhoImagem='@{img/sobre.png}',descricao='DESCRICAO')}"
+                    ></div>
+                    <div
+                        th:replace="~{fragments/landing-card :: card-colorido(titulo='TITULO',caminhoImagem='@{img/sobre.png}',descricao='DESCRICAO')}"
+                    ></div>
+                    <div
+                        th:replace="~{fragments/landing-card :: card-colorido(titulo='TITULO',caminhoImagem='@{img/sobre.png}',descricao='DESCRICAO')}"
+                    ></div>
+                    <!--CARD CONTAINER-->
+                    <!--CARD CONTAINER-->
+                    <!--CARD CONTAINER-->
+                    <!--CARD CONTAINER-->
+                    <!--CARD CONTAINER-->
+                    <!--CARD CONTAINER-->
+                </div>
+            </section>
+            <section class="cto">
+                <span class="cto__text-muted headline-small"
+                    >A nossa história pode começar com</span
+                >
+                <h3
+                    class="cto__text-focus display-medium display-medium--enfatizado"
+                >
+                    Você
+                </h3>
+                <div class="cto__actions">
+                    <div
+                        th:replace="~{fragments/buttons :: botao_link(texto='Quero criar minha conta!', variante='primario', tamanho='grande', caminho='/cadastro')}"
+                    />
+                    <div
+                        th:replace="~{fragments/buttons :: botao_link(texto='Já tenho uma conta', variante='neutro', tamanho='grande', caminho='/login')}"
+                    />
+                </div>
+            </section>
+        </main>
 
-    <div th:replace="~{fragments/layouts :: footer}"></div>
-
-</body>
+        <div th:replace="~{fragments/layouts :: footer}"></div>
+    </body>
 </html>

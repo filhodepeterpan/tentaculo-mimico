@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/", "/login", "/cadastro", "/sobre", "/contato", "/cursos/**").permitAll()
+                        .requestMatchers("/", "/login", "/cadastro", "/sobre", "/contato", "/cursos/**", "/cadastro-curso", "/doacoes").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/img/**", "/webjars/**", "/favicon.ico").permitAll()
                         .anyRequest().authenticated()
                 );

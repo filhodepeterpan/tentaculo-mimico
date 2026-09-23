@@ -1,0 +1,196 @@
+/* =========================================================
+   Material Design — Tipografia
+   ========================================================= */
+
+.display-large {
+    font-size: var(--tipo-display-lg-tamanho);
+    line-height: var(--tipo-display-lg-altura-linha);
+    letter-spacing: var(--tipo-display-lg-espacamento);
+    font-weight: var(--tipo-display-lg-peso);
+}
+
+.display-medium {
+    font-size: var(--tipo-display-md-tamanho);
+    line-height: var(--tipo-display-md-altura-linha);
+    letter-spacing: var(--tipo-display-md-espacamento);
+    font-weight: var(--tipo-display-md-peso);
+}
+
+.display-small {
+    font-size: var(--tipo-display-sm-tamanho);
+    line-height: var(--tipo-display-sm-altura-linha);
+    letter-spacing: var(--tipo-display-sm-espacamento);
+    font-weight: var(--tipo-display-sm-peso);
+}
+
+/* Headline */
+
+.headline-large {
+    font-size: var(--tipo-headline-lg-tamanho);
+    line-height: var(--tipo-headline-lg-altura-linha);
+    letter-spacing: var(--tipo-headline-lg-espacamento);
+    font-weight: var(--tipo-headline-lg-peso);
+}
+
+.headline-medium {
+    font-size: var(--tipo-headline-md-tamanho);
+    line-height: var(--tipo-headline-md-altura-linha);
+    letter-spacing: var(--tipo-headline-md-espacamento);
+    font-weight: var(--tipo-headline-md-peso);
+}
+
+.headline-small {
+    font-size: var(--tipo-headline-sm-tamanho);
+    line-height: var(--tipo-headline-sm-altura-linha);
+    letter-spacing: var(--tipo-headline-sm-espacamento);
+    font-weight: var(--tipo-headline-sm-peso);
+}
+
+/* Title */
+
+.title-large {
+    font-size: var(--tipo-title-lg-tamanho);
+    line-height: var(--tipo-title-lg-altura-linha);
+    letter-spacing: var(--tipo-title-lg-espacamento);
+    font-weight: var(--tipo-title-lg-peso);
+}
+
+.title-medium {
+    font-size: var(--tipo-title-md-tamanho);
+    line-height: var(--tipo-title-md-altura-linha);
+    letter-spacing: var(--tipo-title-md-espacamento);
+    font-weight: var(--tipo-title-md-peso);
+}
+
+.title-small {
+    font-size: var(--tipo-title-sm-tamanho);
+    line-height: var(--tipo-title-sm-altura-linha);
+    letter-spacing: var(--tipo-title-sm-espacamento);
+    font-weight: var(--tipo-title-sm-peso);
+}
+
+/* Label */
+
+.label-large {
+    font-size: var(--tipo-label-lg-tamanho);
+    line-height: var(--tipo-label-lg-altura-linha);
+    letter-spacing: var(--tipo-label-lg-espacamento);
+    font-weight: var(--tipo-label-lg-peso);
+}
+
+.label-medium {
+    font-size: var(--tipo-label-md-tamanho);
+    line-height: var(--tipo-label-md-altura-linha);
+    letter-spacing: var(--tipo-label-md-espacamento);
+    font-weight: var(--tipo-label-md-peso);
+}
+
+.label-small {
+    font-size: var(--tipo-label-sm-tamanho);
+    line-height: var(--tipo-label-sm-altura-linha);
+    letter-spacing: var(--tipo-label-sm-espacamento);
+    font-weight: var(--tipo-label-sm-peso);
+}
+
+/* Body */
+
+.body-large {
+    font-size: var(--tipo-body-lg-tamanho);
+    line-height: var(--tipo-body-lg-altura-linha);
+    letter-spacing: var(--tipo-body-lg-espacamento);
+    font-weight: var(--tipo-body-lg-peso);
+}
+
+.body-medium {
+    font-size: var(--tipo-body-md-tamanho);
+    line-height: var(--tipo-body-md-altura-linha);
+    letter-spacing: var(--tipo-body-md-espacamento);
+    font-weight: var(--tipo-body-md-peso);
+}
+
+.body-small {
+    font-size: var(--tipo-body-sm-tamanho);
+    line-height: var(--tipo-body-sm-altura-linha);
+    letter-spacing: var(--tipo-body-sm-espacamento);
+    font-weight: var(--tipo-body-sm-peso);
+}
+
+.display-large--enfatizado {
+    font-weight: var(--tipo-display-lg-peso-enfatizado);
+}
+
+.display-medium--enfatizado {
+    font-weight: var(--tipo-display-md-peso-enfatizado);
+}
+
+.display-small--enfatizado {
+    font-weight: var(--tipo-display-sm-peso-enfatizado);
+}
+
+.headline-large--enfatizado {
+    font-weight: var(--tipo-headline-lg-peso-enfatizado);
+}
+
+.headline-medium--enfatizado {
+    font-weight: var(--tipo-headline-md-peso-enfatizado);
+}
+
+.headline-small--enfatizado {
+    font-weight: var(--tipo-headline-sm-peso-enfatizado);
+}
+
+.title-large--enfatizado {
+    font-weight: var(--tipo-title-lg-peso-enfatizado);
+}
+
+.title-medium--enfatizado {
+    font-weight: var(--tipo-title-md-peso-enfatizado);
+}
+
+.title-small--enfatizado {
+    font-weight: var(--tipo-title-sm-peso-enfatizado);
+}
+
+.label-large--enfatizado {
+    font-weight: var(--tipo-label-lg-peso-enfatizado);
+}
+
+.label-medium--enfatizado {
+    font-weight: var(--tipo-label-md-peso-enfatizado);
+}
+
+.label-small--enfatizado {
+    font-weight: var(--tipo-label-sm-peso-enfatizado);
+}
+
+.body-large--enfatizado {
+    font-weight: var(--tipo-body-lg-peso-enfatizado);
+}
+
+.body-medium--enfatizado {
+    font-weight: var(--tipo-body-md-peso-enfatizado);
+}
+
+.body-small--enfatizado {
+    font-weight: var(--tipo-body-sm-peso-enfatizado);
+}
+
+/* =========================================================
+   Tipografia editorial — Bitter
+   ========================================================= */
+
+.editorial-display {
+    font-family: "Bitter", serif;
+    font-size: var(--tipo-editorial-display-tamanho);
+    line-height: var(--tipo-editorial-display-altura-linha);
+    letter-spacing: var(--tipo-editorial-display-espacamento);
+    font-weight: var(--tipo-editorial-display-peso);
+}
+
+.editorial-quote {
+    font-family: "Bitter", serif;
+    font-size: var(--tipo-editorial-quote-tamanho);
+    line-height: var(--tipo-editorial-quote-altura-linha);
+    letter-spacing: var(--tipo-editorial-quote-espacamento);
+    font-weight: var(--tipo-editorial-quote-peso);
+}

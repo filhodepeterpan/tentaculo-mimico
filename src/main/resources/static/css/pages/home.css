@@ -1,2 +1,107 @@
 @import url(../root.css);
 @import url(../global.css);
+
+body {
+    background-color: var(--color-surface-dim);
+}
+
+.landing {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+}
+.landing > * {
+    padding-left: clamp(1rem, 2vw + 0.5rem, 6rem);
+    padding-right: clamp(1rem, 2vw + 0.5rem, 6rem);
+}
+
+.hero {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+.hero__left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    gap: 1.5rem;
+}
+
+.hero-content__heading {
+    /**/
+}
+
+.hero-content__description {
+    /**/
+}
+
+.about {
+    /**/
+}
+
+.about__heading {
+    margin-bottom: 0.5rem;
+}
+
+.motivos {
+    /**/
+}
+
+.motivos__heading {
+    margin-bottom: 0.5rem;
+}
+
+.motivos__card-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(0.25rem, 1vw, 1rem);
+}
+
+.cto {
+    text-align: center;
+    background-color: var(--color-primary-container);
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.cto__text-muted {
+    color: var(--color-on-surface-variant);
+}
+
+.cto__actions {
+    /**/
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+/* Utilitários */
+.grid-12 {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 0.5rem;
+}
+
+.grid-span-5 {
+    grid-column: span 5;
+}
+
+.grid-span-7 {
+    grid-column: span 7;
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+.grid-span-2 {
+    grid-column: span 2;
+}
+
+/*TODO: animação scrollview*/

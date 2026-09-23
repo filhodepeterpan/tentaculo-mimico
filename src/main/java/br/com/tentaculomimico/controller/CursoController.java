@@ -1,25 +1,82 @@
 package br.com.tentaculomimico.controller;
 
 import br.com.tentaculomimico.model.Curso;
+import br.com.tentaculomimico.repository.CursoRepository;
+import br.com.tentaculomimico.service.CursoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import br.com.tentaculomimico.service.CursoService;
+import br.com.tentaculomimico.repository.CursoRepository;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import java.util.List;
+
 
 import java.util.List;
 
 @Controller
 public class CursoController {
 
-    @GetMapping("/cursos")
-    public String listarCursos(Model model) {
-        model.addAttribute("cursos", cursosDeExemplo());
-        return "cursos";
+    private final CursoService cursoService;
+    private final CursoRepository cursoRepository;
+
+    public CursoController(CursoService cursoService, CursoRepository cursoRepository) {
+        this.cursoService = cursoService;
+        this.cursoRepository = cursoRepository;
     }
+
 
     @GetMapping("/cursos/novo")
     public String novoCurso() {
         return "cadastro-curso";
+    }
+
+
+    @GetMapping("/cursos")
+    public String listarCursos(Model model) {
+        model.addAttribute("cursos", cursoRepository.findAll());
+        return "cursos";
+    }
+
+    @PostMapping("/cursos")
+    public String salvarCurso(
+            @RequestParam("nome") String nome,
+            @RequestParam("descricao") String descricao,
+            @RequestParam("carga-horaria") String cargaHoraria,
+            @RequestParam("preco") String preco,
+            @RequestParam("vagas-totais") String vagasTotais,
+            @RequestParam(value = "diasSemana", required = false) List<String> diasSemana,
+            @RequestParam("hora-inicio") String horaInicio,
+            @RequestParam("hora-fim") String horaFim,
+            @RequestParam("data-inicio") String dataInicio,
+            @RequestParam(value = "data-fim", required = false) String dataFim,
+            Model model
+    ) {
+        try {
+            cursoService.cadastrarCurso(nome, descricao, cargaHoraria, preco, vagasTotais,
+                    diasSemana, horaInicio, horaFim, dataInicio, dataFim);
+            return "redirect:/cursos";
+        } catch (RuntimeException e) {
+            model.addAttribute("erroGeral", e.getMessage());
+            return "cadastro-curso";
+        }
+
+    }
+
+
+
+
+
+
+
+
+    /*@GetMapping("/cursos")
+    public String listarCursos(Model model) {
+        model.addAttribute("cursos", cursosDeExemplo());
+        return "cursos";
     }
 
     @GetMapping("/cursos/{id}")
@@ -72,5 +129,5 @@ public class CursoController {
                 "Maracatu, cordel, xilogravura e outras expressões da cultura popular.", 189.90, 22, 22,
                 "José Ferreira", "Sáb · 16h", null)
         );
-    }
+    }*/
 }

@@ -1,0 +1,9 @@
+.card-simples {
+    background-color: #ab00ef;
+    min-height: 3rem;
+}
+
+.card-colorido {
+    background-color: #abcdef;
+    min-height: 3rem;
+}

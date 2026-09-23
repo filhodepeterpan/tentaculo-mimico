@@ -1,6 +1,7 @@
 /* COMPONENTES */
 @import url(componentes/buttons.css);
 @import url(componentes/inputs.css);
+@import url(componentes/layout.css);
 @import url(componentes/senha.css);
 @import url(componentes/modal.css);
 @import url(componentes/alert.css);

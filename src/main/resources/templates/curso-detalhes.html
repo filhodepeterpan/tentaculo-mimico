@@ -94,7 +94,15 @@
       Matricule-se
     </button>
   </div>
+
+  <th:block th:if="${erroMatricula != null}">
+    <div th:replace="~{fragments/alert :: alerta(titulo='Não foi possível confirmar a matrícula', mensagem=${erroMatricula}, variante='erro')}"></div>
+  </th:block>
+
 </section>
+
+<form id="form-matricula" method="post" th:action="@{/cursos/{id}/matricula(id=${curso.id})}" hidden></form>
+
 
 <div th:replace="~{fragments/modal :: modal(id='modal-matricula', titulo='Confirmar matrícula?', mensagem='Sua solicitação será enviada para aprovação do professor. O acesso ao curso só é liberado após a aprovação e a confirmação do pagamento.', textoCancelar='Cancelar', textoConfirmar='Confirmar', varianteConfirmar='primario')}"></div>
 

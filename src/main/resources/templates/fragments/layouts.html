@@ -1,32 +1,82 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-<body>
-
-<header th:fragment="header" class="site-header">
-    <a th:href="@{/}" class="brand">Tentáculo Mímico</a>
-    <nav class="main-nav" aria-label="Navegação principal">
-        <ul>
-            <li><a th:href="@{/}">Início</a></li>
-            <li><a th:href="@{/cursos}">Cursos</a></li>
-            <li><a th:href="@{/sobre}">Sobre</a></li>
-            <li><a th:href="@{/cadastro}">Cadastro</a></li>
-            <li><a th:href="@{/contato}">Contato</a></li>
-            <li><a th:href="@{/login}">Login</a></li>
-        </ul>
-    </nav>
-</header>
-<footer th:fragment="footer" class="site-footer">
-    <nav class="footer-nav" aria-label="Links de navegação do rodapé">
-        <ul>
-            <li><a th:href="@{/}">Início</a></li>
-            <li><a th:href="@{/cursos}">Cursos</a></li>
-            <li><a th:href="@{/sobre}">Sobre</a></li>
-            <li><a th:href="@{/cadastro}">Cadastro</a></li>
-            <li><a th:href="@{/contato}">Contato</a></li>
-        </ul>
-    </nav>
-    <p>&copy; 2026 Tentáculo Mímico. Todos os direitos reservados.</p>
-    <div th:replace="~{fragments/modal-cpf :: modalCpf()}"></div>
-</footer>
-</body>
+    <body>
+        <header th:fragment="header" class="site-header">
+            <a th:href="@{/}" class="brand">
+                <img
+                    class="brand__img"
+                    th:src="@{/img/brand.svg}"
+                    alt="Tentáculo Mimico"
+                />
+            </a>
+            <nav class="main-nav" aria-label="Navegação principal">
+                <ul>
+                    <li><a class="title-medium" th:href="@{/}">Início</a></li>
+                    <li>
+                        <a class="title-medium" th:href="@{/sobre}">Sobre</a>
+                    </li>
+                    <li>
+                        <a class="title-medium" th:href="@{/cursos}">Cursos</a>
+                    </li>
+                    <li>
+                        <a class="title-medium" th:href="@{/contato}"
+                            >Contato</a
+                        >
+                    </li>
+                    <li>
+                        <a class="title-medium" th:href="@{/cadastro}"
+                            >Cadastro</a
+                        >
+                    </li>
+                    <li>
+                        <a class="title-medium" th:href="@{/login}">Login</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="site-header__actions">
+                <div
+                    th:replace="~{fragments/buttons :: botao_link(texto='Entrar', variante='neutro', tamanho='grande', caminho='/login')}"
+                />
+                <div
+                    th:replace="~{fragments/buttons :: botao_link(texto='Registrar-se', variante='primario', tamanho='grande', caminho='/cadastro')}"
+                />
+            </div>
+        </header>
+        <footer th:fragment="footer" class="site-footer">
+            <a th:href="@{/}" class="brand">
+                <img
+                    class="brand__img"
+                    th:src="@{/img/brand_dark.svg}"
+                    alt="Tentáculo Mimico"
+                />
+            </a>
+            <!-- Asssim que tiver tempo remova a tag "main-nav" e estilize o footer de forma independente -->
+            <nav
+                class="footer-nav main-nav"
+                aria-label="Links de navegação do rodapé"
+            >
+                <ul>
+                    <li><a class="title-medium" th:href="@{/}">Início</a></li>
+                    <li>
+                        <a class="title-medium" th:href="@{/cursos}">Cursos</a>
+                    </li>
+                    <li>
+                        <a class="title-medium" th:href="@{/sobre}">Sobre</a>
+                    </li>
+                    <li>
+                        <a class="title-medium" th:href="@{/cadastro}"
+                            >Cadastro</a
+                        >
+                    </li>
+                    <li>
+                        <a class="title-medium" th:href="@{/contato}"
+                            >Contato</a
+                        >
+                    </li>
+                </ul>
+            </nav>
+            <p>&copy; 2026 Tentáculo Mímico. Todos os direitos reservados.</p>
+            <div th:replace="~{fragments/modal-cpf :: modalCpf()}"></div>
+        </footer>
+    </body>
 </html>

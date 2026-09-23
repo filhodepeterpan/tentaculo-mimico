@@ -14,8 +14,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDTO dadosLogin) {
-        String token = authService.autenticar(dadosLogin.email(), dadosLogin.senha());
+    public ResponseEntity<String> login(
+        @RequestBody LoginRequestDTO dadosLogin
+    ) {
+        String token = authService.autenticar(
+            dadosLogin.email(),
+            dadosLogin.senha()
+        );
         return ResponseEntity.ok(token);
     }
 
@@ -26,15 +31,23 @@ public class AuthController {
     }
 
     @PostMapping("/redefinir-senha")
-    public ResponseEntity<String> redefinirSenha(@RequestParam String token,
-                                                 @RequestParam String novaSenha,
-                                                 @RequestParam String confirmacaoSenha) {
+    public ResponseEntity<String> redefinirSenha(
+        @RequestParam String token,
+        @RequestParam String novaSenha,
+        @RequestParam String confirmacaoSenha
+    ) {
         authService.redefinirSenha(token, novaSenha, confirmacaoSenha);
         return ResponseEntity.ok("Senha atualizada com sucesso!");
     }
+
     @PostMapping("/login/google")
-    public ResponseEntity<String> loginGoogle(@RequestBody br.com.tentaculomimico.dto.GoogleLoginRequestDTO dadosGoogle) {
-        String token = authService.autenticarComGoogle(dadosGoogle.email(), dadosGoogle.nome());
+    public ResponseEntity<String> loginGoogle(
+        @RequestBody br.com.tentaculomimico.dto.GoogleLoginRequestDTO dadosGoogle
+    ) {
+        String token = authService.autenticarComGoogle(
+            dadosGoogle.email(),
+            dadosGoogle.nome()
+        );
 
         return ResponseEntity.ok(token);
     }

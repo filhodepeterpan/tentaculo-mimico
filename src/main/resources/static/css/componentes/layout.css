@@ -24,3 +24,17 @@
     display: flex;
     gap: 0.5rem;
 }
+
+.site-footer {
+    display: flex;
+    width: 100%;
+    padding: 40px 60px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 50px;
+    background-color: var(--color-inverse-surface);
+}
+
+.site-footer * {
+    color: var(--color-inverse-on-surface, #fff) !important;
+}

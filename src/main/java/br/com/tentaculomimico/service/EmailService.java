@@ -15,7 +15,7 @@ public class EmailService {
         SimpleMailMessage mensagem = new SimpleMailMessage();
 
         mensagem.setTo(destinatario);
-        mensagem.setSubject("Recuperação de Palavra-passe - Tentáculo Mímico");
+        mensagem.setSubject("Recuperação de Senha");
 
         String link = "http://localhost:8080/nova-senha?token=" + token;
 

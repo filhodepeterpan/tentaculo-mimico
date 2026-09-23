@@ -30,14 +30,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // Desativamos a proteção CSRF padrão porque a nossa API vai usar Tokens JWT
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Deixamos a porta escancarada para o Douglas fazer os testes de login e recuperação
                         .requestMatchers("/api/auth/**").permitAll()
-                        // Deixamos também as páginas HTML públicas acessíveis
                         .requestMatchers("/", "/login", "/cadastro", "/sobre", "/contato", "/cursos/**").permitAll()
-                        // Tudo o resto dentro do sistema exige que o utilizador esteja autenticado
+                        .requestMatchers("/css/**", "/js/**", "/img/**", "/webjars/**", "/favicon.ico").permitAll()
                         .anyRequest().authenticated()
                 );
 

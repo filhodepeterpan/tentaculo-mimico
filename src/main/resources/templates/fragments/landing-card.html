@@ -2,5 +2,9 @@
     th:fragment="card-colorido(titulo, caminhoImagem, descricao)"
     class="card-colorido"
 >
-    CARD COLORIDO
+    <img
+        th:src="${caminhoImagem}"
+        th:alt="${altImagem ?: 'Ícone card'}"
+        class="card-colorido__image"
+    />
 </div>

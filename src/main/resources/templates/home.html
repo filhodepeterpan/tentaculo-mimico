@@ -43,14 +43,14 @@
                         />
                     </div>
                     <div class="about__cards">
-                        <article class="card-simples">
+                        <article class="about__card">
                             <span
-                                class="card-simples__title headline-small headline-small--enfatizado"
+                                class="about__card__title headline-small headline-small--enfatizado"
                             >
                                 Um núcleo de teatro e cultura
                             </span>
 
-                            <p class="card-simples__content body-large">
+                            <p class="about__card__content body-large">
                                 A instituição é um centro cultural com
                                 atividades como teatro, violão, canto e yoga a
                                 preços populares. O espaço também se descreve
@@ -60,14 +60,14 @@
                             </p>
                         </article>
 
-                        <article class="card-simples">
+                        <article class="about__card">
                             <span
-                                class="card-simples__title headline-small headline-small--enfatizado"
+                                class="about__card__title headline-small headline-small--enfatizado"
                             >
                                 Arte que se adapta
                             </span>
 
-                            <p class="card-simples__content body-large">
+                            <p class="about__card__content body-large">
                                 Inspirado no polvo-mímico, o núcleo acredita em
                                 um teatro capaz de se transformar conforme o
                                 espaço, o público e a realidade ao seu redor.
@@ -77,15 +77,15 @@
                             </p>
                         </article>
 
-                        <div class="grid-span-2">
-                            <article class="card-simples">
+                        <div style="grid-column: span 2">
+                            <article class="about__card">
                                 <span
-                                    class="card-simples__title headline-small headline-small--enfatizado"
+                                    class="headline-small headline-small--enfatizado"
                                 >
                                     Da primeira cena à sua própria expressão
                                 </span>
 
-                                <p class="card-simples__content body-large">
+                                <p class="body-large">
                                     Nas atividades do Tentáculo Mímico, você
                                     experimenta o teatro na prática. Exercícios
                                     de expressão corporal, voz, improvisação e
@@ -104,25 +104,116 @@
                 >
                     Mais do que aprender teatro
                 </h1>
-                <div class="motivos__card-container">
-                    <div
-                        th:replace="~{fragments/landing-card :: card-colorido(titulo='Aprenda fazendo',caminhoImagem='@{img/landing-cards/icone2.svg}',descricao='Menos teoria abstrata, mais experimentação, exercícios e criação em cena.')}"
-                    ></div>
-                    <div
-                        th:replace="~{fragments/landing-card :: card-colorido(titulo='Desenvolva sua expressão',caminhoImagem='@{img/landing-cards/icone7.svg}',descricao='Trabalhe voz, corpo, presença e comunicação para se expressar com mais liberdade.')}"
-                    ></div>
-                    <div
-                        th:replace="~{fragments/landing-card :: card-colorido(titulo='Crie junto com outras pessoas',caminhoImagem='@{img/landing-cards/icone5.svg}',descricao='O teatro é coletivo. Você aprende através da colaboração, da escuta e da troca.')}"
-                    ></div>
-                    <div
-                        th:replace="~{fragments/landing-card :: card-colorido(titulo='Estimule sua criatividade',caminhoImagem='@{img/landing-cards/icone6.svg}',descricao='Improvisação e criação teatral ajudam você a experimentar ideias e enxergar novas possibilidades.')}"
-                    ></div>
-                    <div
-                        th:replace="~{fragments/landing-card :: card-colorido(titulo='Comece de onde você está',caminhoImagem='@{img/landing-cards/icone4.svg}',descricao='Não é preciso ser ator ou atriz para começar. A experiência pode ser construída a partir do seu próprio repertório.')}"
-                    ></div>
-                    <div
-                        th:replace="~{fragments/landing-card :: card-colorido(titulo='Faça parte da cultura local',caminhoImagem='@{img/landing-cards/icone3.svg}',descricao='Aprenda e crie dentro de um movimento cultural que atua na comunidade e na Baixada Santista.')}"
-                    ></div>
+                <div class="motivos__content">
+                    <article class="card-colorido card-colorido--neutral">
+                        <div class="card-colorido__content">
+                            <span
+                                class="card-colorido__title headline-medium headline-medium--enfatizado"
+                                >Aprenda fazendo</span
+                            >
+                            <p class="card-colorido__description body-large">
+                                Menos teoria abstrata, mais experimentação,
+                                exercícios e criação em cena.
+                            </p>
+                        </div>
+                        <img
+                            th:src="@{img/landing-cards/icon2.svg}"
+                            aria-hidden="true"
+                            class="card-colorido__icon"
+                        />
+                    </article>
+
+                    <article class="card-colorido card-colorido--primary">
+                        <div class="card-colorido__content">
+                            <span
+                                class="card-colorido__title headline-medium headline-medium--enfatizado"
+                                >Desenvolva sua expressão</span
+                            >
+                            <p class="card-colorido__description body-large">
+                                Trabalhe voz, corpo, presença e comunicação para
+                                se expressar com mais liberdade.
+                            </p>
+                        </div>
+                        <img
+                            th:src="@{img/landing-cards/icon7.svg}"
+                            aria-hidden="true"
+                            class="card-colorido__icon"
+                        />
+                    </article>
+
+                    <article class="card-colorido card-colorido--primary">
+                        <div class="card-colorido__content">
+                            <span
+                                class="card-colorido__title headline-medium headline-medium--enfatizado"
+                                >Crie junto com outras pessoas</span
+                            >
+                            <p class="card-colorido__description body-large">
+                                O teatro é coletivo. Você aprende através da
+                                colaboração, da escuta e da troca.
+                            </p>
+                        </div>
+                        <img
+                            th:src="@{img/landing-cards/icon5.svg}"
+                            aria-hidden="true"
+                            class="card-colorido__icon"
+                        />
+                    </article>
+
+                    <article class="card-colorido card-colorido--neutral">
+                        <div class="card-colorido__content">
+                            <span
+                                class="card-colorido__title headline-medium headline-medium--enfatizado"
+                                >Estimule sua criatividade</span
+                            >
+                            <p class="card-colorido__description body-large">
+                                Improvisação e criação teatral ajudam você a
+                                experimentar ideias e enxergar novas
+                                possibilidades.
+                            </p>
+                        </div>
+                        <img
+                            th:src="@{img/landing-cards/icon6.svg}"
+                            aria-hidden="true"
+                            class="card-colorido__icon"
+                        />
+                    </article>
+
+                    <article class="card-colorido card-colorido--neutral">
+                        <div class="card-colorido__content">
+                            <span
+                                class="card-colorido__title headline-medium headline-medium--enfatizado"
+                                >Comece de onde você está</span
+                            >
+                            <p class="card-colorido__description body-large">
+                                Não é preciso ser ator ou atriz para começar. A
+                                experiência pode ser construída a partir do seu
+                                próprio repertório.
+                            </p>
+                        </div>
+                        <img
+                            th:src="@{img/landing-cards/icon4.svg}"
+                            aria-hidden="true"
+                            class="card-colorido__icon"
+                        />
+                    </article>
+
+                    <article class="card-colorido card-colorido--primary">
+                        <div class="card-colorido__content">
+                            <span
+                                class="card-colorido__title headline-medium headline-medium--enfatizado"
+                                >Faça parte da cultura local</span
+                            >
+                            <p class="card-colorido__description body-large">
+                                Aprenda e crie dentro de um movimento cultural
+                                que atua na comunidade e na Baixada Santista.
+                            </p>
+                        </div>
+                        <img
+                            th:src="@{img/landing-cards/icon3.svg}"
+                            aria-hidden="true"
+                            class="card-colorido__icon"
+                        />
+                    </article>
                 </div>
             </section>
             <section class="cto">

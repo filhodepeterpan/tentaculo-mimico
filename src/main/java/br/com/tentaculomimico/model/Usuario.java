@@ -22,6 +22,7 @@ public class Usuario {
     private Autenticacao autenticacao;
     private int tentativasLoginFalhas = 0;
     private LocalDateTime bloqueadoAte;
+    private String fotoPerfil;
 
 
     private String tokenRecuperacaoSenha;

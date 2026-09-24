@@ -96,7 +96,7 @@ public class CursoService {
     public Curso criarCurso(String nome, String descricao, String cargaHoraria,
                             String preco, String vagasTotais, List<String> diasSemana,
                             String horaInicio, String horaFim,
-                            String dataInicio, String dataFim) {
+                            String dataInicio, String dataFim, String urlImagem) {
 
         Curso curso = new Curso();
         curso.setNome(nome);
@@ -106,6 +106,7 @@ public class CursoService {
         int totalVagas = Integer.parseInt(vagasTotais);
         curso.setVagasTotais(totalVagas);
         curso.setVagasDisponiveis(totalVagas);
+        curso.setImagemCapa(urlImagem);
 
         LocalTime inicio = LocalTime.parse(horaInicio);
         LocalTime fim = LocalTime.parse(horaFim);
@@ -135,10 +136,10 @@ public class CursoService {
     public Curso cadastrarCurso(String nome, String descricao, String cargaHoraria,
                                 String preco, String vagasTotais, List<String> diasSemana,
                                 String horaInicio, String horaFim,
-                                String dataInicio, String dataFim) {
+                                String dataInicio, String dataFim, String urlImagem) {
 
         Curso curso = criarCurso(nome, descricao, cargaHoraria, preco, vagasTotais,
-                diasSemana, horaInicio, horaFim, dataInicio, dataFim);
+                diasSemana, horaInicio, horaFim, dataInicio, dataFim, urlImagem);
 
         //se tiver conflito ele interrompe a execussão
         if (existeConflitoParaProfessor(curso)) {

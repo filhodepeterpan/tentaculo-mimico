@@ -27,7 +27,12 @@
 
   </div>
 
-  <img th:src="@{/img/mascara.png}" alt="duas mascaras, símbolo clássico de teatro" class="curso-detalhes__ilustracao">
+  <th:block th:if="${curso.imagemCapa != null and !curso.imagemCapa.isEmpty()}">
+    <img th:src="@{${curso.imagemCapa}}" th:alt="'Foto do curso ' + ${curso.nome}" class="curso-detalhes__capa">
+  </th:block>
+  <th:block th:unless="${curso.imagemCapa != null and !curso.imagemCapa.isEmpty()}">
+    <img th:src="@{/img/mascara.png}" alt="duas mascaras, símbolo clássico de teatro" class="curso-detalhes__ilustracao">
+  </th:block>
 </section>
 
 <section class="curso-detalhes__conteudo">

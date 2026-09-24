@@ -34,27 +34,66 @@
                 >
                     Cultura que nasce e circula na comunidade
                 </h1>
-                <div class="grid-12">
-                    <div class="grid-span-5">
+                <div class="about__content">
+                    <div class="about__figure">
                         <img
                             th:src="@{img/landing_1.png}"
                             alt="Figura ilustrativa mão teatral"
+                            class="about__ilustration"
                         />
                     </div>
-                    <div class="grid-span-7">
-                        <div class="grid-2">
-                            <div
-                                th:replace="~{fragments/landing-card :: card-simples(titulo='Um núcleo de teatro e cultura',descricao='A instituição é um centro cultural com atividades como teatro, violão, canto, yoga a preços populares. O espaço também se descreve como mídia, produzindo entrevistas com artistas e educadores da periferia, cobrindo também eventos na perifeira de Praia Grande.')}"
-                            ></div>
-                            <div
-                                th:replace="~{fragments/landing-card :: card-simples(titulo='Arte que se adapta',descricao='Inspirado no polvo-mímico, o núcleo acredita em um teatro capaz de se transformar conforme o espaço, o público e a realidade ao seu redor. Entre espetáculos, oficinas e ações culturais, o Tentáculo Mímico cria oportunidades para experimentar, aprender e compartilhar arte.')}"
-                            ></div>
+                    <div class="about__cards">
+                        <article class="card-simples">
+                            <span
+                                class="card-simples__title headline-small headline-small--enfatizado"
+                            >
+                                Um núcleo de teatro e cultura
+                            </span>
 
-                            <div class="grid-span-2">
-                                <div
-                                    th:replace="~{fragments/landing-card :: card-simples(titulo='Da primeira cena à sua própria expressão',descricao='Nas atividades do Tentáculo Mímico, você experimenta o teatro na prática. Exercícios de expressão corporal, voz, improvisação e criação ajudam a desenvolver presença, criatividade e confiança para construir e apresentar suas próprias cenas e histórias.')}"
-                                ></div>
-                            </div>
+                            <p class="card-simples__content body-large">
+                                A instituição é um centro cultural com
+                                atividades como teatro, violão, canto e yoga a
+                                preços populares. O espaço também se descreve
+                                como mídia, produzindo entrevistas com artistas
+                                e educadores da periferia, além de cobrir
+                                eventos na periferia de Praia Grande.
+                            </p>
+                        </article>
+
+                        <article class="card-simples">
+                            <span
+                                class="card-simples__title headline-small headline-small--enfatizado"
+                            >
+                                Arte que se adapta
+                            </span>
+
+                            <p class="card-simples__content body-large">
+                                Inspirado no polvo-mímico, o núcleo acredita em
+                                um teatro capaz de se transformar conforme o
+                                espaço, o público e a realidade ao seu redor.
+                                Entre espetáculos, oficinas e ações culturais, o
+                                Tentáculo Mímico cria oportunidades para
+                                experimentar, aprender e compartilhar arte.
+                            </p>
+                        </article>
+
+                        <div class="grid-span-2">
+                            <article class="card-simples">
+                                <span
+                                    class="card-simples__title headline-small headline-small--enfatizado"
+                                >
+                                    Da primeira cena à sua própria expressão
+                                </span>
+
+                                <p class="card-simples__content body-large">
+                                    Nas atividades do Tentáculo Mímico, você
+                                    experimenta o teatro na prática. Exercícios
+                                    de expressão corporal, voz, improvisação e
+                                    criação ajudam a desenvolver presença,
+                                    criatividade e confiança para construir e
+                                    apresentar suas próprias cenas e histórias.
+                                </p>
+                            </article>
                         </div>
                     </div>
                 </div>

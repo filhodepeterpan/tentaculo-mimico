@@ -13,6 +13,7 @@ public class Curso {
     private String id;
     private String professorId;
     private String professorNome;
+    private String professorFotoPerfil;
     private String nome;
     private String descricao;
     private int cargaHoraria;
@@ -54,6 +55,14 @@ public class Curso {
 
     public void setProfessorNome(String professorNome) {
         this.professorNome = professorNome;
+    }
+
+    public String getProfessorFotoPerfil() {
+        return professorFotoPerfil;
+    }
+
+    public void setProfessorFotoPerfil(String professorFotoPerfil) {
+        this.professorFotoPerfil = professorFotoPerfil;
     }
 
     public String getNome() {

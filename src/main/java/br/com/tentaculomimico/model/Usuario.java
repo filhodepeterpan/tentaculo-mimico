@@ -16,6 +16,9 @@ public class Usuario {
 
     @Id
     private String id;
+    private String nome;
+    private String cpf;
+    private java.time.LocalDate dataNascimento;
     private String email;
     private TipoUsuario tipoUsuario;
     private Provedor provedor;

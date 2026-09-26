@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -22,6 +24,23 @@ public class AuthController {
             dadosLogin.senha()
         );
         return ResponseEntity.ok(token);
+    }
+
+    @PostMapping("/cadastro")
+    public ResponseEntity cadastrar(
+            @RequestParam String nome,
+            @RequestParam String email,
+            @RequestParam String senha,
+            @RequestParam LocalDate dataNascimento,
+            @RequestParam(required = false) String tipoUsuario) {
+
+        // pega os campos soltos do formulário e salvar no MongoDB
+        br.com.tentaculomimico.dto.CadastroRequestDTO dados =
+                new br.com.tentaculomimico.dto.CadastroRequestDTO(nome, email, senha, dataNascimento, tipoUsuario);
+
+        authService.cadastrarUsuario(dados);
+
+        return ResponseEntity.ok("Usuário cadastrado com sucesso!");
     }
 
     @PostMapping("/esqueci-senha")
@@ -51,4 +70,5 @@ public class AuthController {
 
         return ResponseEntity.ok(token);
     }
+
 }

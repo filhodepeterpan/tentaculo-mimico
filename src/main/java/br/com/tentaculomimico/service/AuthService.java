@@ -119,4 +119,27 @@ public class AuthService {
         // Independentemente de ser um usuário antigo ou recém-criado, geramos oo JWT
         return jwtTokenProvider.gerarToken(usuario.getEmail(), usuario.getTipoUsuario().toString());
     }
+    public void cadastrarUsuario(br.com.tentaculomimico.dto.CadastroRequestDTO dados) {
+        // vê se o email já existe
+        if (usuarioRepository.findByEmail(dados.email()).isPresent()) {
+            throw new RuntimeException("Esse e-mail já está em uso!");
+        }
+
+        Usuario novoUsuario = new Usuario();
+        novoUsuario.setNome(dados.nome());
+        novoUsuario.setEmail(dados.email());
+        novoUsuario.setDataNascimento(dados.dataNascimento());
+
+        // Se n for info o tipo, vira ALUNO por padrão
+        if (dados.tipoUsuario() != null && !dados.tipoUsuario().isEmpty()) {
+            novoUsuario.setTipoUsuario(TipoUsuario.valueOf(dados.tipoUsuario().toUpperCase()));
+        } else {
+            novoUsuario.setTipoUsuario(TipoUsuario.ALUNO);
+        }
+
+        // embaralha a senha antes de salvar
+        novoUsuario.getAutenticacao().setSenhaHash(passwordEncoder.encode(dados.senha()));
+
+        usuarioRepository.save(novoUsuario);
+    }
 }

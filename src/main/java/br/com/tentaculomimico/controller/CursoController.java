@@ -141,7 +141,7 @@ public class CursoController {
     public String excluirCurso(@PathVariable String id, Model model) {
         try {
             cursoService.excluirCurso(id); // deve respeitar RN025 (não excluir com aluno matriculado)
-            return "redirect:/perfil/professor/" + sessaoService.usuarioLogado().getId();
+            return "redirect:/perfil-professor/" + sessaoService.usuarioLogado().getId();
         } catch (RuntimeException e) {
             model.addAttribute("curso", cursoRepository.findById(id).orElse(null));
             model.addAttribute("erroGeral", e.getMessage());

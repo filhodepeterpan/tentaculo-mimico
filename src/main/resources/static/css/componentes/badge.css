@@ -39,3 +39,11 @@
 .badge--erro .badge__marcador {
   background-color: var(--color-error);
 }
+
+.badge--neutro {
+  background-color: var(--color-surface-container-high);
+  color: var(--color-on-surface-variant);
+}
+.badge--neutro .badge__marcador {
+  background-color: var(--color-outline);
+}

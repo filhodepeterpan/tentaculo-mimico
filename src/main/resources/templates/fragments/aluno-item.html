@@ -1,0 +1,22 @@
+<!-- item(id, nome, fotoPerfil, modo, cursosTexto, statusTexto, matriculaId) -->
+<div th:fragment="item(id, nome, fotoPerfil, modo, cursosTexto, statusTexto, matriculaId)" class="aluno-item" th:attr="data-nome=${nome}">
+
+    <a th:href="@{/perfil/aluno/{id}(id=${id})}" class="aluno-item__link">
+        <img th:if="${fotoPerfil != null and !fotoPerfil.isEmpty()}" th:src="@{${fotoPerfil}}" th:alt="'Foto de ' + ${nome}" class="aluno-item__foto">
+        <span th:unless="${fotoPerfil != null and !fotoPerfil.isEmpty()}" class="aluno-item__foto aluno-item__foto--vazia" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/>
+      </svg>
+    </span>
+
+        <div class="aluno-item__info">
+            <p class="aluno-item__nome" th:text="${nome}">Nome do aluno</p>
+            <p th:if="${modo == 'matriculado'}" class="aluno-item__detalhe" th:text="${cursosTexto}">Cursos</p>
+            <p th:if="${modo == 'pendente'}" class="aluno-item__detalhe" th:text="${statusTexto}">Status</p>
+        </div>
+    </a>
+
+    <button th:if="${modo == 'pendente'}" type="button" class="botao botao--primario botao--pequeno" th:attr="data-modal-abrir=${'modal-responder-' + matriculaId}">Responder</button>
+
+</div>

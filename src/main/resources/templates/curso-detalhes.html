@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="stylesheet" th:href="@{/css/pages/curso-detalhes.css}">
-    <title>Tentáculo Mímico</title>
+  <link rel="stylesheet" th:href="@{/css/pages/curso-detalhes.css}">
+  <title>Tentáculo Mímico</title>
 </head>
 <body>
 
@@ -39,10 +39,19 @@
 
   <p class="curso-detalhes__descricao" th:text="${curso.descricao}">Descrição do curso</p>
 
-  <div class="curso-detalhes__professor">
-    <span class="curso-detalhes__professor-rotulo">Professor(a)</span>
-    <span class="curso-detalhes__professor-nome" th:text="${curso.professorNome}">Nome do professor</span>
-  </div>
+  <a th:href="@{/perfil/professor/{id}(id=${curso.professorId})}" class="curso-detalhes__professor">
+    <img th:if="${curso.professorFotoPerfil != null and !curso.professorFotoPerfil.isEmpty()}" th:src="@{${curso.professorFotoPerfil}}" th:alt="'Foto de ' + ${curso.professorNome}" class="curso-detalhes__professor-foto">
+    <span th:unless="${curso.professorFotoPerfil != null and !curso.professorFotoPerfil.isEmpty()}" class="curso-detalhes__professor-foto curso-detalhes__professor-foto--vazia" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/>
+      </svg>
+    </span>
+    <span class="curso-detalhes__professor-textos">
+      <span class="curso-detalhes__professor-rotulo">Professor(a)</span>
+      <span class="curso-detalhes__professor-nome" th:text="${curso.professorNome}">Nome do professor</span>
+    </span>
+  </a>
 
   <div class="curso-detalhes__chips">
     <div class="chip-info chip-info--quando">
@@ -89,15 +98,42 @@
         <span class="curso-detalhes__info-valor" th:text="'R$ ' + ${curso.preco}">R$ 0,00</span>
       </div>
     </div>
-    <button type="button" class="curso-detalhes__matricular" data-modal-abrir="modal-matricula" th:disabled="${curso.vagasDisponiveis == 0}">
-        <span class="curso-detalhes__matricular-icone" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="7" y1="17" x2="17" y2="7"/>
-            <polyline points="7 7 17 7 17 17"/>
-          </svg>
-        </span>
-      Matricule-se
-    </button>
+    <div class="curso-detalhes__acoes-botoes">
+
+      <th:block th:if="${ehProprietario != null and ehProprietario}">
+        <a th:href="@{/cursos/{id}/editar(id=${curso.id})}" class="botao botao--neutro botao--pequeno">Editar</a>
+        <button type="button" class="botao botao--perigo botao--pequeno" data-modal-abrir="modal-deletar-curso">Excluir curso</button>
+      </th:block>
+
+      <th:block th:if="${tipoUsuarioLogado == 'aluno' and (statusMatricula == null or statusMatricula == 'cancelada')}">
+        <button type="button" class="curso-detalhes__matricular" data-modal-abrir="modal-matricula" th:disabled="${curso.vagasDisponiveis == 0}">
+          <span class="curso-detalhes__matricular-icone" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"/>
+              <polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </span>
+          Matricule-se
+        </button>
+      </th:block>
+
+      <th:block th:if="${tipoUsuarioLogado == 'aluno' and statusMatricula == 'pendente'}">
+        <div th:replace="~{fragments/badge :: badge(texto='Aguardando aprovação', variante='atencao')}"></div>
+      </th:block>
+
+      <th:block th:if="${tipoUsuarioLogado == 'aluno' and statusMatricula == 'recusada'}">
+        <div th:replace="~{fragments/badge :: badge(texto='Matrícula recusada', variante='erro')}"></div>
+      </th:block>
+
+      <th:block th:if="${tipoUsuarioLogado == 'aluno' and statusMatricula == 'aceita_aguardando_pagamento'}">
+        <a th:href="@{/pagamentos/{id}(id=${matriculaId})}" class="botao botao--primario botao--pequeno">Pagar</a>
+      </th:block>
+
+      <th:block th:if="${tipoUsuarioLogado == 'aluno' and statusMatricula == 'ativa'}">
+        <button type="button" class="botao botao--perigo botao--pequeno" data-modal-abrir="modal-desistir">Desistir da matrícula</button>
+      </th:block>
+
+    </div>
   </div>
 
   <th:block th:if="${erroMatricula != null}">
@@ -107,9 +143,18 @@
 </section>
 
 <form id="form-matricula" method="post" th:action="@{/cursos/{id}/matricula(id=${curso.id})}" hidden></form>
-
+<form id="form-deletar-curso" method="post" th:action="@{/cursos/{id}/excluir(id=${curso.id})}" hidden></form>
+<form th:if="${matriculaId != null}" id="form-desistir" method="post" th:action="@{/matriculas/{id}/cancelar(id=${matriculaId})}" hidden></form>
 
 <div th:replace="~{fragments/modal :: modal(id='modal-matricula', titulo='Confirmar matrícula?', mensagem='Sua solicitação será enviada para aprovação do professor. O acesso ao curso só é liberado após a aprovação e a confirmação do pagamento.', textoCancelar='Cancelar', textoConfirmar='Confirmar', varianteConfirmar='primario')}"></div>
+
+<th:block th:if="${ehProprietario != null and ehProprietario}">
+  <div th:replace="~{fragments/modal :: modal(id='modal-deletar-curso', titulo='Excluir este curso?', mensagem='Essa ação não pode ser desfeita. Alunos matriculados perderão acesso ao curso.', textoCancelar='Cancelar', textoConfirmar='Excluir', varianteConfirmar='perigo')}"></div>
+</th:block>
+
+<th:block th:if="${tipoUsuarioLogado == 'aluno' and statusMatricula == 'ativa'}">
+  <div th:replace="~{fragments/modal :: modal(id='modal-desistir', titulo='Desistir da matrícula?', mensagem='Você vai perder o acesso a este curso. Essa ação não pode ser desfeita.', textoCancelar='Cancelar', textoConfirmar='Desistir', varianteConfirmar='perigo')}"></div>
+</th:block>
 
 <div th:replace="~{fragments/layouts :: footer}"></div>
 

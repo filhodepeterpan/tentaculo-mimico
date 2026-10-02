@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/pages/perfil-professor.css}">
+    <title>Tentáculo Mímico</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layouts :: header}"></div>
+
+<main class="perfil-professor">
+
+    <div th:replace="~{fragments/perfil-cabecalho :: cabecalho(nome=${professor.nome}, tipoUsuario='professor', fotoPerfil=${professor.fotoPerfil}, ehPerfilProprio=${ehPerfilProprio})}"></div>
+
+    <th:block th:if="${podeVerDadosSensiveis}">
+        <section class="perfil-info">
+            <h2 class="perfil-info__titulo">Dados pessoais</h2>
+            <div class="perfil-info__grid">
+                <div class="perfil-info__item">
+                    <span class="perfil-info__rotulo">E-mail</span>
+                    <span class="perfil-info__valor" th:text="${professor.email}">email</span>
+                </div>
+                <div class="perfil-info__item">
+                    <span class="perfil-info__rotulo">CPF</span>
+                    <span class="perfil-info__valor" th:text="${professor.cpf}">cpf</span>
+                </div>
+                <div class="perfil-info__item">
+                    <span class="perfil-info__rotulo">Data de nascimento</span>
+                    <span class="perfil-info__valor" th:text="${dataNascimentoFormatada}">data</span>
+                </div>
+            </div>
+        </section>
+    </th:block>
+
+    <!-- "Meus cursos" é a única aba visível pra quem não é o dono do perfil
+         (RN015: aluno só vê dado não sensível do professor, e a lista de
+         cursos que ele oferta é explicitamente não sensível). Por isso, sem
+         ehPerfilProprio, nem monta a interface de abas — mostra só a lista. -->
+    <th:block th:unless="${ehPerfilProprio}">
+        <section class="perfil-professor__painel">
+            <h2 class="perfil-info__titulo">Cursos que leciona</h2>
+
+            <p th:if="${cursosDoProfessor == null or cursosDoProfessor.isEmpty()}" class="perfil-aluno__vazio">Este professor ainda não tem cursos cadastrados.</p>
+
+            <div class="cursos__grid">
+                <th:block th:each="curso, cursoStat : ${cursosDoProfessor}">
+                    <div th:replace="~{fragments/card-professor-curso :: cardProfessorCurso(id=${curso.id}, nome=${curso.nome}, cargaHoraria=${curso.cargaHoraria}, vagasDisponiveis=${curso.vagasDisponiveis}, indice=${cursoStat.index}, imagemCapa=${curso.imagemCapa}, status=${curso.status})}"></div>
+                </th:block>
+            </div>
+        </section>
+    </th:block>
+
+    <th:block th:if="${ehPerfilProprio}">
+
+        <div class="perfil-professor__abas" role="tablist">
+            <button type="button" role="tab" id="aba-cursos" aria-controls="painel-cursos" aria-selected="true" class="perfil-professor__aba">
+                Meus cursos
+            </button>
+            <button type="button" role="tab" id="aba-matriculados" aria-controls="painel-matriculados" aria-selected="false" class="perfil-professor__aba">
+                Alunos matriculados
+            </button>
+            <button type="button" role="tab" id="aba-pendentes" aria-controls="painel-pendentes" aria-selected="false" class="perfil-professor__aba">
+                Matrículas pendentes
+                <span th:if="${totalPendentes != null and totalPendentes > 0}"
+                      class="perfil-professor__notificacao"
+                      th:text="${totalPendentes > 9} ? '9+' : ${totalPendentes}">0</span>
+            </button>
+        </div>
+
+        <div id="painel-cursos" role="tabpanel" aria-labelledby="aba-cursos" class="perfil-professor__painel">
+            <div class="perfil-professor__painel-cabecalho">
+                <h2 class="perfil-info__titulo">Cursos que leciono</h2>
+                <a th:href="@{/cursos/novo}" class="botao botao--primario botao--pequeno">Adicionar curso</a>
+            </div>
+
+            <p th:if="${cursosDoProfessor == null or cursosDoProfessor.isEmpty()}" class="perfil-aluno__vazio">Você ainda não cadastrou nenhum curso.</p>
+
+            <div class="cursos__grid">
+                <th:block th:each="curso, cursoStat : ${cursosDoProfessor}">
+                    <div th:replace="~{fragments/card-professor-curso :: cardProfessorCurso(id=${curso.id}, nome=${curso.nome}, cargaHoraria=${curso.cargaHoraria}, vagasDisponiveis=${curso.vagasDisponiveis}, indice=${cursoStat.index}, imagemCapa=${curso.imagemCapa}, status=${curso.status})}"></div>
+                </th:block>
+            </div>
+        </div>
+
+        <div id="painel-matriculados" role="tabpanel" aria-labelledby="aba-matriculados" class="perfil-professor__painel" hidden>
+            <div th:replace="~{fragments/inputs :: input(id='busca-alunos-matriculados', tipo='search', rotulo='Buscar aluno', placeholder='Nome do aluno...', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>
+
+            <p id="matriculados-vazio" class="perfil-aluno__vazio" hidden>Nenhum aluno encontrado.</p>
+
+            <div class="perfil-professor__lista">
+                <th:block th:each="item : ${alunosMatriculados}">
+                    <div th:replace="~{fragments/aluno-item :: item(id=${item.alunoId}, nome=${item.alunoNome}, fotoPerfil=${item.alunoFotoPerfil}, modo='matriculado', cursosTexto=${item.cursosTexto}, statusTexto='', matriculaId='')}"></div>
+                </th:block>
+            </div>
+        </div>
+
+        <div id="painel-pendentes" role="tabpanel" aria-labelledby="aba-pendentes" class="perfil-professor__painel" hidden>
+            <div th:replace="~{fragments/inputs :: input(id='busca-alunos-pendentes', tipo='search', rotulo='Buscar aluno', placeholder='Nome do aluno...', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>
+
+            <p id="pendentes-vazio" class="perfil-aluno__vazio" hidden>Nenhuma solicitação pendente.</p>
+
+            <div class="perfil-professor__lista">
+                <th:block th:each="item : ${alunosPendentes}">
+                    <div th:replace="~{fragments/aluno-item :: item(id=${item.alunoId}, nome=${item.alunoNome}, fotoPerfil=${item.alunoFotoPerfil}, modo='pendente', cursosTexto='', statusTexto=${item.statusTexto}, matriculaId=${item.matriculaId})}"></div>
+                </th:block>
+            </div>
+        </div>
+
+    </th:block>
+
+</main>
+
+<th:block th:each="item : ${alunosPendentes}">
+    <div th:replace="~{fragments/modal-responder-matricula :: modalResponder(matriculaId=${item.matriculaId}, nomeAluno=${item.alunoNome}, fotoAluno=${item.alunoFotoPerfil}, emailAluno=${item.alunoEmail}, nomeCurso=${item.cursoNome})}"></div>
+    <div th:replace="~{fragments/modal :: modal(id='modal-aceitar-' + ${item.matriculaId}, titulo='Aceitar matrícula?', mensagem='O aluno será notificado e poderá prosseguir para o pagamento.', textoCancelar='Cancelar', textoConfirmar='Aceitar', varianteConfirmar='primario')}"></div>
+    <div th:replace="~{fragments/modal :: modal(id='modal-recusar-' + ${item.matriculaId}, titulo='Recusar matrícula?', mensagem='O aluno será notificado de que a solicitação foi recusada.', textoCancelar='Cancelar', textoConfirmar='Recusar', varianteConfirmar='perigo')}"></div>
+</th:block>
+
+<th:block th:if="${ehPerfilProprio}">
+    <div th:replace="~{fragments/modal :: modal(id='modal-excluir-conta', titulo='Excluir sua conta?', mensagem='Essa ação não pode ser desfeita. Seus dados serão removidos conforme as políticas da plataforma.', textoCancelar='Cancelar', textoConfirmar='Excluir', varianteConfirmar='perigo')}"></div>
+</th:block>
+
+<form id="form-acao-perfil" method="post" hidden></form>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+<script type="module" th:src="@{/js/pages/perfil-professor.js}"></script>
+</body>
+</html>

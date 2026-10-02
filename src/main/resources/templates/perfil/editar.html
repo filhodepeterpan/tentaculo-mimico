@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/pages/perfil-editar.css}">
+    <title>Tentáculo Mímico</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layouts :: header}"></div>
+
+<main class="perfil-editar">
+    <div class="perfil-editar__caixa">
+        <h1 class="perfil-editar__titulo">Editar perfil</h1>
+
+        <th:block th:if="${erroGeral != null}">
+            <div th:replace="~{fragments/alert :: alerta(titulo='Não foi possível salvar', mensagem=${erroGeral ?: ''}, variante='erro')}"></div>
+        </th:block>
+
+        <form class="perfil-editar__formulario" method="post" th:action="@{/perfil/editar}" enctype="multipart/form-data">
+
+            <div th:replace="~{fragments/imagem :: imagem(id='foto-perfil', rotulo='Foto de perfil (opcional)', obrigatorio=false, mensagemErro=${erroFotoPerfil ?: ''}, desabilitado=false)}"></div>
+
+            <div th:replace="~{fragments/inputs :: input(id='nome', tipo='text', rotulo='Nome completo', placeholder='Seu nome completo', valor=${usuario.nome ?: ''}, obrigatorio=true, mensagemErro=${erroNome ?: ''}, desabilitado=false)}"></div>
+
+            <div th:replace="~{fragments/buttons :: botao(texto='Salvar alterações', variante='primario', tamanho='grande', tipoBotao='submit')}"></div>
+
+        </form>
+    </div>
+</main>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+<script type="module" th:src="@{/js/pages/perfil-editar.js}"></script>
+</body>
+</html>

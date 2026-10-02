@@ -1,0 +1,19 @@
+<!-- cardProfessorCurso(id, nome, cargaHoraria, vagasDisponiveis, indice, imagemCapa, status) -->
+<div th:fragment="cardProfessorCurso(id, nome, cargaHoraria, vagasDisponiveis, indice, imagemCapa, status)" class="curso-card">
+
+  <a th:href="@{/cursos/{id}(id=${id})}" class="curso-card__link">
+    <img th:if="${imagemCapa != null and !imagemCapa.isEmpty()}" th:src="@{${imagemCapa}}" th:alt="'Capa do curso ' + ${nome}" class="curso-card__banner">
+    <div th:unless="${imagemCapa != null and !imagemCapa.isEmpty()}" class="curso-card__banner" th:classappend="'curso-card__banner--cor-' + ${indice % 6}"></div>
+    <div class="curso-card__conteudo">
+      <h3 class="curso-card__titulo" th:text="${nome}">Nome do curso</h3>
+      <p class="curso-card__info" th:text="${cargaHoraria} + 'h · ' + ${vagasDisponiveis} + ' vagas disponíveis'">Info</p>
+    </div>
+  </a>
+
+  <div class="curso-card__rodape">
+    <div th:if="${status == 'disponivel'}" th:replace="~{fragments/badge :: badge(texto='Disponível', variante='sucesso')}"></div>
+    <div th:if="${status == 'indisponivel'}" th:replace="~{fragments/badge :: badge(texto='Indisponível', variante='erro')}"></div>
+    <div th:if="${status == 'rascunho'}" th:replace="~{fragments/badge :: badge(texto='Rascunho', variante='atencao')}"></div>
+  </div>
+
+</div>

@@ -1,0 +1,66 @@
+.aluno-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  background-color: var(--color-surface-container-low);
+}
+
+.aluno-item[hidden] {
+  display: none !important;
+}
+
+.aluno-item__link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.aluno-item__foto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.aluno-item__foto--vazia {
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+}
+
+.aluno-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.aluno-item__nome {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-title-sm-tamanho);
+  font-weight: var(--tipo-title-sm-peso-enfatizado);
+  color: var(--color-on-surface);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aluno-item__detalhe {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-sm-tamanho);
+  color: var(--color-on-surface-variant);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

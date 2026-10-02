@@ -1,0 +1,132 @@
+@import url(../root.css);
+@import url(../global.css);
+
+.perfil-professor {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.perfil-info__titulo {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-title-lg-tamanho);
+  font-weight: var(--tipo-title-lg-peso-enfatizado);
+  color: var(--color-on-surface);
+  margin: 0 0 1rem;
+}
+
+.perfil-info__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1.25rem;
+}
+
+.perfil-info__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.perfil-info__rotulo {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-sm-tamanho);
+  color: var(--color-on-surface-variant);
+}
+
+.perfil-info__valor {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-title-sm-tamanho);
+  font-weight: var(--tipo-title-sm-peso-enfatizado);
+  color: var(--color-on-surface);
+}
+
+.perfil-professor__abas {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 0.0625rem solid var(--color-outline-variant);
+  overflow-x: auto;
+}
+
+.perfil-professor__aba {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.25rem;
+  background: none;
+  border: none;
+  border-bottom: 0.1875rem solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-title-sm-tamanho);
+  font-weight: var(--tipo-title-sm-peso-enfatizado);
+  color: var(--color-on-surface-variant);
+}
+
+.perfil-professor__aba[aria-selected="true"] {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.perfil-professor__aba:focus-visible {
+  outline: 0.1875rem solid var(--color-outline);
+  outline-offset: -0.1875rem;
+}
+
+.perfil-professor__notificacao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.3rem;
+  border-radius: 9999px;
+  background-color: var(--color-error);
+  color: var(--color-on-error);
+  font-size: var(--tipo-label-sm-tamanho);
+  font-weight: 700;
+}
+
+.perfil-professor__painel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.perfil-professor__painel[hidden] {
+  display: none !important;
+}
+
+.perfil-professor__painel-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.perfil-professor__painel-cabecalho .perfil-info__titulo {
+  margin: 0;
+}
+
+.perfil-professor__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.perfil-aluno__vazio {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-lg-tamanho);
+  color: var(--color-on-surface-variant);
+  padding: 1.5rem 0;
+}
+
+.cursos__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1.5rem;
+}

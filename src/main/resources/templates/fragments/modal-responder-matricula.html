@@ -1,0 +1,46 @@
+<!-- modalResponder(matriculaId, nomeAluno, fotoAluno, emailAluno, nomeCurso) -->
+<div th:fragment="modalResponder(matriculaId, nomeAluno, fotoAluno, emailAluno, nomeCurso)"
+     th:id="${'modal-responder-' + matriculaId}"
+     class="modal"
+     hidden
+     role="dialog"
+     aria-modal="true"
+     th:aria-labelledby="${'modal-responder-' + matriculaId + '-titulo'}">
+
+    <div class="modal__overlay" th:attr="data-modal-fechar=${'modal-responder-' + matriculaId}"></div>
+
+    <div class="modal__caixa modal-responder__caixa">
+        <div class="modal__cabecalho">
+            <h2 th:id="${'modal-responder-' + matriculaId + '-titulo'}" class="modal__titulo">Solicitação de matrícula</h2>
+            <button type="button" class="modal__fechar" th:attr="data-modal-fechar=${'modal-responder-' + matriculaId}" aria-label="Fechar">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <line x1="4" y1="4" x2="20" y2="20"/>
+                    <line x1="20" y1="4" x2="4" y2="20"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="modal-responder__corpo">
+            <img th:if="${fotoAluno != null and !fotoAluno.isEmpty()}" th:src="@{${fotoAluno}}" th:alt="'Foto de ' + ${nomeAluno}" class="modal-responder__foto">
+            <span th:unless="${fotoAluno != null and !fotoAluno.isEmpty()}" class="modal-responder__foto modal-responder__foto--vazia" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/>
+        </svg>
+      </span>
+
+            <div class="modal-responder__dados">
+                <p class="modal-responder__nome" th:text="${nomeAluno}">Nome do aluno</p>
+                <p class="modal-responder__linha"><strong>E-mail:</strong> <span th:text="${emailAluno}">email</span></p>
+                <p class="modal-responder__linha"><strong>Curso:</strong> <span th:text="${nomeCurso}">curso</span></p>
+
+                <div class="modal-responder__acoes">
+                    <button type="button" class="botao botao--neutro botao--pequeno"
+                            th:attr="data-modal-fechar=${'modal-responder-' + matriculaId},data-modal-abrir=${'modal-recusar-' + matriculaId}">Recusar</button>
+                    <button type="button" class="botao botao--primario botao--pequeno"
+                            th:attr="data-modal-fechar=${'modal-responder-' + matriculaId},data-modal-abrir=${'modal-aceitar-' + matriculaId}">Aceitar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

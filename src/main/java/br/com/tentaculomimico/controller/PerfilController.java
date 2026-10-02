@@ -4,7 +4,6 @@ import br.com.tentaculomimico.model.Curso;
 import br.com.tentaculomimico.model.Usuario;
 import br.com.tentaculomimico.model.view.AlunoMatriculadoView;
 import br.com.tentaculomimico.model.view.AlunoPendenteView;
-import br.com.tentaculomimico.model.view.MatriculaCursoView;
 import br.com.tentaculomimico.repository.CursoRepository;
 import br.com.tentaculomimico.repository.UsuarioRepository;
 import br.com.tentaculomimico.service.MatriculaService;
@@ -18,6 +17,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+// URLs deste controller:
+//   GET  /perfil-aluno/{id}       GET  /perfil-professor/{id}
+//   GET  /perfil-editar           POST /perfil-editar
+//   POST /perfil-excluir
+//
 // PREMISSAS assumidas neste controller (o back deve se adaptar a elas):
 //   - UsuarioRepository já existe (mesmo padrão do CursoRepository).
 //   - SessaoService.usuarioLogado() devolve o Usuario autenticado, ou null
@@ -32,7 +36,6 @@ import java.util.List;
 //   - PerfilService precisa de: atualizarDadosPessoais(nome, fotoPerfil) e
 //     excluirContaDoUsuarioLogado() — este último deve respeitar RN011/012/019.
 @Controller
-@RequestMapping("/perfil")
 public class PerfilController {
 
     private final UsuarioRepository usuarioRepository;
@@ -51,7 +54,7 @@ public class PerfilController {
         this.sessaoService = sessaoService;
     }
 
-    @GetMapping("/aluno/{id}")
+    @GetMapping("/perfil-aluno/{id}")
     public String perfilAluno(@PathVariable String id, Model model) {
         Usuario usuarioLogado = sessaoService.usuarioLogado();
 
@@ -79,7 +82,7 @@ public class PerfilController {
         return "perfil-aluno";
     }
 
-    @GetMapping("/professor/{id}")
+    @GetMapping("/perfil-professor/{id}")
     public String perfilProfessor(@PathVariable String id, Model model) {
         Usuario usuarioLogado = sessaoService.usuarioLogado();
 
@@ -115,13 +118,13 @@ public class PerfilController {
         return "perfil-professor";
     }
 
-    @GetMapping("/editar")
+    @GetMapping("/perfil-editar")
     public String editarPerfil(Model model) {
         model.addAttribute("usuario", sessaoService.usuarioLogado());
         return "perfil-editar";
     }
 
-    @PostMapping("/editar")
+    @PostMapping("/perfil-editar")
     public String salvarEdicaoPerfil(
             @RequestParam("nome") String nome,
             @RequestParam(value = "foto-perfil", required = false) MultipartFile fotoPerfil,
@@ -129,7 +132,7 @@ public class PerfilController {
     ) {
         try {
             perfilService.atualizarDadosPessoais(nome, fotoPerfil);
-            return "redirect:/perfil/editar";
+            return "redirect:/perfil-editar";
         } catch (RuntimeException e) {
             model.addAttribute("erroGeral", e.getMessage());
             model.addAttribute("usuario", sessaoService.usuarioLogado());
@@ -137,7 +140,7 @@ public class PerfilController {
         }
     }
 
-    @PostMapping("/excluir")
+    @PostMapping("/perfil-excluir")
     public String excluirConta() {
         perfilService.excluirContaDoUsuarioLogado();
         return "redirect:/login";

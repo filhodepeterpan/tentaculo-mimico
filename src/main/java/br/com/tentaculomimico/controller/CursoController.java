@@ -23,7 +23,7 @@ import java.util.Map;
 // Mesmas premissas assumidas do PerfilController: SessaoService existe e
 // devolve o Usuario logado (ou null); Usuario.getTipoUsuario().name() vem
 // em maiúsculas. MatriculaService precisa de:
-// buscarStatusDoAluno(alunoId, cursoId) — devolve a MatriculaCursoView da
+// buscarStatusDoAluno(alunoId, cursoId) devolve a MatriculaCursoView da
 // matrícula do aluno logado nesse curso, ou null se nunca solicitou.
 @Controller
 public class CursoController {

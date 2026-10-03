@@ -1,22 +1,27 @@
-package br.com.tentaculomimico.service;
+package br.com.tentaculomimico.service.sessao;
 
 import br.com.tentaculomimico.model.Usuario;
 import br.com.tentaculomimico.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 /**
  * O login deve chamar iniciarSessao(usuario) após validar a senha.
  */
 @Service
-public class SessaoService {
+@Profile("!mock")
+public class SessaoServiceImpl {
 
     private static final String CHAVE = "usuarioLogadoId";
 
     private final HttpSession session;
     private final UsuarioRepository usuarioRepository;
 
-    public SessaoService(HttpSession session, UsuarioRepository usuarioRepository) {
+    public SessaoServiceImpl(
+        HttpSession session,
+        UsuarioRepository usuarioRepository
+    ) {
         this.session = session;
         this.usuarioRepository = usuarioRepository;
     }
@@ -33,7 +38,9 @@ public class SessaoService {
     public Usuario exigirUsuarioLogado() {
         Usuario usuario = usuarioLogado();
         if (usuario == null) {
-            throw new RuntimeException("Você precisa estar logado para fazer isso.");
+            throw new RuntimeException(
+                "Você precisa estar logado para fazer isso."
+            );
         }
         return usuario;
     }

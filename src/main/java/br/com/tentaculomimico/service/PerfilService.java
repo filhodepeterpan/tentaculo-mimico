@@ -4,6 +4,7 @@ import br.com.tentaculomimico.model.Curso;
 import br.com.tentaculomimico.model.Usuario;
 import br.com.tentaculomimico.repository.CursoRepository;
 import br.com.tentaculomimico.repository.UsuarioRepository;
+import br.com.tentaculomimico.service.sessao.SessaoService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,9 +18,14 @@ public class PerfilService {
     private final SessaoService sessaoService;
     private final ImagemService imagemService;
 
-    public PerfilService(UsuarioRepository usuarioRepository, CursoRepository cursoRepository,
-                         CursoService cursoService, MatriculaService matriculaService,
-                         SessaoService sessaoService, ImagemService imagemService) {
+    public PerfilService(
+        UsuarioRepository usuarioRepository,
+        CursoRepository cursoRepository,
+        CursoService cursoService,
+        MatriculaService matriculaService,
+        SessaoService sessaoService,
+        ImagemService imagemService
+    ) {
         this.usuarioRepository = usuarioRepository;
         this.cursoRepository = cursoRepository;
         this.cursoService = cursoService;
@@ -37,7 +43,8 @@ public class PerfilService {
         usuario.setNome(nome.trim());
 
         String urlFoto = imagemService.enviar(fotoPerfil, "perfis");
-        if (urlFoto != null) { // sem arquivo novo, mantém a foto atual
+        if (urlFoto != null) {
+            // sem arquivo novo, mantém a foto atual
             usuario.setFotoPerfil(urlFoto);
         }
 
@@ -59,7 +66,9 @@ public class PerfilService {
         String tipo = usuario.getTipoUsuario().name();
 
         if ("PROFESSOR".equalsIgnoreCase(tipo)) {
-            for (Curso curso : cursoRepository.findByProfessorId(usuario.getId())) {
+            for (Curso curso : cursoRepository.findByProfessorId(
+                usuario.getId()
+            )) {
                 cursoService.excluirCurso(curso.getId());
             }
         } else if ("ALUNO".equalsIgnoreCase(tipo)) {

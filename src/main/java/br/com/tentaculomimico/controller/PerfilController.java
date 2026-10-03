@@ -8,14 +8,13 @@ import br.com.tentaculomimico.repository.CursoRepository;
 import br.com.tentaculomimico.repository.UsuarioRepository;
 import br.com.tentaculomimico.service.MatriculaService;
 import br.com.tentaculomimico.service.PerfilService;
-import br.com.tentaculomimico.service.SessaoService;
+import br.com.tentaculomimico.service.sessao.SessaoService;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 // URLs deste controller:
 //   GET  /perfil-aluno/{id}       GET  /perfil-professor/{id}
@@ -44,9 +43,13 @@ public class PerfilController {
     private final MatriculaService matriculaService;
     private final SessaoService sessaoService;
 
-    public PerfilController(UsuarioRepository usuarioRepository, CursoRepository cursoRepository,
-                            PerfilService perfilService, MatriculaService matriculaService,
-                            SessaoService sessaoService) {
+    public PerfilController(
+        UsuarioRepository usuarioRepository,
+        CursoRepository cursoRepository,
+        PerfilService perfilService,
+        MatriculaService matriculaService,
+        SessaoService sessaoService
+    ) {
         this.usuarioRepository = usuarioRepository;
         this.cursoRepository = cursoRepository;
         this.perfilService = perfilService;
@@ -61,9 +64,11 @@ public class PerfilController {
         // RN confirmada com o PO: aluno não pode visualizar perfil de outro
         // aluno — bloqueia mesmo não havendo, hoje, nenhum link que leve a
         // essa URL diretamente.
-        if (usuarioLogado != null
-                && "ALUNO".equalsIgnoreCase(usuarioLogado.getTipoUsuario().name())
-                && !usuarioLogado.getId().equals(id)) {
+        if (
+            usuarioLogado != null &&
+            "ALUNO".equalsIgnoreCase(usuarioLogado.getTipoUsuario().name()) &&
+            !usuarioLogado.getId().equals(id)
+        ) {
             return "redirect:/acesso-negado";
         }
 
@@ -72,11 +77,15 @@ public class PerfilController {
             return "redirect:/cursos";
         }
 
-        boolean ehPerfilProprio = usuarioLogado != null && usuarioLogado.getId().equals(id);
+        boolean ehPerfilProprio =
+            usuarioLogado != null && usuarioLogado.getId().equals(id);
 
         model.addAttribute("aluno", aluno);
         model.addAttribute("ehPerfilProprio", ehPerfilProprio);
-        model.addAttribute("matriculas", matriculaService.listarCursosDoAluno(id));
+        model.addAttribute(
+            "matriculas",
+            matriculaService.listarCursosDoAluno(id)
+        );
         model.addAttribute("dataNascimentoFormatada", formatarData(aluno));
 
         return "perfil-aluno";
@@ -91,9 +100,13 @@ public class PerfilController {
             return "redirect:/cursos";
         }
 
-        boolean ehPerfilProprio = usuarioLogado != null && usuarioLogado.getId().equals(id);
-        boolean ehAdmin = usuarioLogado != null
-                && "ADMINISTRADOR".equalsIgnoreCase(usuarioLogado.getTipoUsuario().name());
+        boolean ehPerfilProprio =
+            usuarioLogado != null && usuarioLogado.getId().equals(id);
+        boolean ehAdmin =
+            usuarioLogado != null &&
+            "ADMINISTRADOR".equalsIgnoreCase(
+                usuarioLogado.getTipoUsuario().name()
+            );
         boolean podeVerDadosSensiveis = ehPerfilProprio || ehAdmin;
 
         List<Curso> cursosDoProfessor = cursoRepository.findByProfessorId(id);
@@ -107,8 +120,10 @@ public class PerfilController {
         // Alunos matriculados e pendentes só importam pro próprio professor
         // ver (dado sensível de terceiros) — nem busca se não for o dono.
         if (ehPerfilProprio) {
-            List<AlunoMatriculadoView> alunosMatriculados = matriculaService.listarAlunosMatriculados(id);
-            List<AlunoPendenteView> alunosPendentes = matriculaService.listarAlunosPendentes(id);
+            List<AlunoMatriculadoView> alunosMatriculados =
+                matriculaService.listarAlunosMatriculados(id);
+            List<AlunoPendenteView> alunosPendentes =
+                matriculaService.listarAlunosPendentes(id);
 
             model.addAttribute("alunosMatriculados", alunosMatriculados);
             model.addAttribute("alunosPendentes", alunosPendentes);
@@ -126,9 +141,12 @@ public class PerfilController {
 
     @PostMapping("/perfil-editar")
     public String salvarEdicaoPerfil(
-            @RequestParam("nome") String nome,
-            @RequestParam(value = "foto-perfil", required = false) MultipartFile fotoPerfil,
-            Model model
+        @RequestParam("nome") String nome,
+        @RequestParam(
+            value = "foto-perfil",
+            required = false
+        ) MultipartFile fotoPerfil,
+        Model model
     ) {
         try {
             perfilService.atualizarDadosPessoais(nome, fotoPerfil);
@@ -150,6 +168,8 @@ public class PerfilController {
         if (usuario.getDataNascimento() == null) {
             return "";
         }
-        return usuario.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        return usuario
+            .getDataNascimento()
+            .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 }

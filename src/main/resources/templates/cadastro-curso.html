@@ -1,26 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="stylesheet" th:href="@{/css/pages/cadastro-curso.css}">
-    <title>Tentáculo Mímico</title>
+  <link rel="stylesheet" th:href="@{/css/pages/cadastro-curso.css}">
+  <title>Tentáculo Mímico</title>
 </head>
 <body>
 
 <div th:replace="~{fragments/layouts :: header}"></div>
 
-<main class="curso-form">
+<!-- Modo edição = o controller mandou "curso" no model (GET/POST /cursos/{id}/editar).
+     Sem "curso", é o cadastro de um curso novo. -->
+<main class="curso-form" th:with="editando=${curso != null}">
   <div class="curso-form__caixa">
-    <h1 class="curso-form__titulo">Cadastrar curso</h1>
+    <h1 class="curso-form__titulo" th:text="${editando ? 'Editar curso' : 'Cadastrar curso'}">Cadastrar curso</h1>
 
     <th:block th:if="${erroGeral != null}">
-      <div th:replace="~{fragments/alert :: alerta(titulo='Não foi possível cadastrar o curso', mensagem=${erroGeral ?: ''}, variante='erro')}"></div>
+      <div th:replace="~{fragments/alert :: alerta(titulo=${editando ? 'Não foi possível salvar o curso' : 'Não foi possível cadastrar o curso'}, mensagem=${erroGeral ?: ''}, variante='erro')}"></div>
     </th:block>
 
-    <form class="curso-form__formulario" method="post" th:action="@{/cursos}" enctype="multipart/form-data">
+    <form class="curso-form__formulario" method="post"
+          th:action="${editando} ? @{/cursos/{id}/editar(id=${curso.id})} : @{/cursos}"
+          enctype="multipart/form-data">
 
       <div th:replace="~{fragments/inputs :: input(id='nome', tipo='text', rotulo='Nome do curso', placeholder='Ex: Inglês Avançado', valor=${nomePreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroNome ?: ''}, desabilitado=false)}"></div>
 
-      <div th:replace="~{fragments/imagem :: imagem(id='imagem-capa', rotulo='Imagem de capa (opcional)', obrigatorio=false, mensagemErro=${erroImagemCapa ?: ''}, desabilitado=false)}"></div>
+      <div th:replace="~{fragments/imagem :: imagem(id='imagem-capa', rotulo=${editando ? 'Nova imagem de capa (opcional, deixe vazio para manter a atual)' : 'Imagem de capa (opcional)'}, obrigatorio=false, mensagemErro=${erroImagemCapa ?: ''}, desabilitado=false)}"></div>
 
       <div th:replace="~{fragments/textarea :: textarea(id='descricao', rotulo='Descrição', placeholder='Descreva o conteúdo, pré-requisitos e objetivos do curso', valor=${descricaoPreenchida ?: ''}, obrigatorio=true, mensagemErro=${erroDescricao ?: ''}, desabilitado=false)}"></div>
 
@@ -54,7 +58,7 @@
 
       <div th:replace="~{fragments/inputs :: input(id='data-fim', tipo='date', rotulo='Data de término (opcional)', placeholder='', valor=${dataFimPreenchida ?: ''}, obrigatorio=false, mensagemErro=${erroDataFim ?: ''}, desabilitado=false)}"></div>
 
-      <div th:replace="~{fragments/buttons :: botao(texto='Cadastrar curso', variante='primario', tamanho='grande', tipoBotao='submit')}"></div>
+      <div th:replace="~{fragments/buttons :: botao(texto=${editando ? 'Salvar alterações' : 'Cadastrar curso'}, variante='primario', tamanho='grande', tipoBotao='submit')}"></div>
 
     </form>
   </div>

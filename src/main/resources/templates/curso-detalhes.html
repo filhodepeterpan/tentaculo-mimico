@@ -40,16 +40,24 @@
   <p class="curso-detalhes__descricao" th:text="${curso.descricao}">Descrição do curso</p>
 
   <a th:href="@{/perfil/professor/{id}(id=${curso.professorId})}" class="curso-detalhes__professor">
-    <img th:if="${curso.professorFotoPerfil != null and !curso.professorFotoPerfil.isEmpty()}" th:src="@{${curso.professorFotoPerfil}}" th:alt="'Foto de ' + ${curso.professorNome}" class="curso-detalhes__professor-foto">
-    <span th:unless="${curso.professorFotoPerfil != null and !curso.professorFotoPerfil.isEmpty()}" class="curso-detalhes__professor-foto curso-detalhes__professor-foto--vazia" aria-hidden="true">
+    <!-- Exibe a foto do professor (se houver no curso ou no objeto professor) -->
+    <img th:if="${(professor != null and professor.fotoPerfil != null and !professor.fotoPerfil.isEmpty()) or (curso.professorFotoPerfil != null and !curso.professorFotoPerfil.isEmpty())}"
+         th:src="${professor != null and professor.fotoPerfil != null ? professor.fotoPerfil : curso.professorFotoPerfil}"
+         th:alt="'Foto de ' + ${professor != null ? professor.nome : curso.professorNome}"
+         class="curso-detalhes__professor-foto">
+
+    <span th:unless="${(professor != null and professor.fotoPerfil != null and !professor.fotoPerfil.isEmpty()) or (curso.professorFotoPerfil != null and !curso.professorFotoPerfil.isEmpty())}"
+          class="curso-detalhes__professor-foto curso-detalhes__professor-foto--vazia"
+          aria-hidden="true">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="8" r="4"/>
         <path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/>
       </svg>
     </span>
+
     <span class="curso-detalhes__professor-textos">
       <span class="curso-detalhes__professor-rotulo">Professor(a)</span>
-      <span class="curso-detalhes__professor-nome" th:text="${curso.professorNome}">Nome do professor</span>
+      <span class="curso-detalhes__professor-nome" th:text="${professor != null ? professor.nome : curso.professorNome}">Nome do professor</span>
     </span>
   </a>
 

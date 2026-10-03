@@ -80,6 +80,10 @@ public class CursoService {
     private boolean existeConflitoParaProfessor(Curso cursoNovo) {
         List<Curso> existentes = cursoRepository.findByProfessorId(cursoNovo.getProfessorId());
         for (Curso existente : existentes) {
+            // Na edição, o próprio curso já está no banco: não conflita consigo mesmo.
+            if (existente.getId() != null && existente.getId().equals(cursoNovo.getId())) {
+                continue;
+            }
             if (cursosConflitam(cursoNovo, existente)) {
                 return true;
             }
@@ -91,10 +95,12 @@ public class CursoService {
     // Cadastro
     // =========================================================================
 
-    public Curso criarCurso(String nome, String descricao, String cargaHoraria,
-                            String preco, String vagasTotais, List<String> diasSemana,
-                            String horaInicio, String horaFim,
-                            String dataInicio, String dataFim, String urlImagem) {
+    // Lê e valida os campos do formulário (cadastro e edição usam o mesmo).
+    // Não mexe em dono, status nem datas de cadastro: isso é de quem chama.
+    private Curso lerFormulario(String nome, String descricao, String cargaHoraria,
+                                String preco, String vagasTotais, List<String> diasSemana,
+                                String horaInicio, String horaFim,
+                                String dataInicio, String dataFim, String urlImagem) {
 
         if (nome == null || nome.isBlank()) {
             throw new RuntimeException("Informe o nome do curso.");
@@ -152,15 +158,26 @@ public class CursoService {
             throw new RuntimeException("Dados inválidos no formulário. Confira números, datas, horários e dias da semana.");
         }
 
+        return curso;
+    }
+
+    public Curso criarCurso(String nome, String descricao, String cargaHoraria,
+                            String preco, String vagasTotais, List<String> diasSemana,
+                            String horaInicio, String horaFim,
+                            String dataInicio, String dataFim, String urlImagem) {
+
+        Curso curso = lerFormulario(nome, descricao, cargaHoraria, preco, vagasTotais,
+                diasSemana, horaInicio, horaFim, dataInicio, dataFim, urlImagem);
+
         curso.setDataCadastro(LocalDate.now());
         curso.setStatus(StatusCurso.DISPONIVEL);
         curso.setAtivo(true);
-        curso.setProfessorId(professorLogadoProvider.obterProfessorIdAtual());
-        curso.setProfessorNome(professorLogadoProvider.obterProfessorNomeAtual());
-        Usuario professor = sessaoService.usuarioLogado();
-        if (professor != null) {
-            curso.setProfessorFotoPerfil(professor.getFotoPerfil());
-        }
+        // O dono do curso é sempre quem está logado na sessão. Antes vinha do
+        // ProfessorLogadoProvider, que devolvia um professor de teste fixo.
+        Usuario professor = sessaoService.exigirUsuarioLogado();
+        curso.setProfessorId(professor.getId());
+        curso.setProfessorNome(professor.getNome());
+        curso.setProfessorFotoPerfil(professor.getFotoPerfil());
 
         return curso;
     }
@@ -172,6 +189,65 @@ public class CursoService {
 
         Curso curso = criarCurso(nome, descricao, cargaHoraria, preco, vagasTotais,
                 diasSemana, horaInicio, horaFim, dataInicio, dataFim, urlImagem);
+
+        if (existeConflitoParaProfessor(curso)) {
+            throw new RuntimeException("Já existe um curso seu nesse horário.");
+        }
+
+        return cursoRepository.save(curso);
+    }
+
+    // =========================================================================
+    // Edição
+    // =========================================================================
+
+    /** Carrega o curso para edição, só se o usuário logado for o dono (ou admin). */
+    public Curso buscarParaEdicao(String cursoId) {
+        Usuario logado = sessaoService.exigirUsuarioLogado();
+        Curso curso = cursoRepository.findById(cursoId)
+                .orElseThrow(() -> new RuntimeException("Curso não encontrado"));
+
+        boolean ehAdmin = "ADMINISTRADOR".equalsIgnoreCase(logado.getTipoUsuario().name());
+        boolean ehDono = logado.getId().equals(curso.getProfessorId());
+        if (!ehAdmin && !ehDono) {
+            throw new RuntimeException("Você não tem permissão para editar este curso.");
+        }
+        return curso;
+    }
+
+    /**
+     * Atualiza os dados do curso. Dono, status e data de cadastro não mudam.
+     * A imagem de capa só é trocada se vier uma nova (urlImagem != null).
+     * Vagas: o total não pode ficar menor que as vagas já ocupadas, e as
+     * disponíveis são recalculadas a partir disso.
+     */
+    public Curso atualizarCurso(String cursoId, String nome, String descricao, String cargaHoraria,
+                                String preco, String vagasTotais, List<String> diasSemana,
+                                String horaInicio, String horaFim,
+                                String dataInicio, String dataFim, String urlImagem) {
+
+        Curso curso = buscarParaEdicao(cursoId);
+        Curso editado = lerFormulario(nome, descricao, cargaHoraria, preco, vagasTotais,
+                diasSemana, horaInicio, horaFim, dataInicio, dataFim, urlImagem);
+
+        int vagasOcupadas = curso.getVagasTotais() - curso.getVagasDisponiveis();
+        if (editado.getVagasTotais() < vagasOcupadas) {
+            throw new RuntimeException("Este curso já tem " + vagasOcupadas
+                    + " vaga(s) ocupada(s); o total de vagas não pode ser menor que isso.");
+        }
+
+        curso.setNome(editado.getNome());
+        curso.setDescricao(editado.getDescricao());
+        curso.setCargaHoraria(editado.getCargaHoraria());
+        curso.setPreco(editado.getPreco());
+        curso.setVagasTotais(editado.getVagasTotais());
+        curso.setVagasDisponiveis(editado.getVagasTotais() - vagasOcupadas);
+        curso.setHorarios(editado.getHorarios());
+        curso.setDataInicio(editado.getDataInicio());
+        curso.setDataFim(editado.getDataFim());
+        if (urlImagem != null) {
+            curso.setImagemCapa(urlImagem);
+        }
 
         if (existeConflitoParaProfessor(curso)) {
             throw new RuntimeException("Já existe um curso seu nesse horário.");

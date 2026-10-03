@@ -1,0 +1,102 @@
+@import url(../root.css);
+@import url(../global.css);
+
+.perfil-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 24px;
+    background: var(--color-surface-container-low);
+    border: 1px solid var(--color-outline-variant);
+    border-radius: 16px;
+    color: var(--color-on-surface);
+    font-family: var(--fonte-padrao);
+}
+
+.perfil-cabecalho__identidade {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-width: 0;
+}
+
+.perfil-cabecalho__foto {
+    flex-shrink: 0;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-primary);
+    background: var(--color-surface-container-highest);
+}
+
+.perfil-cabecalho__foto--vazia {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-on-primary-container);
+    background: var(--color-primary-container);
+}
+
+.perfil-cabecalho__textos {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.perfil-cabecalho__rotulo {
+    font-size: var(--tipo-legenda-tamanho);
+    line-height: var(--tipo-legenda-altura-linha);
+    letter-spacing: var(--tipo-legenda-espacamento);
+    font-weight: var(--tipo-label-md-peso-enfatizado);
+    text-transform: uppercase;
+    color: var(--color-primary);
+}
+
+.perfil-cabecalho__nome {
+    margin: 0;
+    font-size: var(--tipo-titulo-topo-tamanho);
+    line-height: var(--tipo-titulo-topo-altura-linha);
+    letter-spacing: var(--tipo-titulo-topo-espacamento);
+    font-weight: var(--tipo-titulo-topo-peso);
+    color: var(--color-on-surface);
+    overflow-wrap: anywhere;
+}
+
+.perfil-cabecalho__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+/* Mobile: até 767px */
+@media (max-width: 767px) {
+    .perfil-cabecalho {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px;
+    }
+
+    .perfil-cabecalho__identidade {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .perfil-cabecalho__foto {
+        width: 72px;
+        height: 72px;
+    }
+
+    .perfil-cabecalho__nome {
+        font-size: var(--tipo-headline-sm-tamanho);
+        line-height: var(--tipo-headline-sm-altura-linha);
+    }
+
+    .perfil-cabecalho__acoes {
+        width: 100%;
+    }
+}

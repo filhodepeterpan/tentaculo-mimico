@@ -2,6 +2,7 @@ package br.com.tentaculomimico.controller;
 
 import br.com.tentaculomimico.model.Curso;
 import br.com.tentaculomimico.model.Usuario;
+import br.com.tentaculomimico.model.enums.Provedor;
 import br.com.tentaculomimico.model.view.AlunoMatriculadoView;
 import br.com.tentaculomimico.model.view.AlunoPendenteView;
 import br.com.tentaculomimico.repository.CursoRepository;
@@ -16,10 +17,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 // URLs deste controller:
-//   GET  /perfil-aluno/{id}       GET  /perfil-professor/{id}
-//   GET  /perfil-editar           POST /perfil-editar
+//   GET  /perfil/aluno/{id}       GET  /perfil/professor/{id}
+//   GET  /perfil/editar           POST /perfil/editar
 //   POST /perfil-excluir
 //
 // PREMISSAS assumidas neste controller (o back deve se adaptar a elas):
@@ -33,7 +35,7 @@ import java.util.List;
 //   - CursoRepository precisa do método findByProfessorId(String).
 //   - MatriculaService precisa de: listarCursosDoAluno(alunoId),
 //     listarAlunosMatriculados(professorId), listarAlunosPendentes(professorId).
-//   - PerfilService precisa de: atualizarDadosPessoais(nome, fotoPerfil) e
+//   - PerfilService precisa de: atualizarPerfil(...) e
 //     excluirContaDoUsuarioLogado() — este último deve respeitar RN011/012/019.
 @Controller
 public class PerfilController {
@@ -120,22 +122,56 @@ public class PerfilController {
 
     @GetMapping("/perfil/editar")
     public String editarPerfil(Model model) {
-        model.addAttribute("usuario", sessaoService.usuarioLogado());
+        Usuario usuario = sessaoService.usuarioLogado();
+        if (usuario == null) {
+            return "redirect:/login";
+        }
+
+        preencherEdicao(model, usuario,
+                usuario.getNome(),
+                usuario.getEmail(),
+                formatarCpf(usuario.getCpf()),
+                usuario.getDataNascimento() != null ? usuario.getDataNascimento().toString() : "");
         return "perfil-editar";
     }
 
-    @PostMapping("/perfil-editar")
+    @PostMapping("/perfil/editar")
     public String salvarEdicaoPerfil(
             @RequestParam("nome") String nome,
+            @RequestParam("email") String email,
+            @RequestParam("cpf") String cpf,
+            @RequestParam("data-nascimento") String dataNascimento,
+            @RequestParam(value = "senha-atual", required = false) String senhaAtual,
+            @RequestParam(value = "nova-senha", required = false) String novaSenha,
+            @RequestParam(value = "confirmar-nova-senha", required = false) String confirmarNovaSenha,
             @RequestParam(value = "foto-perfil", required = false) MultipartFile fotoPerfil,
             Model model
     ) {
+        Usuario logado = sessaoService.usuarioLogado();
+        if (logado == null) {
+            return "redirect:/login";
+        }
+
         try {
-            perfilService.atualizarDadosPessoais(nome, fotoPerfil);
-            return "redirect:/perfil-editar";
+            perfilService.atualizarPerfil(nome, email, cpf, dataNascimento,
+                    senhaAtual, novaSenha, confirmarNovaSenha, fotoPerfil);
+
+            String tipo = "PROFESSOR".equalsIgnoreCase(logado.getTipoUsuario().name()) ? "professor" : "aluno";
+            return "redirect:/perfil/" + tipo + "/" + logado.getId();
+        } catch (PerfilService.DadosInvalidosException e) {
+            Map<String, String> erros = e.getErros();
+            model.addAttribute("erroNome", erros.get("nome"));
+            model.addAttribute("erroEmail", erros.get("email"));
+            model.addAttribute("erroCpf", erros.get("cpf"));
+            model.addAttribute("erroDataNascimento", erros.get("dataNascimento"));
+            model.addAttribute("erroSenhaAtual", erros.get("senhaAtual"));
+            model.addAttribute("erroNovaSenha", erros.get("novaSenha"));
+            model.addAttribute("erroConfirmarNovaSenha", erros.get("confirmarNovaSenha"));
+            preencherEdicao(model, logado, nome, email, cpf, dataNascimento);
+            return "perfil-editar";
         } catch (RuntimeException e) {
             model.addAttribute("erroGeral", e.getMessage());
-            model.addAttribute("usuario", sessaoService.usuarioLogado());
+            preencherEdicao(model, logado, nome, email, cpf, dataNascimento);
             return "perfil-editar";
         }
     }
@@ -144,6 +180,34 @@ public class PerfilController {
     public String excluirConta() {
         perfilService.excluirContaDoUsuarioLogado();
         return "redirect:/login";
+    }
+
+    // Campos do formulário de edição: no GET vêm do usuário salvo; no POST com
+    // erro voltam com o que a pessoa digitou. "contaLocal" esconde a seção de
+    // senha pra quem entra com Google (não tem senha local).
+    private void preencherEdicao(Model model, Usuario usuario, String nome, String email,
+                                 String cpf, String dataNascimento) {
+        boolean contaLocal = usuario.getAutenticacao() == null
+                || usuario.getAutenticacao().getProvedor() == Provedor.LOCAL;
+
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("contaLocal", contaLocal);
+        model.addAttribute("nomePreenchido", nome);
+        model.addAttribute("emailPreenchido", email);
+        model.addAttribute("cpfPreenchido", cpf);
+        model.addAttribute("dataNascimentoPreenchida", dataNascimento);
+    }
+
+    // O CPF é guardado só com dígitos; na tela aparece como 000.000.000-00.
+    private String formatarCpf(String cpf) {
+        if (cpf == null) {
+            return "";
+        }
+        String d = cpf.replaceAll("\\D", "");
+        if (d.length() != 11) {
+            return cpf;
+        }
+        return d.substring(0, 3) + "." + d.substring(3, 6) + "." + d.substring(6, 9) + "-" + d.substring(9);
     }
 
     private String formatarData(Usuario usuario) {

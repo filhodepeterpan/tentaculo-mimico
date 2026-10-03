@@ -18,26 +18,38 @@
 .perfil-cabecalho__identidade {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
     min-width: 0;
 }
 
-.perfil-cabecalho__foto {
-    flex-shrink: 0;
-    width: 96px;
-    height: 96px;
+/* Foto sempre num círculo: tamanho fixo, quadrada e recortada com object-fit.
+   O seletor com dois níveis garante que nenhum reset de img do global.css
+   (width: 100%, height: auto...) desfaça o formato. */
+.perfil-cabecalho .perfil-cabecalho__foto {
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    width: 64px;
+    height: 64px;
+    max-width: none;
+    aspect-ratio: 1 / 1;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid var(--color-primary);
+    overflow: hidden;
+    border: 2px solid var(--color-primary);
     background: var(--color-surface-container-highest);
 }
 
-.perfil-cabecalho__foto--vazia {
+.perfil-cabecalho .perfil-cabecalho__foto--vazia {
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--color-on-primary-container);
     background: var(--color-primary-container);
+}
+
+.perfil-cabecalho__foto--vazia svg {
+    width: 60%;
+    height: 60%;
 }
 
 .perfil-cabecalho__textos {
@@ -86,9 +98,9 @@
         gap: 12px;
     }
 
-    .perfil-cabecalho__foto {
-        width: 72px;
-        height: 72px;
+    .perfil-cabecalho .perfil-cabecalho__foto {
+        width: 56px;
+        height: 56px;
     }
 
     .perfil-cabecalho__nome {

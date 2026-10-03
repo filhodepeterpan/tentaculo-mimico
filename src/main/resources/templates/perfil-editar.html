@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" th:href="@{/css/pages/perfil-editar.css}">
+    <link rel="stylesheet" th:href="@{/css/pages/perfil-editar-senha.css}">
     <title>Tentáculo Mímico</title>
 </head>
 <body>
@@ -20,7 +21,29 @@
 
             <div th:replace="~{fragments/imagem :: imagem(id='foto-perfil', rotulo='Foto de perfil (opcional)', obrigatorio=false, mensagemErro=${erroFotoPerfil ?: ''}, desabilitado=false)}"></div>
 
-            <div th:replace="~{fragments/inputs :: input(id='nome', tipo='text', rotulo='Nome completo', placeholder='Seu nome completo', valor=${usuario.nome ?: ''}, obrigatorio=true, mensagemErro=${erroNome ?: ''}, desabilitado=false)}"></div>
+            <div th:replace="~{fragments/inputs :: input(id='nome', tipo='text', rotulo='Nome completo', placeholder='Seu nome completo', valor=${nomePreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroNome ?: ''}, desabilitado=false)}"></div>
+
+            <div th:replace="~{fragments/inputs :: input(id='email', tipo='email', rotulo='E-mail', placeholder='seu@email.com', valor=${emailPreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroEmail ?: ''}, desabilitado=false)}"></div>
+
+            <div th:replace="~{fragments/inputs :: input(id='cpf', tipo='text', rotulo='CPF', placeholder='000.000.000-00', valor=${cpfPreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroCpf ?: ''}, desabilitado=false)}"></div>
+
+            <div th:replace="~{fragments/inputs :: input(id='data-nascimento', tipo='date', rotulo='Data de nascimento', placeholder='', valor=${dataNascimentoPreenchida ?: ''}, obrigatorio=true, mensagemErro=${erroDataNascimento ?: ''}, desabilitado=false)}"></div>
+
+            <!-- Senha: só pra conta local. Em branco = mantém a senha atual. -->
+            <fieldset class="perfil-editar__senha" th:if="${contaLocal}">
+                <legend class="campo__rotulo">Alterar senha (opcional)</legend>
+                <p class="perfil-editar__ajuda">Deixe os campos em branco para manter a senha atual.</p>
+
+                <div th:replace="~{fragments/senha :: campoSenha(id='senha-atual', rotulo='Senha atual', placeholder='Digite sua senha atual', obrigatorio=false, mensagemErro=${erroSenhaAtual ?: ''}, desabilitado=false)}"></div>
+
+                <div th:replace="~{fragments/senha :: campoSenha(id='nova-senha', rotulo='Nova senha', placeholder='Crie uma nova senha', obrigatorio=false, mensagemErro=${erroNovaSenha ?: ''}, desabilitado=false)}"></div>
+
+                <div th:replace="~{fragments/senha :: campoSenha(id='confirmar-nova-senha', rotulo='Confirmar nova senha', placeholder='Digite a nova senha novamente', obrigatorio=false, mensagemErro=${erroConfirmarNovaSenha ?: ''}, desabilitado=false)}"></div>
+            </fieldset>
+
+            <p class="perfil-editar__ajuda" th:unless="${contaLocal}">
+                Sua conta usa login com Google, então a senha é gerenciada por lá.
+            </p>
 
             <div th:replace="~{fragments/buttons :: botao(texto='Salvar alterações', variante='primario', tamanho='grande', tipoBotao='submit')}"></div>
 

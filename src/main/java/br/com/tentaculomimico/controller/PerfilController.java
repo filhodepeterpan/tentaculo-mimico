@@ -54,7 +54,7 @@ public class PerfilController {
         this.sessaoService = sessaoService;
     }
 
-    @GetMapping("/perfil-aluno/{id}")
+    @GetMapping("/perfil/aluno/{id}")
     public String perfilAluno(@PathVariable String id, Model model) {
         Usuario usuarioLogado = sessaoService.usuarioLogado();
 
@@ -82,7 +82,7 @@ public class PerfilController {
         return "perfil-aluno";
     }
 
-    @GetMapping("/perfil-professor/{id}")
+    @GetMapping("/perfil/professor/{id}")
     public String perfilProfessor(@PathVariable String id, Model model) {
         Usuario usuarioLogado = sessaoService.usuarioLogado();
 
@@ -118,7 +118,7 @@ public class PerfilController {
         return "perfil-professor";
     }
 
-    @GetMapping("/perfil-editar")
+    @GetMapping("/perfil/editar")
     public String editarPerfil(Model model) {
         model.addAttribute("usuario", sessaoService.usuarioLogado());
         return "perfil-editar";

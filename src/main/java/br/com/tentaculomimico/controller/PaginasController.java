@@ -23,6 +23,11 @@ public class PaginasController {
         return "contato";
     }
 
+    @GetMapping("/doacoes")
+    public String doacoes() {
+        return "doacoes";
+    }
+
     @GetMapping("/login")
     public String login() {
         return "login";
@@ -31,12 +36,17 @@ public class PaginasController {
     @GetMapping("/componentes")
     public String componentes() { return "exemplos-componentes"; }
 
-    @GetMapping("/cadastro-curso")
-    public String cadastroCursos() { return "cadastro-curso"; }
-
+    // O back ainda precisa: ler o token da query string, validar contra o
+    // banco (existe? não expirou? não foi usado?) e então colocar no model
+    // emailConfirmado=true/false e, se false, mensagemErro com o motivo.
+    // Sem isso, a página sempre cai no estado de erro (fallback seguro).
     @GetMapping("/confirmar-email")
-    public String confirmarEmail() { return "confirmar-email"; }
+    public String confirmarEmail() {
+        return "confirmar-email";
+    }
 
-    @GetMapping("/doacoes")
-    public String doacoes() { return "doacoes"; }
+    @GetMapping("/acesso-negado")
+    public String acessoNegado() {
+        return "acesso-negado";
+    }
 }

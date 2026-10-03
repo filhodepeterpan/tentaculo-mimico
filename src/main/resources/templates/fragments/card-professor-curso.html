@@ -11,9 +11,17 @@
   </a>
 
   <div class="curso-card__rodape">
-    <div th:if="${status == 'disponivel'}" th:replace="~{fragments/badge :: badge(texto='Disponível', variante='sucesso')}"></div>
-    <div th:if="${status == 'indisponivel'}" th:replace="~{fragments/badge :: badge(texto='Indisponível', variante='erro')}"></div>
-    <div th:if="${status == 'rascunho'}" th:replace="~{fragments/badge :: badge(texto='Rascunho', variante='atencao')}"></div>
+    <!-- th:replace roda antes de th:if no mesmo elemento, então o if fica num th:block.
+         status chega como enum (StatusCurso), por isso compara pelo name() em maiúsculas. -->
+    <th:block th:if="${status != null and status.name() == 'DISPONIVEL'}">
+      <div th:replace="~{fragments/badge :: badge(texto='Disponível', variante='sucesso')}"></div>
+    </th:block>
+    <th:block th:if="${status != null and status.name() == 'INDISPONIVEL'}">
+      <div th:replace="~{fragments/badge :: badge(texto='Indisponível', variante='erro')}"></div>
+    </th:block>
+    <th:block th:if="${status != null and status.name() == 'RASCUNHO'}">
+      <div th:replace="~{fragments/badge :: badge(texto='Rascunho', variante='atencao')}"></div>
+    </th:block>
   </div>
 
 </div>

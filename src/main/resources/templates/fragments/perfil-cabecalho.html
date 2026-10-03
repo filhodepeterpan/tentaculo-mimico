@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  Cabeçalho de perfil (aluno e professor).
+  Uso:
+    <div th:replace="~{fragments/perfil-cabecalho :: cabecalho(nome=${...}, tipoUsuario='professor', fotoPerfil=${...}, ehPerfilProprio=${...})}"></div>
+
+  Parâmetros:
+    nome            nome exibido
+    tipoUsuario     'professor' ou 'aluno' (minúsculo)
+    fotoPerfil      URL da foto (pode ser null/vazia: mostra avatar padrão)
+    ehPerfilProprio true = mostra "Editar perfil" e "Excluir conta"
+                    (o modal 'modal-excluir-conta' precisa existir na página)
+-->
+<th:block th:fragment="cabecalho(nome, tipoUsuario, fotoPerfil, ehPerfilProprio)">
+    <link rel="stylesheet" th:href="@{/css/components/perfil-cabecalho.css}">
+
+    <header class="perfil-cabecalho">
+        <div class="perfil-cabecalho__identidade">
+            <img th:if="${fotoPerfil != null and !fotoPerfil.isEmpty()}"
+                 th:src="${fotoPerfil}"
+                 th:alt="'Foto de ' + ${nome}"
+                 class="perfil-cabecalho__foto">
+
+            <span th:unless="${fotoPerfil != null and !fotoPerfil.isEmpty()}"
+                  class="perfil-cabecalho__foto perfil-cabecalho__foto--vazia"
+                  aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/>
+                </svg>
+            </span>
+
+            <div class="perfil-cabecalho__textos">
+                <span class="perfil-cabecalho__rotulo"
+                      th:text="${tipoUsuario == 'professor' ? 'Professor(a)' : 'Aluno(a)'}">Professor(a)</span>
+                <h1 class="perfil-cabecalho__nome" th:text="${nome}">Nome do usuário</h1>
+            </div>
+        </div>
+
+        <div class="perfil-cabecalho__acoes" th:if="${ehPerfilProprio != null and ehPerfilProprio}">
+            <a th:href="@{/perfil/editar}" class="botao botao--neutro botao--pequeno">Editar perfil</a>
+            <button type="button" class="botao botao--perigo botao--pequeno"
+                    data-modal-abrir="modal-excluir-conta">Excluir conta</button>
+        </div>
+    </header>
+</th:block>
+
+</body>
+</html>

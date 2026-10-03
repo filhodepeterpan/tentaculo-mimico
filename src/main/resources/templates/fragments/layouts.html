@@ -1,82 +1,90 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <body>
-        <header th:fragment="header" class="site-header">
-            <a th:href="@{/}" class="brand">
-                <img
-                    class="brand__img"
-                    th:src="@{/img/brand.svg}"
-                    alt="Tentáculo Mimico"
-                />
+<body>
+<header th:fragment="header" class="site-header">
+    <a th:href="@{/}" class="brand">
+        <img
+                class="brand__img"
+                th:src="@{/img/brand.svg}"
+                alt="Tentáculo Mímico"
+        />
+    </a>
+    <nav class="main-nav" aria-label="Navegação principal">
+        <ul>
+            <li><a class="title-medium" th:href="@{/}">Início</a></li>
+            <li>
+                <a class="title-medium" th:href="@{/sobre}">Sobre</a>
+            </li>
+            <li>
+                <a class="title-medium" th:href="@{/cursos}">Cursos</a>
+            </li>
+            <li>
+                <a class="title-medium" th:href="@{/contato}">Contato</a>
+            </li>
+            <!-- Oculta links de Cadastro/Login da navegação central se estiver logado -->
+            <li th:if="${usuarioLogado == null}">
+                <a class="title-medium" th:href="@{/cadastro}">Cadastro</a>
+            </li>
+            <li th:if="${usuarioLogado == null}">
+                <a class="title-medium" th:href="@{/login}">Login</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="site-header__actions">
+        <!-- Se NÃO estiver logado: exibe botões de Entrar e Registrar-se -->
+        <th:block th:if="${usuarioLogado == null}">
+            <div th:replace="~{fragments/buttons :: botao_link(texto='Entrar', variante='neutro', tamanho='grande', caminho='/login')}"></div>
+            <div th:replace="~{fragments/buttons :: botao_link(texto='Registrar-se', variante='primario', tamanho='grande', caminho='/cadastro')}"></div>
+        </th:block>
+
+        <!-- Se ESTIVER logado: exibe nome, foto e redireciona de acordo com o TipoUsuario -->
+        <th:block th:if="${usuarioLogado != null}">
+            <a th:href="@{${usuarioLogado.tipoUsuario.name() == 'PROFESSOR' ? '/perfil/professor/' : '/perfil/aluno/'} + ${usuarioLogado.id}}"
+               class="user-profile-button"
+               style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit;">
+
+                <span class="user-profile-name title-medium" th:text="${usuarioLogado.nome}">Nome do Usuário</span>
+
+                <!-- Exibe a foto cadastrada ou uma foto avatar padrão -->
+                <img th:src="${usuarioLogado.fotoPerfil != null ? usuarioLogado.fotoPerfil : '/img/default-avatar.png'}"
+                     alt="Foto de perfil"
+                     style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color, #4A90E2);" />
             </a>
-            <nav class="main-nav" aria-label="Navegação principal">
-                <ul>
-                    <li><a class="title-medium" th:href="@{/}">Início</a></li>
-                    <li>
-                        <a class="title-medium" th:href="@{/sobre}">Sobre</a>
-                    </li>
-                    <li>
-                        <a class="title-medium" th:href="@{/cursos}">Cursos</a>
-                    </li>
-                    <li>
-                        <a class="title-medium" th:href="@{/contato}"
-                            >Contato</a
-                        >
-                    </li>
-                    <li>
-                        <a class="title-medium" th:href="@{/cadastro}"
-                            >Cadastro</a
-                        >
-                    </li>
-                    <li>
-                        <a class="title-medium" th:href="@{/login}">Login</a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="site-header__actions">
-                <div
-                    th:replace="~{fragments/buttons :: botao_link(texto='Entrar', variante='neutro', tamanho='grande', caminho='/login')}"
-                />
-                <div
-                    th:replace="~{fragments/buttons :: botao_link(texto='Registrar-se', variante='primario', tamanho='grande', caminho='/cadastro')}"
-                />
-            </div>
-        </header>
-        <footer th:fragment="footer" class="site-footer">
-            <a th:href="@{/}" class="brand">
-                <img
-                    class="brand__img"
-                    th:src="@{/img/brand_dark.svg}"
-                    alt="Tentáculo Mimico"
-                />
-            </a>
-            <!-- Asssim que tiver tempo remova a tag "main-nav" e estilize o footer de forma independente -->
-            <nav
-                class="footer-nav main-nav"
-                aria-label="Links de navegação do rodapé"
-            >
-                <ul>
-                    <li><a class="title-medium" th:href="@{/}">Início</a></li>
-                    <li>
-                        <a class="title-medium" th:href="@{/cursos}">Cursos</a>
-                    </li>
-                    <li>
-                        <a class="title-medium" th:href="@{/sobre}">Sobre</a>
-                    </li>
-                    <li>
-                        <a class="title-medium" th:href="@{/cadastro}"
-                            >Cadastro</a
-                        >
-                    </li>
-                    <li>
-                        <a class="title-medium" th:href="@{/contato}"
-                            >Contato</a
-                        >
-                    </li>
-                </ul>
-            </nav>
-            <p>&copy; 2026 Tentáculo Mímico. Todos os direitos reservados.</p>
-            <div th:replace="~{fragments/modal-cpf :: modalCpf()}"></div>
-        </footer>
-    </body>
+        </th:block>
+    </div>
+</header>
+
+<footer th:fragment="footer" class="site-footer">
+    <a th:href="@{/}" class="brand">
+        <img
+                class="brand__img"
+                th:src="@{/img/brand_dark.svg}"
+                alt="Tentáculo Mímico"
+        />
+    </a>
+    <nav
+            class="footer-nav main-nav"
+            aria-label="Links de navegação do rodapé"
+    >
+        <ul>
+            <li><a class="title-medium" th:href="@{/}">Início</a></li>
+            <li>
+                <a class="title-medium" th:href="@{/cursos}">Cursos</a>
+            </li>
+            <li>
+                <a class="title-medium" th:href="@{/sobre}">Sobre</a>
+            </li>
+            <li th:if="${usuarioLogado == null}">
+                <a class="title-medium" th:href="@{/cadastro}">Cadastro</a>
+            </li>
+            <li>
+                <a class="title-medium" th:href="@{/contato}">Contato</a>
+            </li>
+        </ul>
+    </nav>
+    <p>&copy; 2026 Tentáculo Mímico. Todos os direitos reservados.</p>
+    <div th:replace="~{fragments/modal-cpf :: modalCpf()}"></div>
+</footer>
+</body>
 </html>

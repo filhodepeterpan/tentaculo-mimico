@@ -1,7 +1,10 @@
 package br.com.tentaculomimico.controller;
 
 import br.com.tentaculomimico.dto.LoginRequestDTO;
+import br.com.tentaculomimico.model.Usuario;
+import br.com.tentaculomimico.repository.UsuarioRepository;
 import br.com.tentaculomimico.service.AuthService;
+import br.com.tentaculomimico.service.SessaoService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final SessaoService sessaoService; // <-- Adicionado
+    private final UsuarioRepository usuarioRepository; // <-- Adicionado
 
     @PostMapping("/login")
     public String login(
@@ -25,6 +30,10 @@ public class AuthController {
     ) {
         try {
             String token = authService.autenticar(email, senha);
+            Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
+            if (usuario != null) {
+                sessaoService.iniciarSessao(usuario);
+            }
 
             // Se usar Cookies para guardar o token JWT na aplicação Server-Side:
             Cookie cookie = new Cookie("jwt", token);
@@ -34,8 +43,8 @@ public class AuthController {
 
             return "redirect:/cursos";
         } catch (Exception e) {
-            model.addAttribute("erro", "E-mail ou senha inválidos.");
-            return "login"; // Retorna para a tela de login exibindo o erro
+            model.addAttribute("erroGeral", "E-mail ou senha inválidos.");
+            return "login";
         }
     }
 

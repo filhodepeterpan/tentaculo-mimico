@@ -11,5 +11,8 @@ public interface UsuarioRepository extends MongoRepository<Usuario, String> {
 
     Optional<Usuario> findByEmail(String email);
 
+    // Usado na edição de perfil pra impedir CPF repetido (o CPF é guardado só com dígitos).
+    Optional<Usuario> findByCpf(String cpf);
+
     Optional<Usuario> findByTokenRecuperacaoSenha(String tokenRecuperacaoSenha);
 }

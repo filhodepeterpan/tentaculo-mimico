@@ -156,25 +156,42 @@ public class AuthService {
         usuarioRepository.save(usuario);
     }
 
-    public String autenticarComGoogle(String email, String nome) {
+    /**
+     * Usado pelo OAuth2LoginSucessoHandler depois que o Google autenticou a pessoa.
+     * Cria a conta (como ALUNO) no primeiro acesso; nos seguintes, só devolve a existente.
+     */
+    public Usuario obterOuCriarUsuarioGoogle(String email, String nome, String googleId) {
         Optional<Usuario> optionalUsuario = usuarioRepository.findByEmail(email);
-        Usuario usuario;
 
         if (optionalUsuario.isPresent()) {
-            usuario = optionalUsuario.get();
-        } else {
-            usuario = new Usuario();
-            usuario.setEmail(email);
-            usuario.setNome(nome);
-            usuario.setTipoUsuario(TipoUsuario.ALUNO);
+            Usuario usuario = optionalUsuario.get();
+            Autenticacao auth = usuario.getAutenticacao();
 
-            Autenticacao auth = new Autenticacao();
-            auth.setProvedor(Provedor.GOOGLE);
-            usuario.setAutenticacao(auth);
+            // Conta criada com senha: não vinculamos ao Google automaticamente, porque o
+            // e-mail dela nunca foi confirmado (ver observação na resposta).
+            if (auth == null || auth.getProvedor() != Provedor.GOOGLE) {
+                throw new RuntimeException("Já existe uma conta com este e-mail. Entre com e-mail e senha.");
+            }
 
-            usuario = usuarioRepository.save(usuario);
+            if (auth.getProvedorId() == null) {
+                auth.setProvedorId(googleId);
+                usuarioRepository.save(usuario);
+            } else if (!auth.getProvedorId().equals(googleId)) {
+                throw new RuntimeException("Esta conta está vinculada a outra conta Google.");
+            }
+            return usuario;
         }
 
-        return jwtTokenProvider.gerarToken(usuario.getEmail(), usuario.getTipoUsuario().toString());
+        Usuario usuario = new Usuario();
+        usuario.setEmail(email);
+        usuario.setNome(nome);
+        usuario.setTipoUsuario(TipoUsuario.ALUNO);
+
+        Autenticacao auth = new Autenticacao();
+        auth.setProvedor(Provedor.GOOGLE);
+        auth.setProvedorId(googleId);
+        usuario.setAutenticacao(auth);
+
+        return usuarioRepository.save(usuario);
     }
 }

@@ -43,6 +43,7 @@
 
         <div class="perfil-cabecalho__acoes" th:if="${ehPerfilProprio != null and ehPerfilProprio}">
             <a th:href="@{/perfil/editar}" class="botao botao--neutro botao--pequeno">Editar perfil</a>
+            <a th:href="@{/logout}" class="botao botao--neutro botao--pequeno">Encerrar Sessão</a>
             <button type="button" class="botao botao--perigo botao--pequeno"
                     data-modal-abrir="modal-excluir-conta">Excluir conta</button>
         </div>

@@ -27,18 +27,15 @@ public class MatriculaService {
 
     private final MatriculaRepository matriculaRepository;
     private final CursoRepository cursoRepository;
-    private final AlunoLogadoProvider alunoLogadoProvider;
     private final SessaoService sessaoService;
     private final UsuarioRepository usuarioRepository;
 
     public MatriculaService(MatriculaRepository matriculaRepository,
                             CursoRepository cursoRepository,
-                            AlunoLogadoProvider alunoLogadoProvider,
                             SessaoService sessaoService,
                             UsuarioRepository usuarioRepository) {
         this.matriculaRepository = matriculaRepository;
         this.cursoRepository = cursoRepository;
-        this.alunoLogadoProvider = alunoLogadoProvider;
         this.sessaoService = sessaoService;
         this.usuarioRepository = usuarioRepository;
     }
@@ -59,8 +56,10 @@ public class MatriculaService {
             throw new RuntimeException("Curso lotado");
         }
 
-        String alunoId = alunoLogadoProvider.obterAlunoIdAtual();
-        String alunoNome = alunoLogadoProvider.obterAlunoNomeAtual();
+        // Aluno = usuário realmente logado (o mesmo id que o perfil-aluno consulta depois).
+        Usuario aluno = sessaoService.exigirUsuarioLogado();
+        String alunoId = aluno.getId();
+        String alunoNome = aluno.getNome();
 
         // Matrículas CANCELADAS não impedem uma nova solicitação (o histórico fica preservado).
         List<Matricula> matriculasExistentes = matriculaRepository.findByAlunoIdAndCursoId(alunoId, cursoId);
@@ -201,7 +200,10 @@ public class MatriculaService {
         return views;
     }
 
-    /** Solicitações em processo: pendentes de aprovação e aprovadas aguardando pagamento. */
+    /**
+     * Solicitações pendentes de aprovação do professor. Depois que ele aceita (AGUARDANDO_PAGAMENTO)
+     * ou recusa, a solicitação sai desta lista e o contador de notificação diminui.
+     */
     public List<AlunoPendenteView> listarAlunosPendentes(String professorId) {
         Map<String, Curso> cursos = cursosDoProfessor(professorId);
         if (cursos.isEmpty()) {
@@ -209,8 +211,7 @@ public class MatriculaService {
         }
         List<AlunoPendenteView> views = new ArrayList<>();
         for (Matricula m : matriculaRepository.findByCursoIdIn(cursos.keySet())) {
-            StatusMatricula st = m.getStatusMatricula();
-            if (st != StatusMatricula.PENDENTE && st != StatusMatricula.AGUARDANDO_PAGAMENTO) {
+            if (m.getStatusMatricula() != StatusMatricula.PENDENTE) {
                 continue;
             }
             Usuario aluno = usuarioRepository.findById(m.getAlunoId()).orElse(null);
@@ -220,7 +221,7 @@ public class MatriculaService {
                     aluno != null ? aluno.getFotoPerfil() : null,
                     aluno != null ? aluno.getEmail() : null,
                     m.getId(),
-                    st == StatusMatricula.PENDENTE ? "Pendente de aprovação" : "Aguardando pagamento",
+                    "Pendente de aprovação",
                     cursos.get(m.getCursoId()).getNome()));
         }
         return views;

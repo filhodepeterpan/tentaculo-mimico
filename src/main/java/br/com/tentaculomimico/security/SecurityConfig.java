@@ -21,7 +21,6 @@ public class SecurityConfig {
     //  Por último, desliga um bloqueio padrão do Spring porque vamos usar
     //  os nossos próprios Tokens.
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -29,15 +28,46 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/", "/login", "/cadastro", "/sobre", "/contato", "/cursos", "/cursos/**", "/curso-detalhes", "/curso-detalhes/**", "/cadastro-curso", "/doacoes", "/perfil-aluno/**", "/perfil/**", "/perfil/professor/**", "/perfil/aluno/**", "/perfil-professor/**", "/perfil-editar", "/perfil-excluir", "/matriculas/**").permitAll()
-                        .requestMatchers("/css/**", "/js/**", "/img/**", "/webjars/**", "/favicon.ico").permitAll()
-                        .requestMatchers("/error").permitAll()
-                        .anyRequest().authenticated()
-                );
+        http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth ->
+            auth
+                .requestMatchers("/api/auth/**")
+                .permitAll()
+                .requestMatchers(
+                    "/",
+                    "/login",
+                    "/cadastro",
+                    "/sobre",
+                    "/contato",
+                    "/cursos",
+                    "/cursos/**",
+                    "/curso-detalhes",
+                    "/curso-detalhes/**",
+                    "/cadastro-curso",
+                    "/doacoes",
+                    "/perfil-aluno/**",
+                    "/perfil/**",
+                    "/perfil/professor/**",
+                    "/perfil/aluno/**",
+                    "/perfil-professor/**",
+                    "/perfil-editar",
+                    "/perfil-excluir",
+                    "/matriculas/**",
+                    "/sair"
+                )
+                .permitAll()
+                .requestMatchers(
+                    "/css/**",
+                    "/js/**",
+                    "/img/**",
+                    "/webjars/**",
+                    "/favicon.ico"
+                )
+                .permitAll()
+                .requestMatchers("/error")
+                .permitAll()
+                .anyRequest()
+                .authenticated()
+        );
 
         return http.build();
     }

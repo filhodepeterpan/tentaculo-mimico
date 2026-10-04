@@ -55,6 +55,8 @@ public class AuthService {
         System.out.println("Hash carregado do Mongo: '" + hashDoBanco + "'");
 
         // 3. Valida a senha usando o PasswordEncoder
+        // OBS: O BLOCO ABAIXO FARÁ COM QUE O VALOR DE "senha correta" SEJA IRRELEVANTE
+        // (a partir da próxima sprint passaremos a utilizar Injeção de Dependências: Definir `interface AuthService` e criar duas classes `AuthServiceProd` e `AuthServiceMock`})
         boolean senhaCorreta = passwordEncoder.matches(senhaTratada, hashDoBanco);
         System.out.println("Resultado do BCrypt matches: " + senhaCorreta);
         System.out.println("================================");

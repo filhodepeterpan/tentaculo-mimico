@@ -14,6 +14,8 @@
 @import url(componentes/landing-card.css);
 @import url(componentes/badge.css);
 @import url(componentes/imagem.css);
+@import url(componentes/aluno-item.css);
+@import url(componentes/modal-responder-matricula.css);
 @import url(utilitarios/fontes.css);
 
 /* CSS GLOBAL */

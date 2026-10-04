@@ -48,46 +48,8 @@ public class AuthService {
         String senhaTratada = senhaDigitada != null ? senhaDigitada.trim() : "";
         String hashDoBanco = usuario.getAutenticacao().getSenhaHash();
 
-        System.out.println("===== DIAGNÓSTICO DE LOGIN =====");
-        System.out.println("E-mail encontrado: " + usuario.getEmail());
-        System.out.println("Senha digitada (bruta): '" + senhaDigitada + "'");
-        System.out.println("Senha digitada (com trim): '" + senhaTratada + "'");
-        System.out.println("Hash carregado do Mongo: '" + hashDoBanco + "'");
-
         // 3. Valida a senha usando o PasswordEncoder
-        // OBS: O BLOCO ABAIXO FARÁ COM QUE O VALOR DE "senha correta" SEJA IRRELEVANTE
-        // (a partir da próxima sprint passaremos a utilizar Injeção de Dependências: Definir `interface AuthService` e criar duas classes `AuthServiceProd` e `AuthServiceMock`})
         boolean senhaCorreta = passwordEncoder.matches(senhaTratada, hashDoBanco);
-        System.out.println("Resultado do BCrypt matches: " + senhaCorreta);
-        System.out.println("================================");
-
-        // ====================================================================================
-        // ATENÇÃO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // BLOCO TEMPORÁRIO DE AUTO-REPARO DE SENHA DE TESTE (123456)
-        // REMOVER COMPLETAMENTE ESTE BLOCO ABAIXO ANTES DE IR PARA AMBIENTE DE PRODUÇÃO!
-        // INÍCIO DO BLOCO A REMOVER --->
-        // ====================================================================================
-        if (!senhaCorreta && "123456".equals(senhaTratada)) {
-            System.out.println(">>> REPARANDO HASH DE TESTE PARA A SENHA 123456...");
-            String novoHashNativo = passwordEncoder.encode("123456");
-
-            if (usuario.getAutenticacao() == null) {
-                usuario.setAutenticacao(new Autenticacao());
-            }
-            usuario.getAutenticacao().setSenhaHash(novoHashNativo);
-            usuario.getAutenticacao().setProvedor(Provedor.LOCAL);
-            usuario.setTentativasLoginFalhas(0);
-            usuario.setBloqueadoAte(null);
-
-            usuarioRepository.save(usuario);
-
-            System.out.println(">>> NOVO HASH GERADO PELA JVM E SALVO NO MONGO: " + novoHashNativo);
-            senhaCorreta = true;
-        }
-        // ====================================================================================
-        // <--- FIM DO BLOCO A REMOVER
-        // ATENÇÃO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // ====================================================================================
 
         if (!senhaCorreta) {
             int novasTentativas = usuario.getTentativasLoginFalhas() + 1;

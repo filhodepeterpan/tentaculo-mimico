@@ -1,0 +1,35 @@
+@import url(../root.css);
+@import url(../global.css);
+
+/* Complemento do perfil-editar.css: bloco "Alterar senha" e textos de ajuda. */
+
+.perfil-editar__senha {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 0;
+    padding: 16px;
+    border: 1px solid var(--color-outline-variant);
+    border-radius: 12px;
+    background: var(--color-surface-container-low);
+}
+
+.perfil-editar__senha > legend {
+    padding: 0 8px;
+}
+
+.perfil-editar__ajuda {
+    margin: 0;
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-legenda-tamanho);
+    line-height: var(--tipo-legenda-altura-linha);
+    letter-spacing: var(--tipo-legenda-espacamento);
+    color: var(--color-on-surface-variant);
+}
+
+/* Mobile: até 767px */
+@media (max-width: 767px) {
+    .perfil-editar__senha {
+        padding: 12px;
+    }
+}

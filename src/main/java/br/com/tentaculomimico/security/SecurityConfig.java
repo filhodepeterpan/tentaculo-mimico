@@ -32,16 +32,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // add CSS/JS p liberar o front
-                        .requestMatchers("/css/**", "/img/**", "/js/**", "/images/**", "/webjars/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/", "/login", "/cadastro", "/sobre", "/contato", "/cursos/**").permitAll()
+                        .requestMatchers("/", "/login", "/cadastro", "/sobre", "/contato", "/cursos", "/cursos/**", "/curso-detalhes", "/curso-detalhes/**", "/cadastro-curso", "/doacoes", "/perfil-aluno/**", "/perfil/**", "/perfil/professor/**", "/perfil/aluno/**", "/perfil-professor/**", "/perfil-editar", "/perfil-excluir", "/matriculas/**").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/img/**", "/webjars/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
-                )
-                // dizendo p spring Scurity aceitar o login c o google
-                .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
                 );
 
         return http.build();

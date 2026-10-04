@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/pages/perfil-aluno.css}">
+    <title>Tentáculo Mímico</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layouts :: header}"></div>
+
+<main class="perfil-aluno">
+
+    <div th:replace="~{fragments/perfil-cabecalho :: cabecalho(nome=${aluno.nome}, tipoUsuario='aluno', fotoPerfil=${aluno.fotoPerfil}, ehPerfilProprio=${ehPerfilProprio})}"></div>
+
+    <section class="perfil-info">
+        <h2 class="perfil-info__titulo">Dados pessoais</h2>
+        <div class="perfil-info__grid">
+            <div class="perfil-info__item">
+                <span class="perfil-info__rotulo">E-mail</span>
+                <span class="perfil-info__valor" th:text="${aluno.email}">email</span>
+            </div>
+            <div class="perfil-info__item">
+                <span class="perfil-info__rotulo">CPF</span>
+                <span class="perfil-info__valor" th:text="${aluno.cpf}">cpf</span>
+            </div>
+            <div class="perfil-info__item">
+                <span class="perfil-info__rotulo">Data de nascimento</span>
+                <span class="perfil-info__valor" th:text="${dataNascimentoFormatada}">data</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="perfil-aluno__cursos">
+        <div class="perfil-aluno__cursos-cabecalho">
+            <h2 class="perfil-info__titulo">Meus cursos</h2>
+            <div th:with="opcoesStatus=${T(java.util.List).of('Todos','Pendente','Aguardando pagamento','Matriculado','Recusada','Cancelada')}" class="perfil-aluno__filtro">
+                <div th:replace="~{fragments/select :: select(id='filtro-status', rotulo='Filtrar por status', placeholder='', opcoes=${opcoesStatus}, valorSelecionado='Todos', obrigatorio=false, desabilitado=false)}"></div>
+            </div>
+        </div>
+
+        <p th:if="${matriculas == null or matriculas.isEmpty()}" class="perfil-aluno__vazio">Você ainda não se matriculou em nenhum curso.</p>
+
+        <div class="cursos__grid">
+            <th:block th:each="matricula, matriculaStat : ${matriculas}">
+                <div th:replace="~{fragments/card-matricula :: cardMatricula(id=${matricula.cursoId}, nome=${matricula.cursoNome}, cargaHoraria=${matricula.cursoCargaHoraria}, indice=${matriculaStat.index}, imagemCapa=${matricula.cursoImagemCapa}, statusMatricula=${matricula.status}, matriculaId=${matricula.id})}"></div>
+            </th:block>
+        </div>
+    </section>
+
+</main>
+
+<th:block th:each="matricula : ${matriculas}" th:if="${matricula.status == 'ativa'}">
+    <div th:replace="~{fragments/modal :: modal(id='modal-desistir-' + ${matricula.id}, titulo='Desistir da matrícula?', mensagem='Você vai perder o acesso a este curso. Essa ação não pode ser desfeita.', textoCancelar='Cancelar', textoConfirmar='Desistir', varianteConfirmar='perigo')}"></div>
+</th:block>
+
+<th:block th:if="${ehPerfilProprio}">
+    <div th:replace="~{fragments/modal :: modal(id='modal-excluir-conta', titulo='Excluir sua conta?', mensagem='Essa ação não pode ser desfeita. Seus dados serão removidos conforme as políticas da plataforma.', textoCancelar='Cancelar', textoConfirmar='Excluir', varianteConfirmar='perigo')}"></div>
+</th:block>
+
+<form id="form-acao-perfil" method="post" hidden></form>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+<script type="module" th:src="@{/js/pages/perfil-aluno.js}"></script>
+</body>
+</html>

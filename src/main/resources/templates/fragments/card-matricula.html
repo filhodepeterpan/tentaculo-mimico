@@ -1,0 +1,23 @@
+<!-- cardMatricula(id, nome, cargaHoraria, indice, imagemCapa, statusMatricula, matriculaId) -->
+<div th:fragment="cardMatricula(id, nome, cargaHoraria, indice, imagemCapa, statusMatricula, matriculaId)" class="curso-card" th:attr="data-status=${statusMatricula}">
+
+  <a th:href="@{/cursos/{id}(id=${id})}" class="curso-card__link">
+    <img th:if="${imagemCapa != null and !imagemCapa.isEmpty()}" th:src="@{${imagemCapa}}" th:alt="'Capa do curso ' + ${nome}" class="curso-card__banner">
+    <div th:unless="${imagemCapa != null and !imagemCapa.isEmpty()}" class="curso-card__banner" th:classappend="'curso-card__banner--cor-' + ${indice % 6}"></div>
+    <div class="curso-card__conteudo">
+      <h3 class="curso-card__titulo" th:text="${nome}">Nome do curso</h3>
+      <p class="curso-card__info" th:text="${cargaHoraria} + ' horas'">Info</p>
+    </div>
+  </a>
+
+  <div class="curso-card__rodape">
+    <div th:if="${statusMatricula == 'pendente'}" th:replace="~{fragments/badge :: badge(texto='Aguardando aprovação', variante='atencao')}"></div>
+    <div th:if="${statusMatricula == 'recusada'}" th:replace="~{fragments/badge :: badge(texto='Matrícula recusada', variante='erro')}"></div>
+    <div th:if="${statusMatricula == 'cancelada'}" th:replace="~{fragments/badge :: badge(texto='Cancelada', variante='neutro')}"></div>
+
+    <a th:if="${statusMatricula == 'aceita_aguardando_pagamento'}" th:href="@{/pagamentos/{id}(id=${matriculaId})}" class="botao botao--primario botao--pequeno">Pagar</a>
+
+    <button th:if="${statusMatricula == 'ativa'}" type="button" class="botao botao--perigo botao--pequeno" th:attr="data-modal-abrir=${'modal-desistir-' + matriculaId}">Desistir da matrícula</button>
+  </div>
+
+</div>

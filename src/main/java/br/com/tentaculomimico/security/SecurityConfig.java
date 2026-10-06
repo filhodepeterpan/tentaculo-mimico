@@ -52,7 +52,13 @@ public class SecurityConfig {
                     "/perfil-editar",
                     "/perfil-excluir",
                     "/matriculas/**",
-                    "/sair"
+                    "/sair",
+                    "/api/admin/**",
+                    "/admin",
+                    "/admin-alunos",
+                    "/admin-professores",
+                    "/admin-cursos",
+                     "/acesso-negado"
                 )
                 .permitAll()
                 .requestMatchers(

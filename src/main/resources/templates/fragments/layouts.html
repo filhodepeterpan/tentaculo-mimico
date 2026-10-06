@@ -38,18 +38,29 @@
             <div th:replace="~{fragments/buttons :: botao_link(texto='Registrar-se', variante='primario', tamanho='grande', caminho='/cadastro')}"></div>
         </th:block>
 
-        <!-- Se ESTIVER logado: exibe nome, foto e redireciona de acordo com o TipoUsuario -->
+        <!-- Se ESTIVER logado: administrador vai para o painel, professor e aluno para o perfil -->
         <th:block th:if="${usuarioLogado != null}">
-            <a th:href="@{${usuarioLogado.tipoUsuario.name() == 'PROFESSOR' ? '/perfil/professor/' : '/perfil/aluno/'} + ${usuarioLogado.id}}"
+            <a th:href="${usuarioLogado.tipoUsuario.name() == 'ADMINISTRADOR'}
+                        ? @{/admin}
+                        : (${usuarioLogado.tipoUsuario.name() == 'PROFESSOR'}
+                            ? @{/perfil/professor/{id}(id=${usuarioLogado.id})}
+                            : @{/perfil/aluno/{id}(id=${usuarioLogado.id})})"
                class="user-profile-button"
                style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit;">
 
                 <span class="user-profile-name title-medium" th:text="${usuarioLogado.nome}">Nome do Usuário</span>
 
-                <!-- Exibe a foto cadastrada ou uma foto avatar padrão -->
-                <img th:src="${usuarioLogado.fotoPerfil != null ? usuarioLogado.fotoPerfil : '/img/default-avatar.png'}"
+                <!-- Com foto: mostra a foto -->
+                <img th:if="${usuarioLogado.fotoPerfil != null and !#strings.isEmpty(usuarioLogado.fotoPerfil)}"
+                     th:src="${usuarioLogado.fotoPerfil}"
                      alt="Foto de perfil"
                      style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color, #4A90E2);" />
+
+                <!-- Sem foto: mostra a inicial do nome num círculo -->
+                <span th:unless="${usuarioLogado.fotoPerfil != null and !#strings.isEmpty(usuarioLogado.fotoPerfil)}"
+                      th:text="${#strings.toUpperCase(#strings.substring(usuarioLogado.nome, 0, 1))}"
+                      aria-hidden="true"
+                      style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: #e6d3f7; color: #5a1fa0; font-weight: 700; border: 2px solid var(--primary-color, #4A90E2);">A</span>
             </a>
         </th:block>
     </div>

@@ -178,6 +178,16 @@ public class PerfilController {
 
     @PostMapping("/perfil-excluir")
     public String excluirConta() {
+        Usuario logado = sessaoService.usuarioLogado();
+        if (logado == null) {
+            return "redirect:/login";
+        }
+
+        // Critério do TASK-62: administrador não pode excluir a própria conta.
+        if ("ADMINISTRADOR".equalsIgnoreCase(logado.getTipoUsuario().name())) {
+            return "redirect:/acesso-negado";
+        }
+
         perfilService.excluirContaDoUsuarioLogado();
         return "redirect:/login";
     }

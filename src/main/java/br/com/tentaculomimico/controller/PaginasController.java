@@ -1,12 +1,21 @@
 package br.com.tentaculomimico.controller;
 
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import br.com.tentaculomimico.model.Usuario;
+import br.com.tentaculomimico.service.SessaoService;
 
 // Fica separado do HomeController (que já cuida só da "/") pra não
 // dar conflito quando o time for juntar as branches.
 @Controller
 public class PaginasController {
+
+    private final SessaoService sessaoService;
+
+    public PaginasController(SessaoService sessaoService) {
+        this.sessaoService = sessaoService;
+    }
 
     @GetMapping("/sobre")
     public String sobre() {
@@ -16,6 +25,39 @@ public class PaginasController {
     @GetMapping("/cadastro")
     public String cadastro() {
         return "cadastro";
+    }
+
+    @GetMapping("/admin")
+    public String painelAdmin() {
+        return paginaDeAdmin("painel-admin");
+    }
+
+    @GetMapping("/admin-alunos")
+    public String adminAlunos() {
+        return paginaDeAdmin("admin-alunos");
+    }
+
+    @GetMapping("/admin-professores")
+    public String adminProfessores() {
+        return paginaDeAdmin("admin-professores");
+    }
+
+    @GetMapping("/admin-cursos")
+    public String adminCursos() {
+        return paginaDeAdmin("admin-cursos");
+    }
+
+    // Devolve a página só se quem pediu é administrador.
+    private String paginaDeAdmin(String template) {
+        Usuario logado = sessaoService.usuarioLogado();
+
+        if (logado == null) {
+            return "redirect:/login";
+        }
+        if (!"ADMINISTRADOR".equalsIgnoreCase(logado.getTipoUsuario().name())) {
+            return "redirect:/acesso-negado";
+        }
+        return template;
     }
 
     @GetMapping("/contato")

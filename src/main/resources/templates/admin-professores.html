@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/pages/painel-admin.css}">
+    <title>Gestão de professores</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layouts :: header}"></div>
+
+<main class="painel-admin">
+    <a th:href="@{/admin}">← Voltar ao painel</a>
+    <h1 class="painel-admin__titulo">Gestão de professores</h1>
+
+    <p id="erro" hidden></p>
+    <ul id="lista"></ul>
+</main>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+<script>
+    fetch('/api/admin/professores', { credentials: 'same-origin' })
+        .then(r => {
+            if (!r.ok) throw new Error('Não foi possível carregar os professores.');
+            return r.json();
+        })
+        .then(professores => {
+            const lista = document.getElementById('lista');
+            professores.forEach(p => {
+                const li = document.createElement('li');
+                const cursos = (p.cursos || []).map(c => c.nome).join(', ') || 'sem cursos';
+                li.textContent = p.nome + ' (' + p.email + ') - ' + cursos;
+                lista.append(li);
+            });
+        })
+        .catch(e => {
+            const erro = document.getElementById('erro');
+            erro.textContent = e.message;
+            erro.hidden = false;
+        });
+</script>
+</body>
+</html>

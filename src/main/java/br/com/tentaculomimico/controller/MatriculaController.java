@@ -21,19 +21,19 @@ public class MatriculaController {
     @PostMapping("/matriculas/{id}/aceitar")
     public String aceitarMatricula(@PathVariable String id, Model model) {
         String cursoId = matriculaService.aceitar(id);
-        return "redirect:/perfil-professor/" + obterProfessorDoCurso(cursoId);
+        return "redirect:/perfil/professor/" + obterProfessorDoCurso(cursoId);
     }
 
     @PostMapping("/matriculas/{id}/recusar")
     public String recusarMatricula(@PathVariable String id, Model model) {
         String cursoId = matriculaService.recusar(id);
-        return "redirect:/perfil-professor/" + obterProfessorDoCurso(cursoId);
+        return "redirect:/perfil/professor/" + obterProfessorDoCurso(cursoId);
     }
 
     @PostMapping("/matriculas/{id}/cancelar")
     public String cancelarMatricula(@PathVariable String id) {
         matriculaService.cancelar(id);
-        return "redirect:/perfil-aluno/" + matriculaService.obterAlunoDaMatricula(id);
+        return "redirect:/perfil/aluno/" + matriculaService.obterAlunoDaMatricula(id);
     }
 
     // Auxiliar só pra montar o redirect de volta pro perfil do professor

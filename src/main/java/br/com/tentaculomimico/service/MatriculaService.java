@@ -13,7 +13,9 @@ import br.com.tentaculomimico.repository.MatriculaRepository;
 import br.com.tentaculomimico.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,18 +27,15 @@ public class MatriculaService {
 
     private final MatriculaRepository matriculaRepository;
     private final CursoRepository cursoRepository;
-    private final AlunoLogadoProvider alunoLogadoProvider;
     private final SessaoService sessaoService;
     private final UsuarioRepository usuarioRepository;
 
     public MatriculaService(MatriculaRepository matriculaRepository,
                             CursoRepository cursoRepository,
-                            AlunoLogadoProvider alunoLogadoProvider,
                             SessaoService sessaoService,
                             UsuarioRepository usuarioRepository) {
         this.matriculaRepository = matriculaRepository;
         this.cursoRepository = cursoRepository;
-        this.alunoLogadoProvider = alunoLogadoProvider;
         this.sessaoService = sessaoService;
         this.usuarioRepository = usuarioRepository;
     }
@@ -57,11 +56,16 @@ public class MatriculaService {
             throw new RuntimeException("Curso lotado");
         }
 
-        String alunoId = alunoLogadoProvider.obterAlunoIdAtual();
-        String alunoNome = alunoLogadoProvider.obterAlunoNomeAtual();
+        // Aluno = usuário realmente logado (o mesmo id que o perfil-aluno consulta depois).
+        Usuario aluno = sessaoService.exigirUsuarioLogado();
+        String alunoId = aluno.getId();
+        String alunoNome = aluno.getNome();
 
+        // Matrículas CANCELADAS não impedem uma nova solicitação (o histórico fica preservado).
         List<Matricula> matriculasExistentes = matriculaRepository.findByAlunoIdAndCursoId(alunoId, cursoId);
-        if (!matriculasExistentes.isEmpty()) {
+        boolean jaTemMatricula = matriculasExistentes.stream()
+                .anyMatch(m -> m.getStatusMatricula() != StatusMatricula.CANCELADA);
+        if (jaTemMatricula) {
             throw new RuntimeException("Matricula já registrada anteriormente");
         }
 
@@ -84,6 +88,7 @@ public class MatriculaService {
 
         curso.setVagasDisponiveis(curso.getVagasDisponiveis() - 1);
         matricula.setStatusMatricula(StatusMatricula.AGUARDANDO_PAGAMENTO);
+        matricula.setDataRespostaProfessor(LocalDateTime.now());
 
         cursoRepository.save(curso);
         matriculaRepository.save(matricula);
@@ -101,6 +106,7 @@ public class MatriculaService {
         }
 
         matricula.setStatusMatricula(StatusMatricula.RECUSADA);
+        matricula.setDataRespostaProfessor(LocalDateTime.now());
         matriculaRepository.save(matricula);
         return curso.getId();
     }
@@ -129,6 +135,8 @@ public class MatriculaService {
     private void cancelarInterno(Matricula matricula) {
         boolean ocupavaVaga = matricula.getStatusMatricula().ocupaVaga();
         matricula.setStatusMatricula(StatusMatricula.CANCELADA);
+        matricula.setAcessoLiberado(false);
+        matricula.setDataCancelamento(LocalDateTime.now());
         matriculaRepository.save(matricula);
 
         if (ocupavaVaga) {
@@ -150,7 +158,16 @@ public class MatriculaService {
         if (matriculas.isEmpty()) {
             return null;
         }
-        return paraView(matriculas.get(0), cursoRepository.findById(cursoId).orElse(null));
+        // Pode haver uma CANCELADA antiga e uma nova: a que vale é a não cancelada;
+        // se todas estiverem canceladas, a mais recente.
+        Matricula atual = matriculas.stream()
+                .filter(m -> m.getStatusMatricula() != StatusMatricula.CANCELADA)
+                .findFirst()
+                .orElseGet(() -> matriculas.stream()
+                        .max(Comparator.comparing(Matricula::getHorarioMatricula,
+                                Comparator.nullsFirst(Comparator.naturalOrder())))
+                        .get());
+        return paraView(atual, cursoRepository.findById(cursoId).orElse(null));
     }
 
     public List<MatriculaCursoView> listarCursosDoAluno(String alunoId) {
@@ -183,7 +200,10 @@ public class MatriculaService {
         return views;
     }
 
-    /** Solicitações em processo: pendentes de aprovação e aprovadas aguardando pagamento. */
+    /**
+     * Solicitações pendentes de aprovação do professor. Depois que ele aceita (AGUARDANDO_PAGAMENTO)
+     * ou recusa, a solicitação sai desta lista e o contador de notificação diminui.
+     */
     public List<AlunoPendenteView> listarAlunosPendentes(String professorId) {
         Map<String, Curso> cursos = cursosDoProfessor(professorId);
         if (cursos.isEmpty()) {
@@ -191,8 +211,7 @@ public class MatriculaService {
         }
         List<AlunoPendenteView> views = new ArrayList<>();
         for (Matricula m : matriculaRepository.findByCursoIdIn(cursos.keySet())) {
-            StatusMatricula st = m.getStatusMatricula();
-            if (st != StatusMatricula.PENDENTE && st != StatusMatricula.AGUARDANDO_PAGAMENTO) {
+            if (m.getStatusMatricula() != StatusMatricula.PENDENTE) {
                 continue;
             }
             Usuario aluno = usuarioRepository.findById(m.getAlunoId()).orElse(null);
@@ -202,7 +221,7 @@ public class MatriculaService {
                     aluno != null ? aluno.getFotoPerfil() : null,
                     aluno != null ? aluno.getEmail() : null,
                     m.getId(),
-                    st == StatusMatricula.PENDENTE ? "Pendente de aprovação" : "Aguardando pagamento",
+                    "Pendente de aprovação",
                     cursos.get(m.getCursoId()).getNome()));
         }
         return views;

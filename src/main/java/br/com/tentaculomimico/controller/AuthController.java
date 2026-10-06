@@ -70,18 +70,6 @@ public class AuthController {
         return ResponseEntity.ok("Senha atualizada com sucesso!");
     }
 
-    @PostMapping("/login/google")
-    public ResponseEntity<String> loginGoogle(
-        @RequestBody br.com.tentaculomimico.dto.GoogleLoginRequestDTO dadosGoogle
-    ) {
-        String token = authService.autenticarComGoogle(
-            dadosGoogle.email(),
-            dadosGoogle.nome()
-        );
-
-        return ResponseEntity.ok(token);
-    }
-
     @GetMapping("/sair")
     public ResponseEntity<String> logout(
         HttpServletResponse response,

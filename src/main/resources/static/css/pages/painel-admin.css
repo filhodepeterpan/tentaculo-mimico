@@ -1,6 +1,7 @@
 @import url(../root.css);
 @import url(../global.css);
 
+/* ===== Container principal */
 .painel-admin {
   max-width: 64rem;
   margin: 0 auto;
@@ -10,22 +11,56 @@
   gap: 1.25rem;
 }
 
+/* ====== Cabeçalho */
+.painel-admin__topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .painel-admin__titulo {
-  font-family: var(--fonte-padrao);
-  font-size: var(--tipo-headline-sm-tamanho);
-  line-height: var(--tipo-headline-sm-altura-linha);
-  font-weight: var(--tipo-headline-sm-peso-enfatizado);
-  color: var(--color-on-surface);
+  font-family: var(--fonte-editorial);
+  font-size: var(--tipo-editorial-display-tamanho);
+  line-height: var(--tipo-editorial-display-altura-linha);
+  font-weight: var(--tipo-editorial-display-peso);
   margin: 0;
 }
 
 .painel-admin__subtitulo {
   font-family: var(--fonte-padrao);
   font-size: var(--tipo-body-md-tamanho);
+  line-height: var(--tipo-body-md-altura-linha);
   color: var(--color-on-surface-variant);
   margin: 0;
 }
 
+.painel-admin__selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background: var(--color-secondary-container);
+  color: var(--color-on-secondary-container);
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-label-md-tamanho);
+  line-height: var(--tipo-label-md-altura-linha);
+  font-weight: 500;
+}
+
+/* ======== Título de seção */
+.painel-admin__secao-titulo {
+  font-family: var(--fonte-editorial);
+  font-size: var(--tipo-headline-sm-tamanho);
+  line-height: var(--tipo-headline-sm-altura-linha);
+  font-weight: 600;
+  color: var(--color-on-surface);
+  margin: 0;
+}
+
+/* ====== Mensagem de erro */
 #painel-erro {
   font-family: var(--fonte-padrao);
   font-size: var(--tipo-body-md-tamanho);
@@ -36,6 +71,7 @@
   margin: 0;
 }
 
+/* ====== Resumo */
 .painel-admin__resumo {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -44,23 +80,101 @@
 
 .painel-admin__card {
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
   padding: 1rem;
   border: 0.0625rem solid var(--color-on-surface);
   border-radius: 0.75rem;
   box-shadow: 0 0.25rem 0 var(--color-on-surface);
   font-family: var(--fonte-padrao);
+  background-color: var(--color-surface-container-low);
 }
 
+.painel-admin__card-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* ======= subtitulo */
 .painel-admin__card span {
-  font-size: var(--tipo-body-sm-tamanho);
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-label-md-tamanho);
+  line-height: var(--tipo-label-md-altura-linha);
   color: var(--color-on-surface-variant);
 }
 
+/* ======= numero */
 .painel-admin__card strong {
-  font-size: var(--tipo-headline-sm-tamanho);
-  line-height: var(--tipo-headline-sm-altura-linha);
-  font-weight: var(--tipo-headline-sm-peso-enfatizado);
+  font-family: var(--fonte-editorial);
+  font-size: var(--tipo-display-md-tamanho);
+  line-height: var(--tipo-display-md-altura-linha);
+  font-weight: var(--tipo-display-md-peso-enfatizado);
   color: var(--color-on-surface);
+}
+
+/* ======= Gestão */
+.painel-admin__gestao {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.painel-admin__gestao-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  border: 0.0625rem solid var(--color-on-surface);
+  border-radius: 0.75rem;
+  box-shadow: 0 0.25rem 0 var(--color-on-surface);
+  background-color: var(--color-surface-container-low);
+}
+
+.painel-admin__gestao-card .painel-admin__icone {
+  margin-bottom: 0.5rem;
+}
+
+.painel-admin__gestao-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.painel-admin__gestao-card h3 {
+  font-family: var(--fonte-editorial);
+  font-size: var(--tipo-title-lg-tamanho);
+  line-height: var(--tipo-title-lg-altura-linha);
+  font-weight: 600;
+  margin: 0;
+}
+
+.painel-admin__gestao-card p {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-sm-tamanho);
+  line-height: var(--tipo-body-sm-altura-linha);
+  color: var(--color-on-surface-variant);
+  margin: 0;
+}
+
+/* ===== Ícones */
+.painel-admin__icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+}
+
+.painel-admin__icone--lilas {
+  background: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+}
+
+.painel-admin__icone--amarelo {
+  background: var(--color-secondary-container);
+  color: var(--color-on-secondary-container);
 }

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" th:href="@{/css/pages/painel-admin.css}">
     <title>Painel administrativo</title>
 </head>
@@ -9,48 +11,131 @@
 <div th:replace="~{fragments/layouts :: header}"></div>
 
 <main class="painel-admin">
-    <h1 class="painel-admin__titulo">Painel administrativo</h1>
-    <p class="painel-admin__subtitulo">Gerencie usuários, cursos e a segurança da plataforma.</p>
+
+    <div class="painel-admin__topo">
+        <h1 class="painel-admin__titulo">Painel administrativo</h1>
+        <span class="painel-admin__selo">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>
+            </svg>
+            Acesso de administrador
+        </span>
+    </div>
+
+    <p class="painel-admin__subtitulo">
+        Gerencie usuários, cursos e a segurança da plataforma em um só lugar.
+    </p>
 
     <p id="painel-erro" hidden></p>
 
     <section class="painel-admin__resumo">
-        <div class="painel-admin__card"><span>Alunos</span><strong id="total-alunos">–</strong></div>
-        <div class="painel-admin__card"><span>Professores</span><strong id="total-professores">–</strong></div>
-        <div class="painel-admin__card"><span>Cursos ativos</span><strong id="total-cursos">–</strong></div>
-        <div class="painel-admin__card"><span>Matrículas</span><strong id="total-matriculas">–</strong></div>
+        <div class="painel-admin__card">
+            <span class="painel-admin__icone painel-admin__icone--lilas" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
+                </svg>
+            </span>
+            <div class="painel-admin__card-texto">
+                <span>Alunos</span>
+                <strong id="total-alunos">–</strong>
+            </div>
+        </div>
+
+        <div class="painel-admin__card">
+            <span class="painel-admin__icone painel-admin__icone--amarelo" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="12" rx="2"/>
+                    <path d="M8 21l4-5 4 5"/>
+                </svg>
+            </span>
+            <div class="painel-admin__card-texto">
+                <span>Professores</span>
+                <strong id="total-professores">–</strong>
+            </div>
+        </div>
+
+        <div class="painel-admin__card">
+            <span class="painel-admin__icone painel-admin__icone--lilas" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2z"/>
+                    <path d="M22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/>
+                </svg>
+            </span>
+            <div class="painel-admin__card-texto">
+                <span>Cursos ativos</span>
+                <strong id="total-cursos">–</strong>
+            </div>
+        </div>
+
+        <div class="painel-admin__card">
+            <span class="painel-admin__icone painel-admin__icone--amarelo" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="5" y="4" width="14" height="17" rx="2"/>
+                    <path d="M9 4h6v3H9zM9 14l2 2 4-4"/>
+                </svg>
+            </span>
+            <div class="painel-admin__card-texto">
+                <span>Matrículas</span>
+                <strong id="total-matriculas">–</strong>
+            </div>
+        </div>
     </section>
 
     <h2 class="painel-admin__secao-titulo">Gerenciar plataforma</h2>
 
     <section class="painel-admin__gestao">
-        <article class="painel-admin__gestao-card">
+        <div class="painel-admin__gestao-card">
             <span class="painel-admin__icone painel-admin__icone--lilas" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
+                </svg>
             </span>
-            <h3>Gestão de alunos</h3>
-            <p>Acompanhe todos os alunos cadastrados.</p>
-            <a class="painel-admin__botao" th:href="@{/admin-alunos}">Gerenciar</a>
-        </article>
+            <div class="painel-admin__gestao-texto">
+                <h3>Gestão de alunos</h3>
+                <p>Acompanhe todos os alunos cadastrados.</p>
+            </div>
+            <div th:replace="~{fragments/buttons :: botao_link(texto='Gerenciar', variante='primario', tamanho='pequeno', caminho='/admin-alunos')}"></div>
+        </div>
 
-        <article class="painel-admin__gestao-card">
+        <div class="painel-admin__gestao-card">
             <span class="painel-admin__icone painel-admin__icone--amarelo" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 21l4-5 4 5"/></svg>
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="12" rx="2"/>
+                    <path d="M8 21l4-5 4 5"/>
+                </svg>
             </span>
-            <h3>Gestão de professores</h3>
-            <p>Corpo docente da plataforma.</p>
-            <a class="painel-admin__botao" th:href="@{/admin-professores}">Gerenciar</a>
-        </article>
+            <div class="painel-admin__gestao-texto">
+                <h3>Gestão de professores</h3>
+                <p>Corpo docente da plataforma.</p>
+            </div>
+            <div th:replace="~{fragments/buttons :: botao_link(texto='Gerenciar', variante='primario', tamanho='pequeno', caminho='/admin-professores')}"></div>
+        </div>
 
-        <article class="painel-admin__gestao-card">
+        <div class="painel-admin__gestao-card">
             <span class="painel-admin__icone painel-admin__icone--lilas" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2z"/><path d="M22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/></svg>
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2z"/>
+                    <path d="M22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/>
+                </svg>
             </span>
-            <h3>Gestão de cursos</h3>
-            <p>Acompanhe os cursos e as turmas.</p>
-            <a class="painel-admin__botao" th:href="@{/admin-cursos}">Gerenciar</a>
-        </article>
+            <div class="painel-admin__gestao-texto">
+                <h3>Gestão de cursos</h3>
+                <p>Acompanhe os cursos e as turmas.</p>
+            </div>
+            <div th:replace="~{fragments/buttons :: botao_link(texto='Gerenciar', variante='primario', tamanho='pequeno', caminho='/admin-cursos')}"></div>
+        </div>
     </section>
+
 </main>
 
 <div th:replace="~{fragments/layouts :: footer}"></div>

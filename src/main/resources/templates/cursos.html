@@ -19,7 +19,10 @@
 
   <div class="cursos__grid">
     <th:block th:each="curso, cursoStat : ${cursos}">
-      <div th:replace="~{fragments/card :: card(id=${curso.id}, nome=${curso.nome}, cargaHoraria=${curso.cargaHoraria}, vagasDisponiveis=${curso.vagasDisponiveis}, indice=${cursoStat.index}, imagemCapa=${curso.imagemCapa})}"></div>
+      <th:block th:with="matriculaAluno=${matriculasPorCurso != null ? matriculasPorCurso.get(curso.id) : null},
+                         ehDono=${tipoUsuarioLogado == 'professor' and usuarioLogadoId != null and usuarioLogadoId == curso.professorId}">
+        <div th:replace="~{fragments/card :: card(id=${curso.id}, nome=${curso.nome}, cargaHoraria=${curso.cargaHoraria}, vagasDisponiveis=${curso.vagasDisponiveis}, indice=${cursoStat.index}, imagemCapa=${curso.imagemCapa}, statusMatricula=${matriculaAluno != null ? matriculaAluno.status : null}, matriculaId=${matriculaAluno != null ? matriculaAluno.id : null}, ehDono=${ehDono})}"></div>
+      </th:block>
     </th:block>
   </div>
 </main>

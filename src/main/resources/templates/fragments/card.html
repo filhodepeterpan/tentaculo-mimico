@@ -1,10 +1,21 @@
-<!-- card(id, nome, cargaHoraria, vagasDisponiveis, indice, imagemCapa) -->
-<div th:fragment="card(id, nome, cargaHoraria, vagasDisponiveis, indice, imagemCapa)" class="curso-card" th:attr="data-nome=${nome}">
+<!-- card(id, nome, cargaHoraria, vagasDisponiveis, indice, imagemCapa, statusMatricula, matriculaId, ehDono)
+     statusMatricula: null (sem matrícula/visitante/professor), 'pendente', 'aceita_aguardando_pagamento', 'ativa', 'recusada', 'cancelada'
+     ehDono: true quando quem vê é o professor dono do curso -->
+<div th:fragment="card(id, nome, cargaHoraria, vagasDisponiveis, indice, imagemCapa, statusMatricula, matriculaId, ehDono)" class="curso-card" th:attr="data-nome=${nome}">
   <img th:if="${imagemCapa != null and !imagemCapa.isEmpty()}" th:src="@{${imagemCapa}}" th:alt="'Capa do curso ' + ${nome}" class="curso-card__banner">
   <div th:unless="${imagemCapa != null and !imagemCapa.isEmpty()}" class="curso-card__banner" th:classappend="'curso-card__banner--cor-' + ${indice % 6}"></div>
   <div class="curso-card__conteudo">
     <h3 class="curso-card__titulo" th:text="${nome}">Nome do curso</h3>
     <p class="curso-card__info" th:text="${cargaHoraria} + 'h · ' + ${vagasDisponiveis} + ' vagas disponíveis'">Info</p>
-    <a th:href="@{/cursos/{id}(id=${id})}" class="botao botao--primario botao--pequeno">Matricular-se</a>
+
+    <a th:if="${ehDono}" th:href="@{/cursos/{id}(id=${id})}" class="botao botao--neutro botao--pequeno">Gerenciar</a>
+
+    <th:block th:unless="${ehDono}">
+      <a th:if="${statusMatricula == 'pendente'}" th:href="@{/cursos/{id}(id=${id})}" class="botao botao--atencao botao--pequeno">Ver status</a>
+      <a th:if="${statusMatricula == 'aceita_aguardando_pagamento'}" th:href="@{/pagamentos/{mid}(mid=${matriculaId})}" class="botao botao--primario botao--pequeno">Pagar</a>
+      <a th:if="${statusMatricula == 'ativa'}" th:href="@{/cursos/{id}(id=${id})}" class="botao botao--sucesso botao--pequeno">Ver curso</a>
+      <a th:if="${statusMatricula == 'recusada' or statusMatricula == 'cancelada'}" th:href="@{/cursos/{id}(id=${id})}" class="botao botao--primario botao--pequeno">Saiba mais</a>
+      <a th:if="${statusMatricula == null}" th:href="@{/cursos/{id}(id=${id})}" class="botao botao--primario botao--pequeno">Saiba mais</a>
+    </th:block>
   </div>
 </div>

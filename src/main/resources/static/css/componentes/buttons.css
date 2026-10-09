@@ -66,6 +66,16 @@
   color: var(--color-on-error);
 }
 
+.botao--sucesso {
+  background-color: var(--color-success-container);
+  color: var(--color-on-success-container);
+}
+
+.botao--atencao {
+  background-color: var(--color-warning-container);
+  color: var(--color-on-warning-container);
+}
+
 .botao--neutro {
   background-color: var(--color-surface-container-lowest);
   color: var(--color-on-surface);

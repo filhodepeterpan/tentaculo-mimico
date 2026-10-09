@@ -1,0 +1,261 @@
+@import url(../root.css);
+@import url(../global.css);
+
+/* Garante que [hidden] vença qualquer display definido em outros estilos (ex.: .campo__mensagem-erro). */
+.pagamento [hidden] {
+  display: none !important;
+}
+
+.pagamento {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.pagamento__voltar {
+  align-self: flex-start;
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-sm-tamanho);
+  color: var(--color-on-surface-variant);
+  text-decoration: none;
+}
+
+.pagamento__voltar:hover,
+.pagamento__voltar:focus-visible {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.pagamento__titulo {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-title-lg-tamanho);
+  font-weight: var(--tipo-title-lg-peso-enfatizado);
+  color: var(--color-on-surface);
+  margin: 0;
+}
+
+.pagamento__subtitulo {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-title-sm-tamanho);
+  font-weight: var(--tipo-title-sm-peso-enfatizado);
+  color: var(--color-on-surface);
+  margin: 0;
+}
+
+.pagamento__texto {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-lg-tamanho);
+  color: var(--color-on-surface-variant);
+  margin: 0;
+}
+
+.pagamento__aviso {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border: 0.0625rem dashed var(--color-outline);
+  border-radius: 0.5rem;
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-sm-tamanho);
+  color: var(--color-on-surface-variant);
+}
+
+/* ---- Layout: resumo + formas de pagamento ---- */
+
+.pagamento__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (min-width: 48rem) {
+  .pagamento__layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  }
+}
+
+.pagamento__resumo,
+.pagamento__painel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 0.0625rem solid var(--color-outline-variant);
+  border-radius: 0.75rem;
+}
+
+.pagamento__resumo-curso {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-lg-tamanho);
+  color: var(--color-on-surface);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.pagamento__resumo-linha {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.75rem;
+  border-top: 0.0625rem solid var(--color-outline-variant);
+}
+
+.pagamento__resumo-rotulo {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-sm-tamanho);
+  color: var(--color-on-surface-variant);
+}
+
+.pagamento__resumo-valor {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-title-sm-tamanho);
+  font-weight: var(--tipo-title-sm-peso-enfatizado);
+  color: var(--color-on-surface);
+}
+
+.pagamento__formas {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+/* ---- Escolha do método (mesmo padrão do tipo de cadastro) ---- */
+
+.pagamento__metodos {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pagamento__metodos-opcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  margin-top: 0.5rem;
+}
+
+/* ---- Pix ---- */
+
+.pagamento__pix {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (min-width: 40rem) {
+  .pagamento__pix {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+}
+
+/* O QR Code precisa de fundo claro e margem, inclusive no tema escuro, senão os leitores não o reconhecem. */
+.pagamento__qr {
+  box-sizing: border-box;
+  inline-size: min(100%, 14rem);
+  aspect-ratio: 1;
+  padding: 0.75rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  color: #000;
+}
+
+.pagamento__qr svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.pagamento__pix-lado {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.pagamento__passos {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-sm-tamanho);
+  color: var(--color-on-surface-variant);
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.pagamento__linha-botoes {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.pagamento__status {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-sm-tamanho);
+  color: var(--color-on-surface-variant);
+}
+
+.pagamento__tempo {
+  margin: 0;
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-sm-tamanho);
+  color: var(--color-on-surface-variant);
+}
+
+.pagamento__expirado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-lg-tamanho);
+  color: var(--color-on-surface);
+}
+
+.pagamento__expirado p {
+  margin: 0;
+}
+
+/* ---- Cartão ---- */
+
+.pagamento__linha-campos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+/* ---- Pagamento concluído ---- */
+
+.pagamento__concluido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.pagamento__concluido-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 5rem;
+  block-size: 5rem;
+  border-radius: 9999px;
+  border: 0.1875rem solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+.pagamento__acoes-finais {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}

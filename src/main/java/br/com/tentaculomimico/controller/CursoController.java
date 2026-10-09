@@ -58,6 +58,17 @@ public class CursoController {
     @GetMapping("/cursos")
     public String listarCursos(Model model) {
         model.addAttribute("cursos", cursoRepository.findAll());
+
+        // O botão de cada card depende de quem está olhando:
+        //  - aluno: o status da matrícula dele em cada curso (matriculasPorCurso: cursoId -> view);
+        //  - professor: se o curso é dele (compara curso.professorId com usuarioLogadoId no template).
+        Usuario logado = sessaoService.usuarioLogado();
+        String tipoUsuarioLogado = logado != null ? logado.getTipoUsuario().name().toLowerCase() : null;
+        model.addAttribute("tipoUsuarioLogado", tipoUsuarioLogado);
+        model.addAttribute("usuarioLogadoId", logado != null ? logado.getId() : null);
+        if ("aluno".equals(tipoUsuarioLogado)) {
+            model.addAttribute("matriculasPorCurso", matriculaService.mapaMatriculasDoAluno(logado.getId()));
+        }
         return "cursos";
     }
 

@@ -49,10 +49,6 @@
 
 </main>
 
-<th:block th:each="matricula : ${matriculas}" th:if="${matricula.status == 'ativa'}">
-    <div th:replace="~{fragments/modal :: modal(id='modal-desistir-' + ${matricula.id}, titulo='Desistir da matrícula?', mensagem='Você vai perder o acesso a este curso. Essa ação não pode ser desfeita.', textoCancelar='Cancelar', textoConfirmar='Desistir', varianteConfirmar='perigo')}"></div>
-</th:block>
-
 <th:block th:if="${ehPerfilProprio}">
     <div th:replace="~{fragments/modal :: modal(id='modal-excluir-conta', titulo='Excluir sua conta?', mensagem='Essa ação não pode ser desfeita. Seus dados serão removidos conforme as políticas da plataforma.', textoCancelar='Cancelar', textoConfirmar='Excluir', varianteConfirmar='perigo')}"></div>
 </th:block>

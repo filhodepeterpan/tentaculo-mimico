@@ -196,16 +196,33 @@ public class MatriculaService {
         if (matriculas.isEmpty()) {
             return null;
         }
-        // Pode haver uma CANCELADA antiga e uma nova: a que vale é a não cancelada;
-        // se todas estiverem canceladas, a mais recente.
-        Matricula atual = matriculas.stream()
+        return paraView(matriculaAtual(matriculas), cursoRepository.findById(cursoId).orElse(null));
+    }
+
+    /**
+     * Matrícula "atual" do aluno em cada curso (chave = cursoId), numa única consulta.
+     * Serve para a listagem de cursos decidir o botão de cada card. As views só trazem
+     * id e status preenchidos de verdade (nome/carga/capa do curso não são carregados aqui).
+     */
+    public Map<String, MatriculaCursoView> mapaMatriculasDoAluno(String alunoId) {
+        Map<String, List<Matricula>> porCurso = matriculaRepository.findByAlunoId(alunoId).stream()
+                .collect(Collectors.groupingBy(Matricula::getCursoId));
+
+        Map<String, MatriculaCursoView> mapa = new LinkedHashMap<>();
+        porCurso.forEach((cursoId, lista) -> mapa.put(cursoId, paraView(matriculaAtual(lista), null)));
+        return mapa;
+    }
+
+    // Pode haver uma CANCELADA antiga e uma nova: a que vale é a não cancelada;
+    // se todas estiverem canceladas, a mais recente.
+    private Matricula matriculaAtual(List<Matricula> matriculas) {
+        return matriculas.stream()
                 .filter(m -> m.getStatusMatricula() != StatusMatricula.CANCELADA)
                 .findFirst()
                 .orElseGet(() -> matriculas.stream()
                         .max(Comparator.comparing(Matricula::getHorarioMatricula,
                                 Comparator.nullsFirst(Comparator.naturalOrder())))
                         .get());
-        return paraView(atual, cursoRepository.findById(cursoId).orElse(null));
     }
 
     public List<MatriculaCursoView> listarCursosDoAluno(String alunoId) {

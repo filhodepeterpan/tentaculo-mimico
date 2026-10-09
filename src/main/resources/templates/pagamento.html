@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" th:href="@{/css/pages/pagamento.css}">
+  <title>Tentáculo Mímico</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layouts :: header}"></div>
+
+<main class="pagamento">
+
+  <!-- ===== Pagamento já concluído (matrícula ATIVA) ===== -->
+  <th:block th:if="${pagamentoConcluido}">
+    <section class="pagamento__concluido">
+      <div class="pagamento__concluido-icone" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+      <h1 class="pagamento__titulo">Pagamento confirmado!</h1>
+      <p class="pagamento__texto">
+        Sua matrícula em <strong th:text="${curso.nome}">Nome do curso</strong> está ativa e o acesso ao curso foi liberado.
+      </p>
+      <div class="pagamento__acoes-finais">
+        <a th:href="@{/cursos/{id}(id=${curso.id})}" class="botao botao--primario botao--grande">Ir para o curso</a>
+        <a th:href="@{/cursos}" class="botao botao--neutro botao--grande">Ver outros cursos</a>
+      </div>
+    </section>
+  </th:block>
+
+  <!-- ===== Escolha da forma de pagamento ===== -->
+  <th:block th:unless="${pagamentoConcluido}">
+
+    <a th:href="@{/cursos/{id}(id=${curso.id})}" class="pagamento__voltar">&larr; Voltar ao curso</a>
+
+    <h1 class="pagamento__titulo">Pagamento da matrícula</h1>
+
+    <th:block th:if="${erroPagamento != null}">
+      <div th:replace="~{fragments/alert :: alerta(titulo='Não foi possível concluir o pagamento', mensagem=${erroPagamento}, variante='erro')}"></div>
+    </th:block>
+
+    <p th:if="${pagamentoSimulado != null and pagamentoSimulado}" class="pagamento__aviso" role="note">
+      Ambiente de demonstração: nenhuma cobrança real é feita e nenhum dado de cartão é enviado ao servidor.
+    </p>
+
+    <div class="pagamento__layout">
+
+      <aside class="pagamento__resumo" aria-label="Resumo do pedido">
+        <h2 class="pagamento__subtitulo">Resumo</h2>
+        <p class="pagamento__resumo-curso" th:text="${curso.nome}">Nome do curso</p>
+        <div class="pagamento__resumo-linha">
+          <span class="pagamento__resumo-rotulo">Mensalidade</span>
+          <span class="pagamento__resumo-valor" th:text="'R$ ' + ${curso.preco}">R$ 0,00</span>
+        </div>
+      </aside>
+
+      <section class="pagamento__formas">
+
+        <fieldset class="pagamento__metodos">
+          <legend class="campo__rotulo">Forma de pagamento</legend>
+          <div class="pagamento__metodos-opcoes">
+            <div th:replace="~{fragments/radio :: radio(id='metodo-pix', name='metodo', valor='pix', rotulo='Pix', marcado=true, desabilitado=false)}"></div>
+            <div th:replace="~{fragments/radio :: radio(id='metodo-credito', name='metodo', valor='credito', rotulo='Cartão de crédito', marcado=false, desabilitado=false)}"></div>
+            <div th:replace="~{fragments/radio :: radio(id='metodo-debito', name='metodo', valor='debito', rotulo='Cartão de débito', marcado=false, desabilitado=false)}"></div>
+          </div>
+        </fieldset>
+
+        <!-- ----- Pix ----- -->
+        <div id="painel-pix" class="pagamento__painel">
+          <h2 class="pagamento__subtitulo">Pague com Pix</h2>
+
+          <div id="pix-area" class="pagamento__pix" th:attr="data-duracao=${pixExpiraEmSegundos ?: 900}">
+            <div id="pix-qr" class="pagamento__qr" th:attr="data-payload=${pixCopiaECola}"></div>
+
+            <div class="pagamento__pix-lado">
+              <ol class="pagamento__passos">
+                <li>Abra o app do seu banco e escolha pagar com Pix.</li>
+                <li>Escaneie o QR Code ou use o código “copia e cola”.</li>
+                <li>Confira o valor e confirme o pagamento.</li>
+              </ol>
+
+              <div class="campo">
+                <label for="pix-codigo" class="campo__rotulo">Pix copia e cola</label>
+                <input id="pix-codigo" type="text" class="campo__input" readonly th:value="${pixCopiaECola}">
+              </div>
+
+              <div class="pagamento__linha-botoes">
+                <button type="button" id="pix-copiar" class="botao botao--neutro botao--pequeno">Copiar código</button>
+                <span id="pix-copiar-status" class="pagamento__status" role="status" aria-live="polite"></span>
+              </div>
+
+              <p class="pagamento__tempo">O código expira em <strong id="pix-tempo">15:00</strong></p>
+            </div>
+          </div>
+
+          <div id="pix-expirado" class="pagamento__expirado" hidden role="alert">
+            <p>O código Pix expirou. Gere um novo para continuar.</p>
+            <a th:href="@{/pagamentos/{id}(id=${matriculaId})}" class="botao botao--primario botao--pequeno">Gerar novo código</a>
+          </div>
+
+          <button type="button" id="pix-confirmar" class="botao botao--primario botao--grande">Já fiz o pagamento</button>
+        </div>
+
+        <!-- ----- Cartão (crédito ou débito) -----
+             Estes campos ficam de propósito FORA de qualquer <form>: assim o navegador nunca os envia
+             ao servidor, nem por engano (por exemplo se o JS falhar). Só o formulário oculto no fim da
+             página é enviado, e ele leva apenas o método escolhido. -->
+        <div id="painel-cartao" class="pagamento__painel" hidden>
+          <h2 id="cartao-titulo" class="pagamento__subtitulo">Cartão de crédito</h2>
+
+          <div class="campo">
+            <label for="cartao-numero" class="campo__rotulo">Número do cartão</label>
+            <input id="cartao-numero" type="text" class="campo__input" inputmode="numeric" autocomplete="cc-number"
+                   maxlength="19" placeholder="0000 0000 0000 0000">
+            <p id="cartao-numero-erro" class="campo__mensagem-erro" hidden></p>
+          </div>
+
+          <div class="campo">
+            <label for="cartao-nome" class="campo__rotulo">Nome impresso no cartão</label>
+            <input id="cartao-nome" type="text" class="campo__input" autocomplete="cc-name"
+                   maxlength="60" placeholder="Como aparece no cartão">
+            <p id="cartao-nome-erro" class="campo__mensagem-erro" hidden></p>
+          </div>
+
+          <div class="pagamento__linha-campos">
+            <div class="campo">
+              <label for="cartao-validade" class="campo__rotulo">Validade</label>
+              <input id="cartao-validade" type="text" class="campo__input" inputmode="numeric" autocomplete="cc-exp"
+                     maxlength="5" placeholder="MM/AA">
+              <p id="cartao-validade-erro" class="campo__mensagem-erro" hidden></p>
+            </div>
+
+            <div class="campo">
+              <label for="cartao-cvv" class="campo__rotulo">Código de segurança</label>
+              <input id="cartao-cvv" type="password" class="campo__input" inputmode="numeric" autocomplete="cc-csc"
+                     maxlength="4" placeholder="CVV">
+              <p id="cartao-cvv-erro" class="campo__mensagem-erro" hidden></p>
+            </div>
+          </div>
+
+          <button type="button" id="cartao-confirmar" class="botao botao--primario botao--grande"
+                  th:text="'Pagar R$ ' + ${curso.preco}">Pagar</button>
+        </div>
+
+      </section>
+    </div>
+
+    <form id="form-pagamento" method="post" th:action="@{/pagamentos/{id}/confirmar(id=${matriculaId})}" hidden>
+      <input type="hidden" name="metodo" id="campo-metodo" value="pix">
+    </form>
+
+  </th:block>
+</main>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+<script type="module" th:src="@{/js/pages/pagamento.js}"></script>
+</body>
+</html>

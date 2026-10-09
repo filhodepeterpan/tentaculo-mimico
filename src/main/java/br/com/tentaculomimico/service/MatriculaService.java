@@ -111,6 +111,44 @@ public class MatriculaService {
         return curso.getId();
     }
 
+    /**
+     * Matrícula que o aluno logado está pagando. Lança se não existir ou se não for dele
+     * (impede abrir /pagamentos/{id} de outra pessoa).
+     */
+    public Matricula buscarMatriculaDoAlunoLogado(String matriculaId) {
+        Matricula matricula = buscarMatricula(matriculaId);
+        Usuario logado = sessaoService.exigirUsuarioLogado();
+        if (!logado.getId().equals(matricula.getAlunoId())) {
+            throw new RuntimeException("Você não tem permissão para acessar esta matrícula.");
+        }
+        return matricula;
+    }
+
+    /**
+     * Pagamento concluído: AGUARDANDO_PAGAMENTO vira ATIVA e libera o acesso (o aluno passa a
+     * aparecer em "alunos matriculados" do professor). Devolve o cursoId.
+     *
+     * ATENÇÃO, PROVISÓRIO: ainda não existe gateway de pagamento, então este método CONFIA no clique
+     * do aluno. Quando houver gateway, quem chama isto deve ser o webhook de "pagamento aprovado",
+     * e o endpoint do aluno deve deixar de existir (ver PagamentoController).
+     * Idempotente: chamar de novo numa matrícula já ATIVA não faz nada (duplo clique, reenvio).
+     */
+    public String confirmarPagamento(String matriculaId) {
+        Matricula matricula = buscarMatriculaDoAlunoLogado(matriculaId);
+
+        if (matricula.getStatusMatricula() == StatusMatricula.ATIVA) {
+            return matricula.getCursoId();
+        }
+        if (matricula.getStatusMatricula() != StatusMatricula.AGUARDANDO_PAGAMENTO) {
+            throw new RuntimeException("Esta matrícula não está aguardando pagamento.");
+        }
+
+        matricula.setStatusMatricula(StatusMatricula.ATIVA);
+        matricula.setAcessoLiberado(true);
+        matriculaRepository.save(matricula);
+        return matricula.getCursoId();
+    }
+
     /** Aluno desiste (RN039/RN044): vira CANCELADA, o registro fica no histórico. */
     public void cancelar(String matriculaId) {
         Matricula matricula = buscarMatricula(matriculaId);
@@ -178,7 +216,32 @@ public class MatriculaService {
 
     /** Alunos com matrícula ATIVA, um item por aluno, com os cursos dele (deste professor) em texto. */
     public List<AlunoMatriculadoView> listarAlunosMatriculados(String professorId) {
-        Map<String, Curso> cursos = cursosDoProfessor(professorId);
+        return montarAlunosMatriculados(cursosDoProfessor(professorId));
+    }
+
+    /**
+     * Solicitações pendentes de aprovação do professor. Depois que ele aceita (AGUARDANDO_PAGAMENTO)
+     * ou recusa, a solicitação sai desta lista e o contador de notificação diminui.
+     */
+    public List<AlunoPendenteView> listarAlunosPendentes(String professorId) {
+        return montarAlunosPendentes(cursosDoProfessor(professorId));
+    }
+
+    /** Igual a listarAlunosMatriculados, mas só deste curso. Só o professor dono do curso pode chamar. */
+    public List<AlunoMatriculadoView> listarAlunosMatriculadosDoCurso(String cursoId) {
+        Curso curso = buscarCurso(cursoId);
+        exigirProfessorDoCurso(curso);
+        return montarAlunosMatriculados(Map.of(curso.getId(), curso));
+    }
+
+    /** Igual a listarAlunosPendentes, mas só deste curso. Só o professor dono do curso pode chamar. */
+    public List<AlunoPendenteView> listarAlunosPendentesDoCurso(String cursoId) {
+        Curso curso = buscarCurso(cursoId);
+        exigirProfessorDoCurso(curso);
+        return montarAlunosPendentes(Map.of(curso.getId(), curso));
+    }
+
+    private List<AlunoMatriculadoView> montarAlunosMatriculados(Map<String, Curso> cursos) {
         if (cursos.isEmpty()) {
             return List.of();
         }
@@ -200,12 +263,7 @@ public class MatriculaService {
         return views;
     }
 
-    /**
-     * Solicitações pendentes de aprovação do professor. Depois que ele aceita (AGUARDANDO_PAGAMENTO)
-     * ou recusa, a solicitação sai desta lista e o contador de notificação diminui.
-     */
-    public List<AlunoPendenteView> listarAlunosPendentes(String professorId) {
-        Map<String, Curso> cursos = cursosDoProfessor(professorId);
+    private List<AlunoPendenteView> montarAlunosPendentes(Map<String, Curso> cursos) {
         if (cursos.isEmpty()) {
             return List.of();
         }

@@ -2,9 +2,9 @@ package br.com.tentaculomimico.controller;
 
 import br.com.tentaculomimico.service.MatriculaService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 // Ações do professor sobre a solicitação (aceitar/recusar) e do aluno
 // desistindo de uma matrícula já ativa (RN039/RN044: desistência vira
@@ -18,16 +18,21 @@ public class MatriculaController {
         this.matriculaService = matriculaService;
     }
 
+    // "voltar=curso" vem da página de detalhes do curso: o professor volta para ela
+    // em vez de ir para o perfil. Só a palavra "curso" é aceita (nunca uma URL), para
+    // não virar redirecionamento aberto.
     @PostMapping("/matriculas/{id}/aceitar")
-    public String aceitarMatricula(@PathVariable String id, Model model) {
+    public String aceitarMatricula(@PathVariable String id,
+                                   @RequestParam(required = false) String voltar) {
         String cursoId = matriculaService.aceitar(id);
-        return "redirect:/perfil/professor/" + obterProfessorDoCurso(cursoId);
+        return redirecionarDepoisDeResponder(cursoId, voltar);
     }
 
     @PostMapping("/matriculas/{id}/recusar")
-    public String recusarMatricula(@PathVariable String id, Model model) {
+    public String recusarMatricula(@PathVariable String id,
+                                   @RequestParam(required = false) String voltar) {
         String cursoId = matriculaService.recusar(id);
-        return "redirect:/perfil/professor/" + obterProfessorDoCurso(cursoId);
+        return redirecionarDepoisDeResponder(cursoId, voltar);
     }
 
     @PostMapping("/matriculas/{id}/cancelar")
@@ -36,10 +41,13 @@ public class MatriculaController {
         return "redirect:/perfil/aluno/" + matriculaService.obterAlunoDaMatricula(id);
     }
 
-    // Auxiliar só pra montar o redirect de volta pro perfil do professor
-    // logado depois de aceitar/recusar — o back pode simplificar isso se
-    // já tiver o id do professor logado disponível em outro lugar (sessão).
-    private String obterProfessorDoCurso(String cursoId) {
-        return matriculaService.obterProfessorDoCurso(cursoId);
+    private String redirecionarDepoisDeResponder(String cursoId, String voltar) {
+        if ("curso".equals(voltar)) {
+            return "redirect:/cursos/" + cursoId;
+        }
+        // Auxiliar só pra montar o redirect de volta pro perfil do professor
+        // logado depois de aceitar/recusar — o back pode simplificar isso se
+        // já tiver o id do professor logado disponível em outro lugar (sessão).
+        return "redirect:/perfil/professor/" + matriculaService.obterProfessorDoCurso(cursoId);
     }
 }

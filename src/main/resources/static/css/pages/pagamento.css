@@ -259,3 +259,11 @@
   gap: 0.75rem;
   margin-top: 0.5rem;
 }
+
+.pagamento__concluido-imagem {
+  display: block;
+  width: 100%;
+  max-width: 12.5rem;
+  height: auto;
+  margin: 0 auto;
+}

@@ -13,7 +13,7 @@
   <!-- ===== Pagamento já concluído (matrícula ATIVA) ===== -->
   <th:block th:if="${pagamentoConcluido}">
     <section class="pagamento__concluido">
-      <div class="pagamento__concluido-icone" aria-hidden="true">
+      <div th:unless="${ehDoacao}" class="pagamento__concluido-icone" aria-hidden="true">
         <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M5 13l4 4L19 7"/>
         </svg>
@@ -29,6 +29,7 @@
         </div>
       </th:block>
       <th:block th:if="${ehDoacao}">
+        <img th:src="@{/img/doacoes-icon.png}" alt="Ilustração de uma mão humana e a pata de um cachorro alcançando um coração juntos" class="pagamento__concluido-imagem">
         <h1 class="pagamento__titulo">Agradecemos sua generosidade!</h1>
         <p class="pagamento__texto">
           Sua doação de <strong th:text="${valorTexto}">R$ 0,00</strong> ajuda o Tentáculo Mímico a continuar criando, ensinando e levando a arte para mais pessoas e espaços. Obrigado por acreditar no nosso trabalho e por fazer parte dessa história.

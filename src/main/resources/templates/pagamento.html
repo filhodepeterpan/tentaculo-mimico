@@ -18,23 +18,35 @@
           <path d="M5 13l4 4L19 7"/>
         </svg>
       </div>
-      <h1 class="pagamento__titulo">Pagamento confirmado!</h1>
-      <p class="pagamento__texto">
-        Sua matrícula em <strong th:text="${curso.nome}">Nome do curso</strong> está ativa e o acesso ao curso foi liberado.
-      </p>
-      <div class="pagamento__acoes-finais">
-        <a th:href="@{/cursos/{id}(id=${curso.id})}" class="botao botao--primario botao--grande">Ir para o curso</a>
-        <a th:href="@{/cursos}" class="botao botao--neutro botao--grande">Ver outros cursos</a>
-      </div>
+      <th:block th:unless="${ehDoacao}">
+        <h1 class="pagamento__titulo">Pagamento confirmado!</h1>
+        <p class="pagamento__texto">
+          Sua matrícula em <strong th:text="${curso.nome}">Nome do curso</strong> está ativa e o acesso ao curso foi liberado.
+        </p>
+        <div class="pagamento__acoes-finais">
+          <a th:href="@{/cursos/{id}(id=${curso.id})}" class="botao botao--primario botao--grande">Ir para o curso</a>
+          <a th:href="@{/cursos}" class="botao botao--neutro botao--grande">Ver outros cursos</a>
+        </div>
+      </th:block>
+      <th:block th:if="${ehDoacao}">
+        <h1 class="pagamento__titulo">Agradecemos sua generosidade!</h1>
+        <p class="pagamento__texto">
+          Sua doação de <strong th:text="${valorTexto}">R$ 0,00</strong> ajuda o Tentáculo Mímico a continuar criando, ensinando e levando a arte para mais pessoas e espaços. Obrigado por acreditar no nosso trabalho e por fazer parte dessa história.
+        </p>
+        <div class="pagamento__acoes-finais">
+          <a th:href="@{/cursos}" class="botao botao--primario botao--grande">Conhecer os cursos</a>
+          <a th:href="@{/doacoes}" class="botao botao--neutro botao--grande">Voltar para doações</a>
+        </div>
+      </th:block>
     </section>
   </th:block>
 
   <!-- ===== Escolha da forma de pagamento ===== -->
   <th:block th:unless="${pagamentoConcluido}">
 
-    <a th:href="@{/cursos/{id}(id=${curso.id})}" class="pagamento__voltar">&larr; Voltar ao curso</a>
+    <a th:href="@{${voltarUrl}}" class="pagamento__voltar" th:text="'← ' + ${voltarTexto}">&larr; Voltar ao curso</a>
 
-    <h1 class="pagamento__titulo">Pagamento da matrícula</h1>
+    <h1 class="pagamento__titulo" th:text="${tituloPagina}">Pagamento da matrícula</h1>
 
     <th:block th:if="${erroPagamento != null}">
       <div th:replace="~{fragments/alert :: alerta(titulo='Não foi possível concluir o pagamento', mensagem=${erroPagamento}, variante='erro')}"></div>
@@ -48,10 +60,10 @@
 
       <aside class="pagamento__resumo" aria-label="Resumo do pedido">
         <h2 class="pagamento__subtitulo">Resumo</h2>
-        <p class="pagamento__resumo-curso" th:text="${curso.nome}">Nome do curso</p>
+        <p class="pagamento__resumo-curso" th:text="${itemNome}">Nome do curso</p>
         <div class="pagamento__resumo-linha">
-          <span class="pagamento__resumo-rotulo">Mensalidade</span>
-          <span class="pagamento__resumo-valor" th:text="'R$ ' + ${curso.preco}">R$ 0,00</span>
+          <span class="pagamento__resumo-rotulo" th:text="${rotuloValor}">Mensalidade</span>
+          <span class="pagamento__resumo-valor" th:text="${valorTexto}">R$ 0,00</span>
         </div>
       </aside>
 
@@ -96,7 +108,7 @@
 
           <div id="pix-expirado" class="pagamento__expirado" hidden role="alert">
             <p>O código Pix expirou. Gere um novo para continuar.</p>
-            <a th:href="@{/pagamentos/{id}(id=${matriculaId})}" class="botao botao--primario botao--pequeno">Gerar novo código</a>
+            <a th:href="@{${urlPagina}}" class="botao botao--primario botao--pequeno">Gerar novo código</a>
           </div>
 
           <button type="button" id="pix-confirmar" class="botao botao--primario botao--grande">Já fiz o pagamento</button>
@@ -140,13 +152,13 @@
           </div>
 
           <button type="button" id="cartao-confirmar" class="botao botao--primario botao--grande"
-                  th:text="'Pagar R$ ' + ${curso.preco}">Pagar</button>
+                  th:text="'Pagar ' + ${valorTexto}">Pagar</button>
         </div>
 
       </section>
     </div>
 
-    <form id="form-pagamento" method="post" th:action="@{/pagamentos/{id}/confirmar(id=${matriculaId})}" hidden>
+    <form id="form-pagamento" method="post" th:action="@{${acaoConfirmar}}" hidden>
       <input type="hidden" name="metodo" id="campo-metodo" value="pix">
     </form>
 

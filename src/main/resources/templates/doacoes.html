@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="stylesheet" th:href="@{/css/pages/doacoes.css}">
-    <title>Tentáculo Mímico</title>
+  <link rel="stylesheet" th:href="@{/css/pages/doacoes.css}">
+  <title>Tentáculo Mímico</title>
 </head>
 <body>
 
@@ -18,7 +18,14 @@
   <div class="doacoes__caixa">
     <h2 class="doacoes__caixa-titulo">Faça sua doação</h2>
 
-    <form class="doacoes__formulario" method="post" th:action="@{/doacoes}">
+    <th:block th:if="${erroDoacao != null}">
+      <div th:replace="~{fragments/alert :: alerta(titulo='Não foi possível continuar', mensagem=${erroDoacao}, variante='erro')}"></div>
+    </th:block>
+
+    <form class="doacoes__formulario" method="post" th:action="@{/doacoes}" novalidate>
+      <!-- Preenchidos pelo doacoes.js antes do envio: valor final (do botão ou do campo "Outro") e a mensagem. -->
+      <input type="hidden" name="valor" id="doacao-valor">
+      <input type="hidden" name="mensagem" id="doacao-mensagem">
 
       <fieldset class="doacoes__valores">
         <legend class="campo__rotulo">Valor</legend>
@@ -48,8 +55,6 @@
   </div>
 
 </main>
-
-<div th:replace="~{fragments/modal-info :: modalInfo(id='modal-doacao-sucesso', titulo='Agradecemos sua generosidade!', imagem='/img/doacoes-icon.png', altImagem='Ilustração de uma mão humana e a pata de um cachorro alcançando um coração juntos', mensagem='Sua contribuição ajuda o Tentáculo Mímico a continuar criando, ensinando e levando a arte para mais pessoas e espaços. Obrigado por acreditar no nosso trabalho e por fazer parte dessa história.', textoFechar='Fechar')}"></div>
 
 <div th:replace="~{fragments/layouts :: footer}"></div>
 

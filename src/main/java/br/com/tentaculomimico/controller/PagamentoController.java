@@ -75,6 +75,16 @@ public class PagamentoController {
 
         model.addAttribute("matriculaId", matricula.getId());
         model.addAttribute("curso", curso);
+        // Dados genéricos que a tela de pagamento usa (a mesma tela serve para doação).
+        model.addAttribute("ehDoacao", false);
+        model.addAttribute("tituloPagina", "Pagamento da matrícula");
+        model.addAttribute("itemNome", curso.getNome());
+        model.addAttribute("rotuloValor", "Mensalidade");
+        model.addAttribute("valorTexto", "R$ " + curso.getPreco());
+        model.addAttribute("voltarUrl", "/cursos/" + curso.getId());
+        model.addAttribute("voltarTexto", "Voltar ao curso");
+        model.addAttribute("urlPagina", "/pagamentos/" + matricula.getId());
+        model.addAttribute("acaoConfirmar", "/pagamentos/" + matricula.getId() + "/confirmar");
         model.addAttribute("pagamentoConcluido", concluido);
         model.addAttribute("pagamentoSimulado", pagamentoSimulado);
         // TODO(gateway): trocar pelo "Pix copia e cola" real devolvido pelo gateway. Este texto NÃO é um

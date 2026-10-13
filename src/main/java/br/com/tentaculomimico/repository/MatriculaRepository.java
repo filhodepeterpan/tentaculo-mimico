@@ -13,6 +13,6 @@ public interface MatriculaRepository extends MongoRepository<Matricula, String> 
     List<Matricula> findByCursoIdIn(java.util.Collection<String> cursoIds);
 
 
-    //painel admin: conta a quantidade de mstriculados
+    //painel admin: conta a quantidade de matriculados
     long count();
 }

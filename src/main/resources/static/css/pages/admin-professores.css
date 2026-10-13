@@ -1,0 +1,108 @@
+@import url(../root.css);
+@import url(../global.css);
+
+.admin-professores-container {
+    padding: 2rem 1.5rem 3rem;
+    max-width: 72rem;
+    margin: 0 auto;
+}
+
+.admin-professores__titulo {
+    font-family: var(--fonte-editorial);
+    font-size: var(--tipo-editorial-display-tamanho);
+    line-height: var(--tipo-editorial-display-altura-linha);
+    font-weight: var(--tipo-editorial-display-peso);
+    color: var(--color-on-surface);
+    margin: 0 0 1.5rem;
+}
+
+.admin-professores__busca {
+    max-width: 28rem;
+    margin-bottom: 2rem;
+}
+
+.admin-professores__vazio {
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-body-lg-tamanho);
+    color: var(--color-on-surface-variant);
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.admin-professores__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    list-style: none;
+}
+
+.admin-professores__card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--color-on-surface);
+    border-bottom-width: 3px;
+    border-radius: 1.25rem;
+    background-color: var(--color-surface-container-low);
+}
+
+.admin-professores__cabecalho {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.admin-professores__avatar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background-color: var(--color-surface-dim);
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-body-md-tamanho);
+    font-weight: var(--tipo-title-md-peso-enfatizado);
+    text-transform: uppercase;
+    color: var(--color-on-surface);
+}
+
+.admin-professores__dados {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.admin-professores__nome {
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-body-md-tamanho);
+    font-weight: var(--tipo-title-md-peso-enfatizado);
+    color: var(--color-on-surface);
+}
+
+.admin-professores__email {
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-body-md-tamanho);
+    color: var(--color-on-surface-variant);
+}
+
+.admin-professores__cursos {
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-on-surface-variant);
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-body-md-tamanho);
+    color: var(--color-on-surface-variant);
+}
+
+.admin-professores__tabela {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.admin-professores__tabela th,
+.admin-professores__tabela td {
+    padding: 0.25rem 1rem 0.25rem 0;
+}

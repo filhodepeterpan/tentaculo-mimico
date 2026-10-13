@@ -8,6 +8,7 @@ import br.com.tentaculomimico.model.Usuario;
 import br.com.tentaculomimico.model.enums.TipoUsuario;
 import br.com.tentaculomimico.service.AdminService;
 import br.com.tentaculomimico.service.SessaoService;
+import ch.qos.logback.core.model.Model;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,4 +62,7 @@ public class AdminController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acesso restrito a administradores.");
         }
     }
+
+
+
 }

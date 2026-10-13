@@ -1,44 +1,34 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/css/pages/painel-admin.css}">
-    <title>Gestão de cursos</title>
+    <link rel="stylesheet" th:href="@{/css/pages/admin-cursos.css}">
+    <title>Tentáculo Mímico</title>
 </head>
 <body>
 
 <div th:replace="~{fragments/layouts :: header}"></div>
 
-<main class="painel-admin">
-    <a th:href="@{/admin}">← Voltar ao painel</a>
-    <h1 class="painel-admin__titulo">Gestão de cursos</h1>
+<main class="admin-cursos-container">
+    <h1 class="admin-cursos__titulo">Gestão de Cursos</h1>
 
-    <p id="erro" hidden></p>
-    <ul id="lista"></ul>
+    <div class="admin-cursos__busca">
+        <div th:replace="~{fragments/inputs :: input(id='admin-cursos-busca', tipo='search', rotulo='Buscar cursos', placeholder='Ex: Nome, professor, status...', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>
+    </div>
+
+    <p id="admin-cursos-vazio" class="admin-cursos__vazio" role="status" hidden>Nenhum curso encontrado.</p>
+
+    <ul class="admin-cursos__lista">
+        <li class="admin-cursos__item"
+            th:each="item : ${listaDeCursos}"
+            th:data-busca="${item.curso.nome + ' ' + item.curso.professorNome + ' ' + item.curso.status}">
+            <div th:replace="~{fragments/card-cursos :: cardCurso(item=${item})}"></div>
+        </li>
+    </ul>
+
 </main>
 
 <div th:replace="~{fragments/layouts :: footer}"></div>
 
-<script>
-    fetch('/api/admin/cursos', { credentials: 'same-origin' })
-        .then(r => {
-            if (!r.ok) throw new Error('Não foi possível carregar os cursos.');
-            return r.json();
-        })
-        .then(cursos => {
-            const lista = document.getElementById('lista');
-            cursos.forEach(c => {
-                const li = document.createElement('li');
-                li.textContent = c.nome + ' - Prof. ' + (c.professorNome || 'sem professor')
-                    + ' - ' + (c.cargaHoraria || '?') + ' h';
-                lista.append(li);
-            });
-        })
-        .catch(e => {
-            const erro = document.getElementById('erro');
-            erro.textContent = e.message;
-            erro.hidden = false;
-        });
-</script>
+<script type="module" th:src="@{/js/pages/admin-cursos.js}"></script>
 </body>
 </html>

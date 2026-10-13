@@ -6,7 +6,9 @@ import br.com.tentaculomimico.model.enums.TipoUsuario;
 import br.com.tentaculomimico.repository.CursoRepository;
 import br.com.tentaculomimico.repository.MatriculaRepository;
 import br.com.tentaculomimico.repository.UsuarioRepository;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +74,25 @@ public class AdminService {
 
         return resultado;
     }
+    //===============================================================================
+
+    public List<CursoAdminResposta> listarCursosComAlunos() {
+        List<CursoAdminResposta> resultado = new ArrayList<>();
+        for (Curso c : cursoRepository.findAll()) {
+
+            List<Matricula> matriculas;
+            if (ObjectId.isValid(c.getId())) {
+                matriculas = matriculaRepository.findByCursoId(c.getId());
+            } else {
+                matriculas = new ArrayList<>();
+            }
+
+            resultado.add(new CursoAdminResposta(c, matriculas));
+        }
+        return resultado;
+    }
+
+
 
 
     //===============================================================================

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/pages/admin-cursos.css}">
+</head>
+<body>
+
+<article th:fragment="cardCurso(item)" class="admin-cursos__card">
+
+    <header class="admin-cursos__cabecalho">
+        <span class="admin-cursos__avatar" aria-hidden="true"
+              th:text="${#strings.substring(item.curso.nome, 0, 1)}">C</span>
+
+        <div class="admin-cursos__dados">
+            <h3 class="admin-cursos__nome" th:text="${item.curso.nome}">Nome</h3>
+            <p class="admin-cursos__professor" th:text="${item.curso.professorNome}">Professor</p>
+        </div>
+    </header>
+
+    <div class="admin-cursos__cursos">
+        <p>
+            <span th:text="${item.curso.status != null ? item.curso.status : 'Indefinido'}"></span>
+            ·
+            <span th:if="${#lists.isEmpty(item.curso.horarios)}">Horário indefinido</span>
+            <th:block th:unless="${#lists.isEmpty(item.curso.horarios)}">
+                <span th:each="h : ${item.curso.horarios}"
+                      th:text="${h.diaSemana} + ' ' + ${#temporals.format(h.inicio, 'HH:mm')} + '-' + ${#temporals.format(h.fim, 'HH:mm')} + ' '"></span>
+            </th:block>
+        </p>
+
+        <p th:if="${#lists.isEmpty(item.matriculas)}">Sem alunos</p>
+
+        <table class="admin-cursos__tabela" th:unless="${#lists.isEmpty(item.matriculas)}">
+            <thead>
+            <tr>
+                <th scope="col">Aluno</th>
+                <th scope="col">Status da matrícula</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="m : ${item.matriculas}">
+                <td th:text="${m.nomeAluno}"></td>
+                <td th:text="${m.statusMatricula}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</article>
+
+</body>
+</html>

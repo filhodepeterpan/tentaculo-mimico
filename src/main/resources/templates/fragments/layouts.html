@@ -9,9 +9,22 @@
                 alt="Tentáculo Mímico"
         />
     </a>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true" />
+    <label for="nav-toggle" class="nav-toggle__label" aria-label="Abrir/fechar menu">
+        <span></span><span></span><span></span>
+    </label>
     <nav class="main-nav" aria-label="Navegação principal">
         <ul>
-            <li><a class="title-medium" th:href="@{/}">Início</a></li>
+            <li>
+                <a class="title-medium" th:href="@{/}">Início</a>
+            </li>
+            <li th:if="${usuarioLogado != null}">
+                <a class="title-medium" th:href="${usuarioLogado.tipoUsuario.name() == 'ADMINISTRADOR'}
+                        ? @{/admin}
+                        : (${usuarioLogado.tipoUsuario.name() == 'PROFESSOR'}
+                            ? @{/perfil/professor/{id}(id=${usuarioLogado.id})}
+                            : @{/perfil/aluno/{id}(id=${usuarioLogado.id})})">Meu perfil</a>
+            </li>
             <li>
                 <a class="title-medium" th:href="@{/sobre}">Sobre</a>
             </li>
@@ -21,12 +34,8 @@
             <li>
                 <a class="title-medium" th:href="@{/contato}">Contato</a>
             </li>
-            <!-- Oculta links de Cadastro/Login da navegação central se estiver logado -->
-            <li th:if="${usuarioLogado == null}">
-                <a class="title-medium" th:href="@{/cadastro}">Cadastro</a>
-            </li>
-            <li th:if="${usuarioLogado == null}">
-                <a class="title-medium" th:href="@{/login}">Login</a>
+            <li>
+                <a class="title-medium" th:href="@{/doacoes}">Doações</a>
             </li>
         </ul>
     </nav>

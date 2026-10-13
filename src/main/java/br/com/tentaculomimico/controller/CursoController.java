@@ -3,6 +3,7 @@ package br.com.tentaculomimico.controller;
 import br.com.tentaculomimico.model.Curso;
 import br.com.tentaculomimico.model.Horario;
 import br.com.tentaculomimico.model.Usuario;
+import br.com.tentaculomimico.model.view.AlunoPendenteView;
 import br.com.tentaculomimico.repository.CursoRepository;
 import br.com.tentaculomimico.repository.UsuarioRepository;
 import br.com.tentaculomimico.service.CursoService;
@@ -57,6 +58,17 @@ public class CursoController {
     @GetMapping("/cursos")
     public String listarCursos(Model model) {
         model.addAttribute("cursos", cursoRepository.findAll());
+
+        // O botão de cada card depende de quem está olhando:
+        //  - aluno: o status da matrícula dele em cada curso (matriculasPorCurso: cursoId -> view);
+        //  - professor: se o curso é dele (compara curso.professorId com usuarioLogadoId no template).
+        Usuario logado = sessaoService.usuarioLogado();
+        String tipoUsuarioLogado = logado != null ? logado.getTipoUsuario().name().toLowerCase() : null;
+        model.addAttribute("tipoUsuarioLogado", tipoUsuarioLogado);
+        model.addAttribute("usuarioLogadoId", logado != null ? logado.getId() : null);
+        if ("aluno".equals(tipoUsuarioLogado)) {
+            model.addAttribute("matriculasPorCurso", matriculaService.mapaMatriculasDoAluno(logado.getId()));
+        }
         return "cursos";
     }
 
@@ -120,6 +132,15 @@ public class CursoController {
             var statusView = matriculaService.buscarStatusDoAluno(usuarioLogado.getId(), id);
             model.addAttribute("statusMatricula", statusView != null ? statusView.getStatus() : null);
             model.addAttribute("matriculaId", statusView != null ? statusView.getId() : null);
+        }
+
+        // Seção "Alunos do curso": só o professor dono (o template também confere ehProprietario).
+        // Os dois métodos do service lançam exceção se quem pede não for o professor do curso.
+        if (ehProprietario) {
+            model.addAttribute("alunosMatriculados", matriculaService.listarAlunosMatriculadosDoCurso(id));
+            List<AlunoPendenteView> alunosPendentes = matriculaService.listarAlunosPendentesDoCurso(id);
+            model.addAttribute("alunosPendentes", alunosPendentes);
+            model.addAttribute("totalPendentes", alunosPendentes.size());
         }
 
         return "curso-detalhes";

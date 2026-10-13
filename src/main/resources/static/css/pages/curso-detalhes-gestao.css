@@ -1,0 +1,92 @@
+@import url(../root.css);
+@import url(../global.css);
+
+/* Seção "Alunos do curso" (professor dono). Visual igual ao das abas do perfil do professor. */
+
+.gestao-matriculas {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.gestao-matriculas [hidden] {
+  display: none !important;
+}
+
+.gestao-matriculas__titulo {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-title-lg-tamanho);
+  font-weight: var(--tipo-title-lg-peso-enfatizado);
+  color: var(--color-on-surface);
+  margin: 0;
+}
+
+.gestao-matriculas__abas {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 0.0625rem solid var(--color-outline-variant);
+  overflow-x: auto;
+}
+
+.gestao-matriculas__aba {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.25rem;
+  background: none;
+  border: none;
+  border-bottom: 0.1875rem solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-title-sm-tamanho);
+  font-weight: var(--tipo-title-sm-peso-enfatizado);
+  color: var(--color-on-surface-variant);
+}
+
+.gestao-matriculas__aba[aria-selected="true"] {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.gestao-matriculas__aba:focus-visible {
+  outline: 0.1875rem solid var(--color-outline);
+  outline-offset: -0.1875rem;
+}
+
+.gestao-matriculas__notificacao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.3rem;
+  border-radius: 9999px;
+  background-color: var(--color-error);
+  color: var(--color-on-error);
+  font-size: var(--tipo-label-sm-tamanho);
+  font-weight: 700;
+}
+
+.gestao-matriculas__painel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.gestao-matriculas__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.gestao-matriculas__vazio {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-lg-tamanho);
+  color: var(--color-on-surface-variant);
+  padding: 1.5rem 0;
+  margin: 0;
+}

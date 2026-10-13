@@ -61,6 +61,7 @@ public class SecurityConfig {
                                         "/perfil-editar",
                                         "/perfil-excluir",
                                         "/matriculas/**",
+                                        "/pagamentos/**",
                                         "/sair",
                                         "/api/admin/**",
                                         "/admin",

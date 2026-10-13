@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <link rel="stylesheet" th:href="@{/css/pages/curso-detalhes.css}">
+  <link rel="stylesheet" th:href="@{/css/pages/curso-detalhes-gestao.css}" th:if="${ehProprietario != null and ehProprietario}">
   <title>Tentáculo Mímico</title>
 </head>
 <body>
@@ -150,6 +151,55 @@
 
 </section>
 
+<!-- Alunos do curso: só o professor dono (ehProprietario). Mesmas abas, busca e ações do perfil do
+     professor, mas apenas com os alunos deste curso. Os dados vêm do CursoController
+     (alunosMatriculados, alunosPendentes, totalPendentes). -->
+<th:block th:if="${ehProprietario != null and ehProprietario}">
+<section class="gestao-matriculas" aria-labelledby="gestao-titulo">
+
+  <h2 id="gestao-titulo" class="gestao-matriculas__titulo">Alunos do curso</h2>
+
+  <div class="gestao-matriculas__abas" role="tablist">
+    <button type="button" role="tab" id="aba-matriculados" aria-controls="painel-matriculados" aria-selected="true" class="gestao-matriculas__aba">
+      Alunos matriculados
+    </button>
+    <button type="button" role="tab" id="aba-pendentes" aria-controls="painel-pendentes" aria-selected="false" class="gestao-matriculas__aba">
+      Matrículas pendentes
+      <span th:if="${totalPendentes != null and totalPendentes > 0}"
+            class="gestao-matriculas__notificacao"
+            th:text="${totalPendentes > 9} ? '9+' : ${totalPendentes}">0</span>
+    </button>
+  </div>
+
+  <div id="painel-matriculados" role="tabpanel" aria-labelledby="aba-matriculados" class="gestao-matriculas__painel">
+    <div th:replace="~{fragments/inputs :: input(id='busca-alunos-matriculados', tipo='search', rotulo='Buscar aluno', placeholder='Nome do aluno...', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>
+
+    <p th:if="${alunosMatriculados == null or alunosMatriculados.isEmpty()}" class="gestao-matriculas__vazio">Nenhum aluno matriculado neste curso ainda.</p>
+    <p id="matriculados-vazio" class="gestao-matriculas__vazio" hidden>Nenhum aluno encontrado.</p>
+
+    <div class="gestao-matriculas__lista">
+      <th:block th:each="item : ${alunosMatriculados}">
+        <div th:replace="~{fragments/aluno-item :: item(id=${item.alunoId}, nome=${item.alunoNome}, fotoPerfil=${item.alunoFotoPerfil}, modo='matriculado', cursosTexto=${item.cursosTexto}, statusTexto='', matriculaId='')}"></div>
+      </th:block>
+    </div>
+  </div>
+
+  <div id="painel-pendentes" role="tabpanel" aria-labelledby="aba-pendentes" class="gestao-matriculas__painel" hidden>
+    <div th:replace="~{fragments/inputs :: input(id='busca-alunos-pendentes', tipo='search', rotulo='Buscar aluno', placeholder='Nome do aluno...', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>
+
+    <p th:if="${alunosPendentes == null or alunosPendentes.isEmpty()}" class="gestao-matriculas__vazio">Nenhuma solicitação pendente.</p>
+    <p id="pendentes-vazio" class="gestao-matriculas__vazio" hidden>Nenhuma solicitação encontrada.</p>
+
+    <div class="gestao-matriculas__lista">
+      <th:block th:each="item : ${alunosPendentes}">
+        <div th:replace="~{fragments/aluno-item :: item(id=${item.alunoId}, nome=${item.alunoNome}, fotoPerfil=${item.alunoFotoPerfil}, modo='pendente', cursosTexto='', statusTexto=${item.statusTexto}, matriculaId=${item.matriculaId})}"></div>
+      </th:block>
+    </div>
+  </div>
+
+</section>
+</th:block>
+
 <form id="form-matricula" method="post" th:action="@{/cursos/{id}/matricula(id=${curso.id})}" hidden></form>
 <form id="form-deletar-curso" method="post" th:action="@{/cursos/{id}/excluir(id=${curso.id})}" hidden></form>
 <form th:if="${matriculaId != null}" id="form-desistir" method="post" th:action="@{/matriculas/{id}/cancelar(id=${matriculaId})}" hidden></form>
@@ -162,6 +212,15 @@
 
 <th:block th:if="${tipoUsuarioLogado == 'aluno' and statusMatricula == 'ativa'}">
   <div th:replace="~{fragments/modal :: modal(id='modal-desistir', titulo='Desistir da matrícula?', mensagem='Você vai perder o acesso a este curso. Essa ação não pode ser desfeita.', textoCancelar='Cancelar', textoConfirmar='Desistir', varianteConfirmar='perigo')}"></div>
+</th:block>
+
+<th:block th:if="${ehProprietario != null and ehProprietario}">
+  <th:block th:each="item : ${alunosPendentes}">
+    <div th:replace="~{fragments/modal-responder-matricula :: modalResponder(matriculaId=${item.matriculaId}, nomeAluno=${item.alunoNome}, fotoAluno=${item.alunoFotoPerfil}, emailAluno=${item.alunoEmail}, nomeCurso=${item.cursoNome})}"></div>
+    <div th:replace="~{fragments/modal :: modal(id='modal-aceitar-' + ${item.matriculaId}, titulo='Aceitar matrícula?', mensagem='O aluno será notificado e poderá prosseguir para o pagamento.', textoCancelar='Cancelar', textoConfirmar='Aceitar', varianteConfirmar='primario')}"></div>
+    <div th:replace="~{fragments/modal :: modal(id='modal-recusar-' + ${item.matriculaId}, titulo='Recusar matrícula?', mensagem='O aluno será notificado de que a solicitação foi recusada.', textoCancelar='Cancelar', textoConfirmar='Recusar', varianteConfirmar='perigo')}"></div>
+  </th:block>
+  <form id="form-acao-perfil" method="post" hidden></form>
 </th:block>
 
 <div th:replace="~{fragments/layouts :: footer}"></div>

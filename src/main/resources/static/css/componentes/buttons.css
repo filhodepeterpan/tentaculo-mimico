@@ -13,6 +13,7 @@
   border-color: var(--color-shadow);
   cursor: pointer;
 
+
   transition:
     transform 0.08s ease-out,
     box-shadow 0.08s ease-out,

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="stylesheet" th:href="@{/css/pages/admin-alunos.css}">
+</head>
+<body>
+<main class="card-alunos-container">
+<article th:fragment="cardAluno(aluno)" class="admin-alunos__card">
+
+    <header class="admin-alunos__cabecalho">
+        <span class="admin-alunos__avatar" aria-hidden="true"
+              th:text="${#strings.substring(aluno.nome, 0, 1)}">A</span>
+
+        <div class="admin-alunos__dados">
+            <h3 class="admin-alunos__nome" th:text="${aluno.nome}">Nome</h3>
+            <p class="admin-alunos__email" th:text="${aluno.email}">email</p>
+        </div>
+    </header>
+
+    <div class="admin-alunos__cursos">
+        <p th:if="${#lists.isEmpty(aluno.cursos)}">Sem cursos</p>
+
+        <table class="admin-alunos__tabela" th:unless="${#lists.isEmpty(aluno.cursos)}">
+            <thead>
+            <tr>
+                <th scope="col">Curso</th>
+                <th scope="col">Status</th>
+                <th scope="col">Professor</th>
+                <th scope="col">Horários</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="curso : ${aluno.cursos}">
+                <td th:text="${curso.nome}"></td>
+                <td th:text="${curso.status}"></td>
+                <td th:text="${curso.professorNome}"></td>
+                <td>
+                    <span th:each="h : ${curso.horarios}"
+                          th:text="${h.diaSemana} + ' ' + ${#temporals.format(h.inicio, 'HH:mm')} + '-' + ${#temporals.format(h.fim, 'HH:mm')} + ' '"></span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</article>
+</main>
+</body>
+</html>

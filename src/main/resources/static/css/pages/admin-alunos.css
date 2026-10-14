@@ -29,6 +29,16 @@
     padding: 2rem 0;
 }
 
+.admin-alunos__nome a {
+    color: var(--color-link);
+    text-decoration: none;
+}
+
+.admin-alunos__nome a:hover {
+    color: var(--color-link);
+    text-decoration: underline;
+}
+
 .admin-alunos__lista {
     display: flex;
     flex-direction: column;
@@ -67,6 +77,7 @@
     font-weight: var(--tipo-title-md-peso-enfatizado);
     text-transform: uppercase;
     color: var(--color-on-surface);
+    object-fit: cover;
 }
 
 .admin-alunos__dados {

@@ -41,3 +41,8 @@ img {
     display: block;
     width: 100%;
 }
+
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+    outline: 3px solid var(--primary-color, #4A90E2);
+    outline-offset: 2px;
+}

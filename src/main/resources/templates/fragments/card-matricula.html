@@ -11,15 +11,6 @@
   </a>
 
   <div class="curso-card__rodape">
-    <th:block th:if="${statusMatricula == 'pendente'}">
-      <div th:replace="~{fragments/badge :: badge(texto='Aguardando aprovação', variante='atencao')}"></div>
-    </th:block>
-    <th:block th:if="${statusMatricula == 'recusada'}">
-      <div th:replace="~{fragments/badge :: badge(texto='Matrícula recusada', variante='erro')}"></div>
-    </th:block>
-    <th:block th:if="${statusMatricula == 'cancelada'}">
-      <div th:replace="~{fragments/badge :: badge(texto='Cancelada', variante='neutro')}"></div>
-    </th:block>
 
     <a th:if="${statusMatricula == 'aceita_aguardando_pagamento'}" th:href="@{/pagamentos/{id}(id=${matriculaId})}" class="botao botao--primario botao--pequeno">Pagar</a>
 

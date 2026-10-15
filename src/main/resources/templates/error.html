@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/css/pages/acesso-negado.css}">
+    <title th:text="'Erro ' + ${status} + ' - Tentáculo Mímico'">Erro - Tentáculo Mímico</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layouts :: header}"></div>
+
+<main class="acesso-negado">
+    <div class="acesso-negado__caixa">
+        <div class="acesso-negado__icone" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/>
+                <line x1="12" y1="7" x2="12" y2="13"/>
+                <line x1="12" y1="16.5" x2="12" y2="16.6"/>
+            </svg>
+        </div>
+        <p class="acesso-negado__texto" th:text="'Erro ' + ${status}">Erro 500</p>
+        <h1 class="acesso-negado__titulo" th:text="${titulo}">Algo deu errado</h1>
+        <p class="acesso-negado__texto" th:text="${mensagem}">Tente novamente em alguns instantes.</p>
+        <a th:href="@{/}" class="botao botao--primario botao--grande">Voltar para o início</a>
+    </div>
+</main>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+</body>
+</html>

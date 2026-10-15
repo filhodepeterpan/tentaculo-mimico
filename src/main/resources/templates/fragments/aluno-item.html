@@ -17,6 +17,9 @@
         </div>
     </a>
 
+    <!-- O modal correspondente (fragments/modal-cancelar-matricula) é renderizado pela página, fora da lista. -->
+    <button th:if="${modo == 'matriculado'}" type="button" class="botao botao--perigo botao--pequeno" th:attr="data-modal-abrir=${'modal-cancelar-aluno-' + id}">Cancelar matrícula</button>
+
     <button th:if="${modo == 'pendente'}" type="button" class="botao botao--primario botao--pequeno" th:attr="data-modal-abrir=${'modal-responder-' + matriculaId}">Responder</button>
 
 </div>

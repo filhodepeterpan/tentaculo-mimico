@@ -1,0 +1,65 @@
+<div th:fragment="modalCancelar(alunoId, nomeAluno, matriculas, voltar)"
+     th:id="${'modal-cancelar-aluno-' + alunoId}"
+     class="modal"
+     hidden
+     role="dialog"
+     aria-modal="true"
+     th:aria-labelledby="${'modal-cancelar-aluno-' + alunoId + '-titulo'}">
+
+  <div class="modal__overlay" th:attr="data-modal-fechar=${'modal-cancelar-aluno-' + alunoId}"></div>
+
+  <div class="modal__caixa modal-cancelar__caixa">
+    <div class="modal__cabecalho">
+      <h2 th:id="${'modal-cancelar-aluno-' + alunoId + '-titulo'}" class="modal__titulo">Cancelar matrícula?</h2>
+      <button type="button" class="modal__fechar" th:attr="data-modal-fechar=${'modal-cancelar-aluno-' + alunoId}" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <line x1="4" y1="4" x2="20" y2="20"/>
+          <line x1="20" y1="4" x2="4" y2="20"/>
+        </svg>
+      </button>
+    </div>
+
+    <form method="post" th:action="@{/matriculas/cancelar-aluno}" class="modal-cancelar__form">
+      <input type="hidden" name="voltar" th:value="${voltar}">
+
+      <!-- Um curso só: sem escolha. -->
+      <th:block th:if="${#lists.size(matriculas) == 1}">
+        <input type="hidden" name="matriculaIds" th:value="${matriculas[0].matriculaId}">
+        <p class="modal__mensagem modal-cancelar__mensagem">
+          <strong th:text="${nomeAluno}">Aluno</strong> perderá o acesso a
+          <strong th:text="${matriculas[0].cursoNome}">Curso</strong>
+          e precisará se matricular de novo se quiser voltar. Essa ação não pode ser desfeita.
+        </p>
+      </th:block>
+
+      <!-- Vários cursos: escolher um específico ou todos. -->
+      <th:block th:if="${#lists.size(matriculas) > 1}">
+        <p class="modal__mensagem modal-cancelar__mensagem">
+          Escolha de qual curso <strong th:text="${nomeAluno}">Aluno</strong> será removido.
+          Ele perderá o acesso e precisará se matricular de novo. Essa ação não pode ser desfeita.
+        </p>
+
+        <fieldset class="modal-cancelar__opcoes">
+          <legend class="modal-cancelar__legenda">Curso a cancelar</legend>
+
+          <label th:each="m, stat : ${matriculas}" class="modal-cancelar__opcao">
+            <input type="radio" name="matriculaIds" class="modal-cancelar__radio"
+                   th:value="${m.matriculaId}" th:required="${stat.first}">
+            <span class="modal-cancelar__opcao-texto" th:text="${m.cursoNome}">Curso</span>
+          </label>
+
+          <label class="modal-cancelar__opcao modal-cancelar__opcao--todos">
+            <input type="radio" name="matriculaIds" class="modal-cancelar__radio"
+                   th:value="${#strings.listJoin(matriculas.![matriculaId], ',')}">
+            <span class="modal-cancelar__opcao-texto">Todos os cursos</span>
+          </label>
+        </fieldset>
+      </th:block>
+
+      <div class="modal__acoes">
+        <button type="button" class="botao botao--neutro botao--pequeno" th:attr="data-modal-fechar=${'modal-cancelar-aluno-' + alunoId}">Voltar</button>
+        <button type="submit" class="botao botao--perigo botao--pequeno">Cancelar matrícula</button>
+      </div>
+    </form>
+  </div>
+</div>

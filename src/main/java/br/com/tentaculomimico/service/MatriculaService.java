@@ -163,6 +163,31 @@ public class MatriculaService {
         cancelarInterno(matricula);
     }
 
+    /**
+     * Professor cancela matrículas ATIVAS dos alunos dos cursos dele (uma ou várias de uma vez,
+     * conforme a escolha no modal). Vira CANCELADA, o histórico fica e a vaga é devolvida.
+     * Valida TODAS antes de cancelar qualquer uma, para não cancelar só metade se uma falhar.
+     * Devolve o cursoId da primeira matrícula (usado no redirect de volta para o curso).
+     */
+    public String cancelarPeloProfessor(List<String> matriculaIds) {
+        if (matriculaIds == null || matriculaIds.isEmpty()) {
+            throw new RuntimeException("Selecione a matrícula que deseja cancelar.");
+        }
+
+        List<Matricula> matriculas = new ArrayList<>();
+        for (String id : matriculaIds.stream().distinct().toList()) {
+            Matricula matricula = buscarMatricula(id);
+            exigirProfessorDoCurso(buscarCurso(matricula.getCursoId()));
+            if (matricula.getStatusMatricula() != StatusMatricula.ATIVA) {
+                throw new RuntimeException("Só é possível cancelar matrículas ativas.");
+            }
+            matriculas.add(matricula);
+        }
+
+        matriculas.forEach(this::cancelarInterno);
+        return matriculas.get(0).getCursoId();
+    }
+
     /** Uso interno (ex.: exclusão de conta do aluno): cancela tudo que está em aberto, sem checar sessão. */
     void cancelarEmAbertoDoAluno(String alunoId) {
         matriculaRepository.findByAlunoId(alunoId).stream()
@@ -225,8 +250,14 @@ public class MatriculaService {
                         .get());
     }
 
+    /**
+     * "Meus cursos" do perfil do aluno. Matrículas CANCELADAS (desistência do aluno ou
+     * cancelamento pelo professor) ficam só no histórico do banco e não aparecem aqui:
+     * para o aluno, é como se nunca tivesse se matriculado.
+     */
     public List<MatriculaCursoView> listarCursosDoAluno(String alunoId) {
         return matriculaRepository.findByAlunoId(alunoId).stream()
+                .filter(m -> m.getStatusMatricula() != StatusMatricula.CANCELADA)
                 .map(m -> paraView(m, cursoRepository.findById(m.getCursoId()).orElse(null)))
                 .toList();
     }
@@ -275,7 +306,10 @@ public class MatriculaService {
                     .map(m -> cursos.get(m.getCursoId()).getNome())
                     .distinct()
                     .collect(Collectors.joining(", "));
-            views.add(new AlunoMatriculadoView(alunoId, nome, foto, cursosTexto));
+            List<AlunoMatriculadoView.MatriculaItem> itens = matriculas.stream()
+                    .map(m -> new AlunoMatriculadoView.MatriculaItem(m.getId(), cursos.get(m.getCursoId()).getNome()))
+                    .toList();
+            views.add(new AlunoMatriculadoView(alunoId, nome, foto, cursosTexto, itens));
         });
         return views;
     }

@@ -215,6 +215,9 @@
 </th:block>
 
 <th:block th:if="${ehProprietario != null and ehProprietario}">
+  <th:block th:each="item : ${alunosMatriculados}">
+    <div th:replace="~{fragments/modal-cancelar-matricula :: modalCancelar(alunoId=${item.alunoId}, nomeAluno=${item.alunoNome}, matriculas=${item.matriculas}, voltar='curso')}"></div>
+  </th:block>
   <th:block th:each="item : ${alunosPendentes}">
     <div th:replace="~{fragments/modal-responder-matricula :: modalResponder(matriculaId=${item.matriculaId}, nomeAluno=${item.alunoNome}, fotoAluno=${item.alunoFotoPerfil}, emailAluno=${item.alunoEmail}, nomeCurso=${item.cursoNome})}"></div>
     <div th:replace="~{fragments/modal :: modal(id='modal-aceitar-' + ${item.matriculaId}, titulo='Aceitar matrícula?', mensagem='O aluno será notificado e poderá prosseguir para o pagamento.', textoCancelar='Cancelar', textoConfirmar='Aceitar', varianteConfirmar='primario')}"></div>

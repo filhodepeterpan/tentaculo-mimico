@@ -35,6 +35,15 @@ public class MatriculaController {
         return redirecionarDepoisDeResponder(cursoId, voltar);
     }
 
+    // Professor cancela matrícula(s) ATIVA(S) de um aluno. "matriculaIds" vem do modal
+    // (um id, ou vários separados por vírgula quando escolhe "Todos os cursos").
+    @PostMapping("/matriculas/cancelar-aluno")
+    public String cancelarMatriculaDoAluno(@RequestParam("matriculaIds") java.util.List<String> matriculaIds,
+                                           @RequestParam(required = false) String voltar) {
+        String cursoId = matriculaService.cancelarPeloProfessor(matriculaIds);
+        return redirecionarDepoisDeResponder(cursoId, voltar);
+    }
+
     @PostMapping("/matriculas/{id}/cancelar")
     public String cancelarMatricula(@PathVariable String id) {
         matriculaService.cancelar(id);

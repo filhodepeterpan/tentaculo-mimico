@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
@@ -220,14 +221,15 @@ public class CursoController {
     }
 
     @PostMapping("/cursos/{id}/excluir")
-    public String excluirCurso(@PathVariable String id, Model model) {
+    public String excluirCurso(@PathVariable String id, RedirectAttributes redirectAttributes) {
         try {
-            cursoService.excluirCurso(id); // deve respeitar RN025 (não excluir com aluno matriculado)
+            cursoService.excluirCurso(id); // respeita RN025 (não exclui com aluno matriculado)
             return "redirect:/perfil/professor/" + sessaoService.usuarioLogado().getId();
         } catch (RuntimeException e) {
-            model.addAttribute("curso", cursoRepository.findById(id).orElse(null));
-            model.addAttribute("erroGeral", e.getMessage());
-            return "curso-detalhes";
+            // Volta pra página do curso (que monta o model completo: professor, ehProprietario,
+            // alunos...) e mostra o motivo num alerta, em vez de renderizar o template com model parcial.
+            redirectAttributes.addFlashAttribute("erroExclusao", e.getMessage());
+            return "redirect:/cursos/" + id;
         }
     }
 

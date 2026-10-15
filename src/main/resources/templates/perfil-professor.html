@@ -124,6 +124,10 @@
     <div th:replace="~{fragments/modal :: modal(id='modal-excluir-conta', titulo='Excluir sua conta?', mensagem='Essa ação não pode ser desfeita. Seus dados serão removidos conforme as políticas da plataforma.', textoCancelar='Cancelar', textoConfirmar='Excluir', varianteConfirmar='perigo')}"></div>
 </th:block>
 
+<th:block th:if="${erroExclusaoConta != null}">
+    <div th:replace="~{fragments/modal-exclusao-bloqueada :: modalExclusaoBloqueada(mensagem=${erroExclusaoConta})}"></div>
+</th:block>
+
 <form id="form-acao-perfil" method="post" hidden></form>
 
 <div th:replace="~{fragments/layouts :: footer}"></div>

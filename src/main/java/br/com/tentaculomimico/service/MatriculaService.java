@@ -195,6 +195,81 @@ public class MatriculaService {
                 .forEach(this::cancelarInterno);
     }
 
+    /**
+     * Exclusão de conta do ALUNO: só PENDENTE pode ficar (é cancelada junto com a conta).
+     * Matrícula ATIVA ou AGUARDANDO_PAGAMENTO bloqueia: o aluno precisa desistir antes.
+     * Lança RuntimeException com o motivo (o controller mostra num modal).
+     */
+    public void exigirAlunoPodeExcluirConta(String alunoId) {
+        List<Matricula> ocupando = matriculaRepository.findByAlunoId(alunoId).stream()
+                .filter(m -> m.getStatusMatricula() != null && m.getStatusMatricula().ocupaVaga())
+                .toList();
+        if (ocupando.isEmpty()) {
+            return;
+        }
+
+        Map<String, Curso> nomes = new LinkedHashMap<>();
+        ocupando.forEach(m -> nomes.computeIfAbsent(m.getCursoId(),
+                id -> cursoRepository.findById(id).orElse(null)));
+
+        String ativas = nomesDosCursos(ocupando, StatusMatricula.ATIVA, nomes);
+        String aguardando = nomesDosCursos(ocupando, StatusMatricula.AGUARDANDO_PAGAMENTO, nomes);
+
+        StringBuilder msg = new StringBuilder();
+        if (!ativas.isEmpty()) {
+            msg.append("Você tem matrícula ativa em: ").append(ativas).append(". ");
+        }
+        if (!aguardando.isEmpty()) {
+            msg.append("Você tem matrícula aguardando pagamento em: ").append(aguardando).append(". ");
+        }
+        msg.append("Desista de cada uma na página do curso e depois tente excluir a conta de novo.");
+        throw new RuntimeException(msg.toString());
+    }
+
+    /**
+     * Exclusão de conta do PROFESSOR: bloqueia se algum curso dele tem aluno com matrícula
+     * ATIVA (ele precisa cancelar) ou AGUARDANDO_PAGAMENTO (ele precisa esperar o aluno pagar
+     * ou desistir, e só então cancelar). Pendentes não bloqueiam: viram recusadas na exclusão do curso.
+     */
+    public void exigirProfessorPodeExcluirConta(String professorId) {
+        Map<String, Curso> cursos = cursosDoProfessor(professorId);
+        if (cursos.isEmpty()) {
+            return;
+        }
+        List<Matricula> ocupando = matriculaRepository.findByCursoIdIn(cursos.keySet()).stream()
+                .filter(m -> m.getStatusMatricula() != null && m.getStatusMatricula().ocupaVaga())
+                .toList();
+        if (ocupando.isEmpty()) {
+            return;
+        }
+
+        String ativas = nomesDosCursos(ocupando, StatusMatricula.ATIVA, cursos);
+        String aguardando = nomesDosCursos(ocupando, StatusMatricula.AGUARDANDO_PAGAMENTO, cursos);
+
+        StringBuilder msg = new StringBuilder();
+        if (!ativas.isEmpty()) {
+            msg.append("Há alunos matriculados em: ").append(ativas)
+               .append(". Cancele a matrícula deles (na aba \"Alunos matriculados\" ou na página do curso). ");
+        }
+        if (!aguardando.isEmpty()) {
+            msg.append("Há alunos aguardando pagamento em: ").append(aguardando)
+               .append(". Aguarde o pagamento ou a desistência do aluno. ");
+        }
+        msg.append("Só então será possível excluir a conta.");
+        throw new RuntimeException(msg.toString());
+    }
+
+    private String nomesDosCursos(List<Matricula> matriculas, StatusMatricula status, Map<String, Curso> cursos) {
+        return matriculas.stream()
+                .filter(m -> m.getStatusMatricula() == status)
+                .map(m -> {
+                    Curso c = cursos.get(m.getCursoId());
+                    return c != null ? c.getNome() : "(curso removido)";
+                })
+                .distinct()
+                .collect(Collectors.joining(", "));
+    }
+
     private void cancelarInterno(Matricula matricula) {
         boolean ocupavaVaga = matricula.getStatusMatricula().ocupaVaga();
         matricula.setStatusMatricula(StatusMatricula.CANCELADA);

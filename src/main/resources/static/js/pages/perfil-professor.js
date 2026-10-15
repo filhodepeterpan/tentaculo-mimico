@@ -11,7 +11,7 @@ function inicializarExclusaoDeConta() {
     if (!botao || botao.id !== 'modal-excluir-conta-confirmar') return;
 
     const form = document.getElementById('form-acao-perfil');
-    form.action = '/perfil/excluir';
+    form.action = '/perfil-excluir';
     form.submit();
   });
 }

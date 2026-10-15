@@ -200,24 +200,25 @@ public class PerfilService {
     }
 
     /**
-     * ATENÇÃO: regras de negócio abaixo são uma interpretação de RN011/012/019
-     * (não tenho o texto delas) — ajuste se divergirem:
-     *  - Professor: não exclui se algum curso dele tem aluno matriculado
-     *    (CursoService.excluirCurso lança a exceção); os demais cursos são excluídos.
-     *  - Aluno: matrículas em aberto são canceladas (vagas devolvidas).
-     * Limitação: se o professor tiver vários cursos e um deles bloquear, os
-     *    anteriores já foram excluídos (sem transação). Se isso importar, crie
-     *    um método "podeExcluir" no CursoService e valide todos antes.
+     * Exclui a conta do usuário logado (apaga o Usuario de vez) e encerra a sessão.
+     *  - Professor: bloqueia se algum curso tem aluno ATIVO ou AGUARDANDO_PAGAMENTO;
+     *    senão exclui todos os cursos dele (pendentes viram recusadas).
+     *  - Aluno: bloqueia se tem matrícula ATIVA ou AGUARDANDO_PAGAMENTO; as PENDENTES
+     *    são canceladas (e somem da lista do professor).
+     * A validação roda ANTES de apagar qualquer coisa, então um bloqueio não deixa
+     * a conta pela metade. Quem bloqueia lança RuntimeException com o motivo.
      */
     public void excluirContaDoUsuarioLogado() {
         Usuario usuario = sessaoService.exigirUsuarioLogado();
         String tipo = usuario.getTipoUsuario().name();
 
         if ("PROFESSOR".equalsIgnoreCase(tipo)) {
+            matriculaService.exigirProfessorPodeExcluirConta(usuario.getId());
             for (Curso curso : cursoRepository.findByProfessorId(usuario.getId())) {
                 cursoService.excluirCurso(curso.getId());
             }
         } else if ("ALUNO".equalsIgnoreCase(tipo)) {
+            matriculaService.exigirAlunoPodeExcluirConta(usuario.getId());
             matriculaService.cancelarEmAbertoDoAluno(usuario.getId());
         }
 

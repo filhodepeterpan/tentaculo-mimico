@@ -253,7 +253,7 @@ public class MatriculaService {
         }
         if (!aguardando.isEmpty()) {
             msg.append("Há alunos aguardando pagamento em: ").append(aguardando)
-               .append(". Aguarde o pagamento ou a desistência do aluno");
+               .append(". Aguarde o pagamento ou a desistência do aluno. ");
         }
         msg.append("Só então será possível excluir a conta.");
         throw new RuntimeException(msg.toString());

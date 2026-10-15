@@ -138,7 +138,8 @@
         <a th:href="@{/pagamentos/{id}(id=${matriculaId})}" class="botao botao--primario botao--pequeno">Pagar</a>
       </th:block>
 
-      <th:block th:if="${tipoUsuarioLogado == 'aluno' and statusMatricula == 'ativa'}">
+      <!-- Desistir: em qualquer matrícula "viva" (aguardando aprovação, aguardando pagamento ou ativa). -->
+      <th:block th:if="${tipoUsuarioLogado == 'aluno' and (statusMatricula == 'pendente' or statusMatricula == 'aceita_aguardando_pagamento' or statusMatricula == 'ativa')}">
         <button type="button" class="botao botao--perigo botao--pequeno" data-modal-abrir="modal-desistir">Desistir da matrícula</button>
       </th:block>
 
@@ -210,8 +211,8 @@
   <div th:replace="~{fragments/modal :: modal(id='modal-deletar-curso', titulo='Excluir este curso?', mensagem='Essa ação não pode ser desfeita. Alunos matriculados perderão acesso ao curso.', textoCancelar='Cancelar', textoConfirmar='Excluir', varianteConfirmar='perigo')}"></div>
 </th:block>
 
-<th:block th:if="${tipoUsuarioLogado == 'aluno' and statusMatricula == 'ativa'}">
-  <div th:replace="~{fragments/modal :: modal(id='modal-desistir', titulo='Desistir da matrícula?', mensagem='Você vai perder o acesso a este curso. Essa ação não pode ser desfeita.', textoCancelar='Cancelar', textoConfirmar='Desistir', varianteConfirmar='perigo')}"></div>
+<th:block th:if="${tipoUsuarioLogado == 'aluno' and (statusMatricula == 'pendente' or statusMatricula == 'aceita_aguardando_pagamento' or statusMatricula == 'ativa')}">
+  <div th:replace="~{fragments/modal :: modal(id='modal-desistir', titulo='Desistir da matrícula?', mensagem=${statusMatricula == 'ativa' ? 'Você vai perder o acesso a este curso. Para voltar, será preciso se matricular de novo.' : (statusMatricula == 'pendente' ? 'Sua solicitação será cancelada e deixará de aparecer para o professor. Você pode solicitar de novo depois.' : 'A vaga reservada para você será liberada e você não precisará pagar. Você pode solicitar de novo depois.')}, textoCancelar='Cancelar', textoConfirmar='Desistir', varianteConfirmar='perigo')}"></div>
 </th:block>
 
 <th:block th:if="${ehProprietario != null and ehProprietario}">

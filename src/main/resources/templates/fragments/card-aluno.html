@@ -9,11 +9,15 @@
 <article th:fragment="cardAluno(aluno)" class="admin-alunos__card">
 
     <header class="admin-alunos__cabecalho">
-        <span class="admin-alunos__avatar" aria-hidden="true"
-              th:text="${#strings.substring(aluno.nome, 0, 1)}">A</span>
+        <img th:if="${aluno.fotoPerfil != null and !aluno.fotoPerfil.isEmpty()}" th:src="${aluno.fotoPerfil}" th:alt="'Foto de ' + ${aluno.nome}"  class="admin-alunos__avatar">
+        <span th:unless="${aluno.fotoPerfil != null and !aluno.fotoPerfil.isEmpty()}" class="admin-alunos__avatar" aria-hidden="true"
+              th:text="${#strings.substring(aluno.nome, 0, 1)}">
+        </span>
 
         <div class="admin-alunos__dados">
-            <h3 class="admin-alunos__nome" th:text="${aluno.nome}">Nome</h3>
+            <h3 class="admin-alunos__nome">
+                <a th:href="@{/perfil/aluno/{id}(id=${aluno.id})}" th:text="${aluno.nome}">Nome</a>
+            </h3>
             <p class="admin-alunos__email" th:text="${aluno.email}">email</p>
         </div>
     </header>

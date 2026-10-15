@@ -8,14 +8,15 @@ public class AlunoAdminResposta {
     private String nome;
     private String email;
     private List<Curso> cursos;
+    private String fotoPerfil;
 
-    public AlunoAdminResposta(String id, String nome, String email, List<Curso> cursos) {
+    public AlunoAdminResposta(String id, String nome, String email, List<Curso> cursos, String fotoPerfil) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.cursos = cursos;
+        this.fotoPerfil = fotoPerfil;
     }
-
 
     public String getId() {
         return id;
@@ -47,6 +48,10 @@ public class AlunoAdminResposta {
 
     public void setCursos(List<Curso> cursos) {
         this.cursos = cursos;
+    }
+
+    public String getFotoPerfil() {
+        return fotoPerfil;
     }
 
 }

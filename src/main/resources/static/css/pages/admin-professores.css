@@ -29,6 +29,18 @@
     padding: 2rem 0;
 }
 
+
+.admin-professores__nome a {
+    color: var(--color-link);
+    text-decoration: none;
+}
+
+.admin-professores__nome a:hover {
+    color: var(--color-link);
+    text-decoration: underline;
+}
+
+
 .admin-professores__lista {
     display: flex;
     flex-direction: column;

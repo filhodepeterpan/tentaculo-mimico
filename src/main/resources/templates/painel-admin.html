@@ -14,6 +14,8 @@
 
     <div class="painel-admin__topo">
         <h1 class="painel-admin__titulo">Painel administrativo</h1>
+
+        <div class="painel-admin__acoes">
         <span class="painel-admin__selo">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -21,7 +23,11 @@
             </svg>
             Acesso de administrador
         </span>
+            <div th:replace="~{fragments/buttons :: botao_link(texto='Sair da conta', variante='neutro', tamanho='pequeno', caminho='/sair')}"></div>
+        </div>
     </div>
+
+
 
     <p class="painel-admin__subtitulo">
         Gerencie usuários, cursos e a segurança da plataforma em um só lugar.

@@ -55,7 +55,7 @@ public class AdminService {
                     cursos.add(curso);
                 }
             }
-            resultado.add(new AlunoAdminResposta(aluno.getId(), aluno.getNome(), aluno.getEmail(), cursos));
+            resultado.add(new AlunoAdminResposta(aluno.getId(), aluno.getNome(), aluno.getEmail(),cursos, aluno.getFotoPerfil()));
         }
 
         return resultado;
@@ -69,7 +69,7 @@ public class AdminService {
 
         for (Usuario professor : usuarioRepository.findByTipoUsuario(TipoUsuario.PROFESSOR)) {
             List<Curso> cursos = cursoRepository.findByProfessorId(professor.getId());
-            resultado.add(new ProfessorAdminResposta(professor.getId(), professor.getNome(), professor.getEmail(), cursos));
+            resultado.add(new ProfessorAdminResposta(professor.getId(), professor.getNome(), professor.getEmail(), cursos, professor.getFotoPerfil()));
         }
 
         return resultado;

@@ -118,3 +118,41 @@
 .admin-professores__tabela td {
     padding: 0.25rem 1rem 0.25rem 0;
 }
+
+/* ===== Responsivo ===== */
+.admin-professores__item {
+    min-width: 0;
+}
+
+.admin-professores__nome,
+.admin-professores__email {
+    overflow-wrap: anywhere;
+}
+
+/* Tabela de cursos rola na horizontal em vez de estourar o card */
+.admin-professores__cursos {
+    overflow-x: auto;
+}
+
+@media (max-width: 600px) {
+    .admin-professores-container {
+        padding: 1.5rem 1rem 2rem;
+    }
+
+    .admin-professores__busca {
+        max-width: none;
+    }
+
+    .admin-professores__lista {
+        gap: 1rem;
+    }
+
+    .admin-professores__card {
+        padding: 1rem;
+        border-radius: 1rem;
+    }
+
+    .admin-professores__cabecalho {
+        gap: 0.75rem;
+    }
+}

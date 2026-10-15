@@ -187,3 +187,44 @@
   background: var(--color-secondary-container);
   color: var(--color-on-secondary-container);
 }
+
+/* ===== Responsivo ===== */
+.painel-admin__icone {
+  flex-shrink: 0;
+}
+
+.painel-admin__card,
+.painel-admin__gestao-card {
+  min-width: 0;
+}
+
+/* Tablet: resumo em 2 colunas, gestão em 2 colunas */
+@media (max-width: 900px) {
+  .painel-admin__resumo {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .painel-admin__gestao {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Celular: tudo em 1 coluna */
+@media (max-width: 600px) {
+  .painel-admin {
+    padding: 1.5rem 1rem 2rem;
+  }
+
+  .painel-admin__resumo,
+  .painel-admin__gestao {
+    grid-template-columns: 1fr;
+  }
+
+  .painel-admin__topo {
+    align-items: flex-start;
+  }
+
+  .painel-admin__acoes {
+    flex-wrap: wrap;
+  }
+}

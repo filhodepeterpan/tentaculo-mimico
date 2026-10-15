@@ -117,3 +117,41 @@
 .admin-alunos__tabela td {
     padding: 0.25rem 1rem 0.25rem 0;
 }
+
+/* ===== Responsivo ===== */
+.admin-alunos__item {
+    min-width: 0;
+}
+
+.admin-alunos__nome,
+.admin-alunos__email {
+    overflow-wrap: anywhere;
+}
+
+/* Tabela de cursos rola na horizontal em vez de estourar o card */
+.admin-alunos__cursos {
+    overflow-x: auto;
+}
+
+@media (max-width: 600px) {
+    .admin-alunos-container {
+        padding: 1.5rem 1rem 2rem;
+    }
+
+    .admin-alunos__busca {
+        max-width: none;
+    }
+
+    .admin-alunos__lista {
+        gap: 1rem;
+    }
+
+    .admin-alunos__card {
+        padding: 1rem;
+        border-radius: 1rem;
+    }
+
+    .admin-alunos__cabecalho {
+        gap: 0.75rem;
+    }
+}

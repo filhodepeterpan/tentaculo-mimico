@@ -135,6 +135,11 @@
     border-top: 1px solid var(--color-surface-dim);
 }
 
+/* Tabela rola na horizontal em vez de estourar o card */
+.admin-cursos__cursos {
+    overflow-x: auto;
+}
+
 @media (max-width: 600px) {
     .admin-cursos-container {
         padding: 1.5rem 1rem 2rem;

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" th:href="@{/css/pages/calendario-pagina.css}">
+  <title>Tentáculo Mímico</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layouts :: header}"></div>
+
+<main class="calendario-pagina">
+  <h1 class="calendario-pagina__titulo">Calendário</h1>
+  <p class="calendario-pagina__descricao">Veja em quais dias e horários cada curso acontece nesta semana.</p>
+
+  <!-- Calendário da semana (domingo a sábado). Os dados vêm de GET /api/calendario/semana
+       e o desenho é feito por /js/componentes/calendario.js. O CSS do componente
+       (componentes/calendario.css) é importado pelo global.css. -->
+  <section class="calendario"
+           aria-labelledby="calendario-titulo"
+           data-calendario
+           th:attr="data-url=@{/api/calendario/semana},data-url-curso=@{/cursos/},data-img-padrao=@{/img/mascara.png}">
+
+    <header class="calendario__cabecalho">
+      <h2 id="calendario-titulo" class="calendario__titulo">Agenda da semana</h2>
+      <p class="calendario__periodo" data-calendario-periodo></p>
+    </header>
+
+    <p class="calendario__mensagem" data-calendario-mensagem role="status">Carregando agenda...</p>
+
+    <div class="calendario__rolagem" data-calendario-rolagem hidden>
+      <div class="calendario__grade" data-calendario-grade></div>
+    </div>
+  </section>
+</main>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+<script type="module" th:src="@{/js/componentes/calendario.js}"></script>
+</body>
+</html>

@@ -40,7 +40,7 @@ public class SecurityConfig {
                         && (request.getContextPath() + "/doacoes").equals(request.getRequestURI())))
                 .authorizeHttpRequests(auth ->
                         auth
-                                .requestMatchers("/api/auth/**")
+                                .requestMatchers("/api/auth/**", "/api/calendario/**")
                                 .permitAll()
                                 .requestMatchers(
                                         "/",
@@ -52,6 +52,7 @@ public class SecurityConfig {
                                         "/contato",
                                         "/cursos",
                                         "/cursos/**",
+                                        "/calendario",
                                         "/curso-detalhes",
                                         "/curso-detalhes/**",
                                         "/cadastro-curso",

@@ -8,12 +8,17 @@
   gap: 2rem;
   background-color: var(--color-primary);
   padding: 3rem 2rem;
-  position: relative;
 }
 
-/* Com capa: reserva espaço à direita para a imagem, que fica colada nas bordas da seção */
+/* Com capa: a imagem define a altura da seção e fica colada no topo, na base e à direita */
 .curso-detalhes__topo:has(.curso-detalhes__capa) {
-  padding-right: calc(16rem + 2rem);
+  padding: 0 0 0 2rem;
+  align-items: stretch;
+}
+
+.curso-detalhes__topo:has(.curso-detalhes__capa) .curso-detalhes__topo-texto {
+  justify-content: center;
+  padding: 3rem 0;
 }
 
 .curso-detalhes__topo-texto {
@@ -91,14 +96,11 @@
 }
 
 .curso-detalhes__capa {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 16rem;
-  height: 100%;
+  width: 32rem;
+  height: 24rem;
   object-fit: cover;
   border-radius: 0;
+  flex-shrink: 0;
 }
 
 .curso-detalhes__conteudo {
@@ -302,10 +304,10 @@
 
   .curso-detalhes__topo:has(.curso-detalhes__capa) {
     padding: 0 0 2rem;
+    align-items: center;
   }
 
   .curso-detalhes__capa {
-    position: static;
     order: -1;
     width: 100%;
     height: 10rem;

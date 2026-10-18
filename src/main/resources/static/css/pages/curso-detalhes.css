@@ -96,8 +96,8 @@
 }
 
 .curso-detalhes__capa {
-  width: 32rem;
-  height: 24rem;
+  width: 24rem;
+  height: 18rem;
   object-fit: cover;
   border-radius: 0;
   flex-shrink: 0;

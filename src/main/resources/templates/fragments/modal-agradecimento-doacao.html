@@ -1,0 +1,20 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="modal" id="modal-agradecimento-doacao"
+     class="modal fade doacoes-modal" tabindex="-1" aria-labelledby="doacoes-modal-titulo"
+     aria-describedby="doacoes-modal-texto" aria-hidden="true"
+     th:attr="data-mostrar=${mostrarAgradecimentoDoacao}">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="doacoes-modal-titulo">Agradecemos sua generosidade!</h2>
+        <button type="button" class="doacoes-modal__fechar" data-bs-dismiss="modal" aria-label="Fechar">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="doacoes-modal__imagem" role="img" aria-label="Espaço reservado para uma imagem de agradecimento">Imagem de agradecimento</div>
+        <p id="doacoes-modal-texto">Sua contribuição ajuda o Tentáculo Mímico a continuar criando, ensinando e levando a arte para mais pessoas e espaços. Obrigado por acreditar no nosso trabalho e por fazer parte dessa história.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="botao botao--primario botao--pequeno" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>

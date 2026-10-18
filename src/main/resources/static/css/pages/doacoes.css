@@ -75,6 +75,70 @@
   gap: 0.5rem;
 }
 
+.doacoes__erro { color: var(--color-error); }
+
+/* Apenas o componente Bootstrap da doação: não carregar o reset global da biblioteca.
+   Mantém o modal próprio do rodapé sem mudanças. Estilos do modal baseados no Bootstrap 5.3.3 (MIT). */
+.doacoes-modal.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1055;
+  overflow-x: hidden;
+  overflow-y: auto;
+  outline: 0;
+  align-items: initial;
+  justify-content: initial;
+}
+.doacoes-modal.modal.show { display: block; }
+.doacoes-modal.fade { opacity: 0; transition: opacity .15s linear; }
+.doacoes-modal.fade.show { opacity: 1; }
+.doacoes-modal .modal-dialog {
+  position: relative;
+  width: auto;
+  margin: 1.75rem auto;
+  pointer-events: none;
+  max-width: min(32rem, calc(100vw - 2rem));
+}
+.doacoes-modal .modal-dialog-centered { display: flex; align-items: center; min-height: calc(100% - 3.5rem); }
+.doacoes-modal.fade .modal-dialog { transform: translateY(-3rem); transition: transform .3s ease-out; }
+.doacoes-modal.show .modal-dialog { transform: none; }
+.doacoes-modal .modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: calc(100vh - 3.5rem);
+  overflow-y: auto;
+  pointer-events: auto;
+  background: var(--color-surface);
+  border-radius: 1rem;
+  color: var(--color-on-surface);
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, .25);
+}
+.doacoes-modal .modal-header, .doacoes-modal .modal-footer { display: flex; align-items: center; padding: 1rem 1.5rem; }
+.doacoes-modal .modal-header { justify-content: space-between; gap: 1rem; }
+.doacoes-modal .modal-footer { justify-content: flex-end; }
+.doacoes-modal .modal-title { font-family: var(--fonte-editorial); font-size: 1.5rem; margin: 0; }
+.doacoes-modal .modal-body { padding: 0 1.5rem 1rem; line-height: 1.5; }
+.doacoes-modal__imagem {
+  min-height: 9rem;
+  display: grid;
+  place-items: center;
+  margin-bottom: 1rem;
+  border: 2px dashed var(--color-outline);
+  border-radius: .75rem;
+  text-align: center;
+  color: var(--color-on-surface-variant);
+}
+.doacoes-modal__fechar { border: 0; background: transparent; color: inherit; font-size: 2rem; cursor: pointer; }
+.modal-backdrop { position: fixed; inset: 0; z-index: 1050; background: #000; }
+.modal-backdrop.fade { opacity: 0; }
+.modal-backdrop.show { opacity: .5; }
+@media (prefers-reduced-motion: reduce) {
+  .doacoes-modal.fade, .doacoes-modal.fade .modal-dialog { transition: none; }
+}
+
 @media (max-width: 900px) {
   .doacoes {
     grid-template-columns: 1fr;

@@ -43,4 +43,15 @@ class DoacaoServiceTest {
         assertThrows(PagBankClient.CheckoutIndisponivelException.class, () -> inseguro.iniciar("10", ""));
         verifyNoInteractions(client);
     }
+
+    @Test
+    void aceitaLimitesIncluindoCentavoExato() {
+        when(client.criar(any())).thenReturn(URI.create("https://pagamento.pagbank.com.br/pagamento?code=1"));
+        service.iniciar("1,00", "");
+        service.iniciar("10.000,00", "");
+        var pedido = org.mockito.ArgumentCaptor.forClass(CriarCheckout.class);
+        verify(client, times(2)).criar(pedido.capture());
+        assertEquals(100, pedido.getAllValues().get(0).items().getFirst().unitAmount());
+        assertEquals(1_000_000, pedido.getAllValues().get(1).items().getFirst().unitAmount());
+    }
 }

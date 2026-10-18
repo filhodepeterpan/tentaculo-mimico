@@ -2,7 +2,7 @@ package br.com.tentaculomimico.service;
 
 import br.com.tentaculomimico.config.PagBankProperties;
 import br.com.tentaculomimico.dto.pagbank.CheckoutCriado;
-import br.com.tentaculomimico.dto.pagbank.CriarCheckout;
+import br.com.tentaculomimico.dto.pagbank.CheckoutRequest;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ public class PagBankClient {
         this.properties = properties;
     }
 
-    public URI criar(CriarCheckout checkout) {
+    public URI criar(CheckoutRequest checkout) {
         if (properties.token() == null || properties.token().isBlank()) {
             throw new CheckoutIndisponivelException();
         }

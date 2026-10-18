@@ -1,7 +1,7 @@
 package br.com.tentaculomimico.service;
 
 import br.com.tentaculomimico.config.PagBankProperties;
-import br.com.tentaculomimico.dto.pagbank.CriarCheckout;
+import br.com.tentaculomimico.dto.pagbank.CheckoutRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -20,8 +20,8 @@ class PagBankClientTest {
     private final MockRestServiceServer server = MockRestServiceServer.bindTo(builder).build();
     private final PagBankProperties properties = new PagBankProperties("segredo", PagBankProperties.Environment.sandbox, "https://exemplo.org");
     private final PagBankClient client = new PagBankClient(builder.build(), properties);
-    private final CriarCheckout checkout = new CriarCheckout("referencia", OffsetDateTime.now(), true,
-            List.of(new CriarCheckout.Item("Doação ao Tentáculo Mímico", 1, 3500)),
+    private final CheckoutRequest checkout = new CheckoutRequest("referencia", OffsetDateTime.now(), true,
+            List.of(new CheckoutRequest.Item("Doação ao Tentáculo Mímico", 1, 3500)),
             "https://exemplo.org/doacoes?retorno=pagbank", "https://exemplo.org/doacoes?retorno=pagbank", List.of());
 
     @Test

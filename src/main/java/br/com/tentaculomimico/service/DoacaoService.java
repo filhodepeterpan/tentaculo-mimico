@@ -1,7 +1,7 @@
 package br.com.tentaculomimico.service;
 
 import br.com.tentaculomimico.config.PagBankProperties;
-import br.com.tentaculomimico.dto.pagbank.CriarCheckout;
+import br.com.tentaculomimico.dto.pagbank.CheckoutRequest;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -32,12 +32,12 @@ public class DoacaoService {
         }
         try {
             String retorno = properties.retorno().toString();
-            CriarCheckout checkout = new CriarCheckout(UUID.randomUUID().toString(),
+            CheckoutRequest checkout = new CheckoutRequest(UUID.randomUUID().toString(),
                     OffsetDateTime.now(ZoneOffset.UTC).plusHours(2), true,
-                    List.of(new CriarCheckout.Item("Doação ao Tentáculo Mímico", 1, valor.movePointRight(2).intValueExact())),
+                    List.of(new CheckoutRequest.Item("Doação ao Tentáculo Mímico", 1, valor.movePointRight(2).intValueExact())),
                     retorno, retorno,
-                    List.of(new CriarCheckout.MetodoConfig("CREDIT_CARD",
-                            List.of(new CriarCheckout.Opcao("INSTALLMENTS_LIMIT", "1")))));
+                    List.of(new CheckoutRequest.MetodoConfig("CREDIT_CARD",
+                            List.of(new CheckoutRequest.Opcao("INSTALLMENTS_LIMIT", "1")))));
             return client.criar(checkout);
         } catch (IllegalStateException e) {
             throw new PagBankClient.CheckoutIndisponivelException();

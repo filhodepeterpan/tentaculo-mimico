@@ -1,7 +1,7 @@
 package br.com.tentaculomimico.service;
 
 import br.com.tentaculomimico.config.PagBankProperties;
-import br.com.tentaculomimico.dto.pagbank.CriarCheckout;
+import br.com.tentaculomimico.dto.pagbank.CheckoutRequest;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
@@ -19,7 +19,7 @@ class DoacaoServiceTest {
     void converteCentavosExatosSemPersistirMensagem() {
         when(client.criar(any())).thenReturn(URI.create("https://pagamento.pagbank.com.br/pagamento?code=1"));
         service.iniciar("R$ 1.234,56", "Mensagem pessoal");
-        var pedido = org.mockito.ArgumentCaptor.forClass(CriarCheckout.class);
+        var pedido = org.mockito.ArgumentCaptor.forClass(CheckoutRequest.class);
         verify(client).criar(pedido.capture());
         assertEquals(123456, pedido.getValue().items().getFirst().unitAmount());
         assertEquals("https://exemplo.org/doacoes?retorno=pagbank", pedido.getValue().redirectUrl());
@@ -49,7 +49,7 @@ class DoacaoServiceTest {
         when(client.criar(any())).thenReturn(URI.create("https://pagamento.pagbank.com.br/pagamento?code=1"));
         service.iniciar("1,00", "");
         service.iniciar("10.000,00", "");
-        var pedido = org.mockito.ArgumentCaptor.forClass(CriarCheckout.class);
+        var pedido = org.mockito.ArgumentCaptor.forClass(CheckoutRequest.class);
         verify(client, times(2)).criar(pedido.capture());
         assertEquals(100, pedido.getAllValues().get(0).items().getFirst().unitAmount());
         assertEquals(1_000_000, pedido.getAllValues().get(1).items().getFirst().unitAmount());

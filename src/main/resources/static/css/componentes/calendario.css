@@ -1,0 +1,246 @@
+/* COMPONENTE — Calendário da semana (domingo a sábado)
+   Markup: fragments/calendario.html · Desenho: js/componentes/calendario.js
+   Cores e tipografia vêm só dos tokens de root.css (tema claro/escuro/alto contraste). */
+
+.calendario {
+    --cal-hora-altura: 8rem; /* altura de 1 hora na grade; as aulas acompanham */
+    --cal-coluna-horas: 3.5rem;
+
+    width: 100%;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3rem;
+}
+
+.calendario__cabecalho {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.calendario__titulo {
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-titulo-secao-tamanho);
+    line-height: var(--tipo-titulo-secao-altura-linha);
+    letter-spacing: var(--tipo-titulo-secao-espacamento);
+    font-weight: var(--tipo-titulo-secao-peso);
+    color: var(--color-on-surface);
+}
+
+.calendario__periodo {
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-corpo-padrao-tamanho);
+    line-height: var(--tipo-corpo-padrao-altura-linha);
+    color: var(--color-on-surface-variant);
+}
+
+.calendario__mensagem {
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-body-lg-tamanho);
+    color: var(--color-on-surface-variant);
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.calendario__mensagem--erro {
+    color: var(--color-error);
+}
+
+/* Em telas estreitas a grade rola na horizontal em vez de espremer as colunas. */
+.calendario__rolagem {
+    overflow-x: auto;
+    border: 1px solid var(--color-outline-variant);
+    border-radius: 0.75rem;
+    background-color: var(--color-surface-container-lowest);
+}
+
+.calendario__grade {
+    display: grid;
+    grid-template-columns: var(--cal-coluna-horas) repeat(7, minmax(7.5rem, 1fr));
+    min-width: 62rem;
+}
+
+/* Cabeçalho: um bloco por dia, com o nome e o número do dia do mês */
+.calendario__canto,
+.calendario__dia {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: var(--color-surface-container-low);
+    border-bottom: 1px solid var(--color-outline-variant);
+}
+
+.calendario__dia {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem 0.25rem;
+    border-left: 1px solid var(--color-outline-variant);
+}
+
+.calendario__dia-nome {
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-label-lg-tamanho);
+    line-height: var(--tipo-label-lg-altura-linha);
+    letter-spacing: var(--tipo-label-lg-espacamento);
+    font-weight: var(--tipo-label-lg-peso);
+    color: var(--color-on-surface-variant);
+}
+
+.calendario__dia-numero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    height: 2rem;
+    padding: 0 0.375rem;
+    border-radius: 1rem;
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-title-lg-tamanho);
+    line-height: var(--tipo-title-lg-altura-linha);
+    color: var(--color-on-surface);
+}
+
+.calendario__dia--hoje .calendario__dia-nome {
+    color: var(--color-primary);
+    font-weight: var(--tipo-label-lg-peso-enfatizado);
+}
+
+.calendario__dia--hoje .calendario__dia-numero {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    font-weight: var(--tipo-title-md-peso-enfatizado);
+}
+
+/* Coluna das horas (08:00, 09:00...) */
+.calendario__horas {
+    position: relative;
+    height: calc(var(--cal-horas) * var(--cal-hora-altura));
+}
+
+.calendario__hora {
+    position: absolute;
+    right: 0.5rem;
+    top: calc(var(--hora-indice) * var(--cal-hora-altura));
+    transform: translateY(-50%);
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-legenda-tamanho);
+    line-height: var(--tipo-legenda-altura-linha);
+    letter-spacing: var(--tipo-legenda-espacamento);
+    color: var(--color-on-surface-variant);
+}
+
+/* A primeira hora fica colada no topo: sem o deslocamento, o rótulo seria cortado. */
+.calendario__hora--primeira {
+    transform: translateY(0.25rem);
+}
+
+/* Uma coluna por dia; as linhas horizontais marcam cada hora. */
+.calendario__coluna {
+    position: relative;
+    height: calc(var(--cal-horas) * var(--cal-hora-altura));
+    border-left: 1px solid var(--color-outline-variant);
+    background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent calc(var(--cal-hora-altura) - 1px),
+        var(--color-outline-variant) calc(var(--cal-hora-altura) - 1px),
+        var(--color-outline-variant) var(--cal-hora-altura)
+    );
+}
+
+.calendario__coluna--hoje {
+    background-color: var(--color-primary-container);
+    background-blend-mode: normal;
+}
+
+/* Aula: ocupa exatamente o intervalo do horário (topo e altura em horas). Aulas que
+   se cruzam no mesmo dia dividem a largura da coluna (--ev-col de --ev-cols). */
+.calendario__evento {
+    position: absolute;
+    top: calc(var(--ev-topo) * var(--cal-hora-altura));
+    height: calc(var(--ev-altura) * var(--cal-hora-altura));
+    left: calc(var(--ev-col) * 100% / var(--ev-cols));
+    width: calc(100% / var(--ev-cols));
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    border: 2px solid var(--color-surface-container-lowest);
+    border-radius: 0.5rem;
+    background-color: var(--color-primary-container);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/* Ao passar o mouse (ou focar com o teclado) a aula cresce para baixo até caber o
+   nome inteiro, sem passar do tamanho do horário quando o nome já cabe. */
+.calendario__evento:hover,
+.calendario__evento:focus-visible {
+    z-index: 1;
+    height: auto;
+    min-height: calc(var(--ev-altura) * var(--cal-hora-altura));
+    box-shadow: 0 0.25rem 0.75rem color-mix(in srgb, var(--color-shadow) 30%, transparent);
+}
+
+.calendario__evento:hover .calendario__evento-nome,
+.calendario__evento:focus-visible .calendario__evento-nome {
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    overflow: visible;
+}
+
+.calendario__evento-imagem {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Degradê escuro por cima da foto para o nome continuar legível em qualquer imagem. */
+.calendario__evento::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        color-mix(in srgb, var(--color-scrim) 80%, transparent) 0%,
+        color-mix(in srgb, var(--color-scrim) 35%, transparent) 60%,
+        transparent 100%
+    );
+}
+
+.calendario__evento-texto {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    width: 100%;
+    padding: 0.375rem 0.5rem;
+}
+
+.calendario__evento-nome {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    overflow-wrap: anywhere; /* palavras muito longas quebram em vez de vazar */
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-title-md-tamanho);
+    line-height: var(--tipo-title-md-altura-linha);
+    letter-spacing: var(--tipo-title-md-espacamento);
+    font-weight: var(--tipo-title-md-peso-enfatizado);
+    text-shadow: 0 1px 2px color-mix(in srgb, var(--color-scrim) 60%, transparent);
+}
+
+@media (max-width: 767px) {
+    .calendario {
+        padding: 1.5rem 1rem 2rem;
+    }
+}

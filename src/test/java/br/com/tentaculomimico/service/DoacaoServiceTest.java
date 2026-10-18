@@ -41,7 +41,25 @@ class DoacaoServiceTest {
         DoacaoService inseguro = new DoacaoService(client,
                 new PagBankProperties("token", PagBankProperties.Environment.sandbox, "http://exemplo.org"));
         assertThrows(PagBankClient.CheckoutIndisponivelException.class, () -> inseguro.iniciar("10", ""));
+        DoacaoService producaoLocal = new DoacaoService(client,
+                new PagBankProperties("token", PagBankProperties.Environment.production, "http://localhost:8080"));
+        assertThrows(PagBankClient.CheckoutIndisponivelException.class, () -> producaoLocal.iniciar("10", ""));
+        DoacaoService comCredenciaisNaUrl = new DoacaoService(client,
+                new PagBankProperties("token", PagBankProperties.Environment.sandbox, "http://usuario@localhost:8080"));
+        assertThrows(PagBankClient.CheckoutIndisponivelException.class, () -> comCredenciaisNaUrl.iniciar("10", ""));
         verifyNoInteractions(client);
+    }
+
+    @Test
+    void permiteRetornoLocalSomenteNoSandbox() {
+        when(client.criar(any())).thenReturn(URI.create("https://pagamento.pagbank.com.br/pagamento?code=1"));
+        DoacaoService local = new DoacaoService(client,
+                new PagBankProperties("token", PagBankProperties.Environment.sandbox, "http://localhost:8080"));
+        local.iniciar("10", "");
+        var pedido = org.mockito.ArgumentCaptor.forClass(CheckoutRequest.class);
+        verify(client).criar(pedido.capture());
+        assertEquals("http://localhost:8080/doacoes?retorno=pagbank", pedido.getValue().redirectUrl());
+        assertEquals(pedido.getValue().redirectUrl(), pedido.getValue().returnUrl());
     }
 
     @Test

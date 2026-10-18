@@ -34,7 +34,10 @@ public class SecurityConfig {
             OAuth2LoginSucessoHandler oauth2SucessoHandler
     ) throws Exception {
 
-        http.csrf(csrf -> csrf.disable())
+        // Só o POST de doação usa CSRF por enquanto: formulários antigos ainda não têm token.
+        http.csrf(csrf -> csrf.requireCsrfProtectionMatcher(request ->
+                "POST".equals(request.getMethod())
+                        && (request.getContextPath() + "/doacoes").equals(request.getRequestURI())))
                 .authorizeHttpRequests(auth ->
                         auth
                                 .requestMatchers("/api/auth/**")

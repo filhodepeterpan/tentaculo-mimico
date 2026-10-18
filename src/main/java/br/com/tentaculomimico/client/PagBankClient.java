@@ -1,4 +1,4 @@
-package br.com.tentaculomimico.service;
+package br.com.tentaculomimico.client;
 
 import br.com.tentaculomimico.config.PagBankProperties;
 import br.com.tentaculomimico.dto.pagbank.CheckoutCriado;

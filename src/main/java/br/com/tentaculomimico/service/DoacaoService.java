@@ -1,5 +1,6 @@
 package br.com.tentaculomimico.service;
 
+import br.com.tentaculomimico.client.PagBankClient;
 import br.com.tentaculomimico.config.PagBankProperties;
 import br.com.tentaculomimico.dto.pagbank.CheckoutRequest;
 import org.springframework.stereotype.Service;

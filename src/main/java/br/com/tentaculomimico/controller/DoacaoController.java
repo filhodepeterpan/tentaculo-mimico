@@ -1,7 +1,8 @@
 package br.com.tentaculomimico.controller;
 
+import br.com.tentaculomimico.client.PagBankClient;
 import br.com.tentaculomimico.service.DoacaoService;
-import br.com.tentaculomimico.service.PagBankClient;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

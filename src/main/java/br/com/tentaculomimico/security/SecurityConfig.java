@@ -37,7 +37,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth ->
                         auth
-                                .requestMatchers("/api/auth/**")
+                                .requestMatchers("/api/auth/**", "/api/calendario/**")
                                 .permitAll()
                                 .requestMatchers(
                                         "/",
@@ -49,6 +49,7 @@ public class SecurityConfig {
                                         "/contato",
                                         "/cursos",
                                         "/cursos/**",
+                                        "/calendario",
                                         "/curso-detalhes",
                                         "/curso-detalhes/**",
                                         "/cadastro-curso",

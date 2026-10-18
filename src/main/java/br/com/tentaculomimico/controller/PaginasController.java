@@ -96,6 +96,9 @@ public class PaginasController {
 
     @GetMapping("/login")
     public String login() {
+        if (sessaoService.usuarioLogado() != null) {
+            return "redirect:cursos";
+        }
 
         return "login";
     }

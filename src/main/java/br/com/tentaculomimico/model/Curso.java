@@ -1,31 +1,63 @@
 package br.com.tentaculomimico.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+// Os nomes dos campos no banco são snake_case (ver docs/data_dictionary.md e o
+// $jsonSchema da coleção "cursos"), então cada campo divergente precisa de @Field.
+// Sem isso, o Spring Data procura a chave com o nome Java (camelCase), não acha e
+// silenciosamente usa o default (int vira 0, objeto vira null) — era o que fazia
+// "vagasDisponiveis" chegar como 0 e o curso aparecer sempre lotado.
 @Document(collection = "cursos")
 public class Curso {
 
     @Id
     private String id;
+
+    @Field(value = "professor_id", targetType = FieldType.OBJECT_ID)
     private String professorId;
+
+    @Field("professor_nome")
     private String professorNome;
+
+    @Field("professor_foto_perfil")
     private String professorFotoPerfil;
+
+    // Estes já batem com o banco: mantidos sem @Field.
     private String nome;
     private String descricao;
+
+    @Field("carga_horaria")
     private int cargaHoraria;
+
     private List<Horario> horarios;
     private BigDecimal preco;
+
+    @Field("vagas_totais")
     private int vagasTotais;
+
+    @Field("vagas_disponiveis")
     private int vagasDisponiveis;
+
     private StatusCurso status;
+
+    @Field("data_inicio")
     private LocalDate dataInicio;
+
+    @Field("data_fim")
     private LocalDate dataFim;
+
+    @Field("data_cadastro")
     private LocalDate dataCadastro;
+
     private Boolean ativo;
+
+    @Field("imagem_capa")
     private String imagemCapa;
 
     //private String quando;

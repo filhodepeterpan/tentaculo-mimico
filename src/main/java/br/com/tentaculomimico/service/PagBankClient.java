@@ -11,13 +11,18 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.net.URI;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 @Component
 public class PagBankClient {
     private static final Logger LOG = LoggerFactory.getLogger(PagBankClient.class);
+    private static final JsonMapper JSON = new JsonMapper();
+    private static final Pattern CODIGO_SEGURO = Pattern.compile("[a-z][a-z0-9_]{0,63}");
     private static final Set<String> HOSTS_PRODUCAO = Set.of("pagamento.pagbank.com.br", "pagamento.pagseguro.uol.com.br");
     private static final Set<String> HOSTS_SANDBOX = Set.of("sandbox.pagamento.pagseguro.uol.com.br",
             "sandbox.pagamento.pagbank.com.br", "pagamento.pagbank.com.br", "pagamento.pagseguro.uol.com.br");
@@ -42,12 +47,26 @@ public class PagBankClient {
             return resposta.links().stream().filter(link -> "PAY".equals(link.rel()))
                     .map(link -> validarPay(link.href())).findFirst().orElseThrow(CheckoutIndisponivelException::new);
         } catch (RestClientResponseException e) {
-            LOG.warn("Falha ao criar checkout PagBank: HTTP {}", e.getStatusCode().value());
+            // O navegador só recebe um erro genérico. Mesmo no log, nunca exibir corpo nem headers da API.
+            LOG.warn("Falha ao criar checkout PagBank ({}): HTTP {}, código {}",
+                    properties.environment(), e.getStatusCode().value(), codigoErro(e.getResponseBodyAsByteArray()));
             throw new CheckoutIndisponivelException();
         } catch (RestClientException | IllegalArgumentException e) {
             // Nunca registrar corpo de resposta ou headers: podem conter dados sensíveis.
             LOG.warn("Falha de comunicação ou resposta inválida ao criar checkout PagBank");
             throw new CheckoutIndisponivelException();
+        }
+    }
+
+    static String codigoErro(byte[] corpo) {
+        if (corpo.length == 0 || corpo.length > 4096) return "indisponivel";
+        try {
+            JsonNode mensagens = JSON.readTree(corpo).path("error_messages");
+            if (!mensagens.isArray() || mensagens.isEmpty()) return "indisponivel";
+            String codigo = mensagens.get(0).path("error").asText();
+            return CODIGO_SEGURO.matcher(codigo).matches() ? codigo : "indisponivel";
+        } catch (RuntimeException e) {
+            return "indisponivel";
         }
     }
 

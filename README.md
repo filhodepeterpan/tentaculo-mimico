@@ -40,3 +40,10 @@ O retorno é uma navegação do navegador, não um webhook: testar com localhost
 As referências públicas da API não garantem explicitamente que o Sandbox aceite localhost como URL de
 retorno; se a criação falhar por essa validação, será necessário conferir o erro no portal/suporte e
 usar uma URL HTTPS de teste. A liberação de HTTP no código nunca se aplica à produção.
+
+Se o POST `/doacoes` retornar à página com erro, o código HTTP visto no navegador é o da aplicação:
+o PagBank é chamado pelo servidor. O log `Falha ao criar checkout PagBank` mostra o ambiente, HTTP
+externo e, quando disponível, somente o código saneado de `error_messages[].error`. Em caso de 403,
+verifique se `PAGBANK_ENVIRONMENT=sandbox` usa o token Sandbox (valor puro, sem prefixo `Bearer `)
+e consulte o código na [tabela oficial de erros](https://developer.pagbank.com.br/reference/codigos-de-erro-checkout).
+Não envie HAR, cookies, JWT, token, body de resposta ou headers de autenticação em chamados públicos.

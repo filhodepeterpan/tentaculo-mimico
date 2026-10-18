@@ -67,6 +67,20 @@ class PagBankClientTest {
     }
 
     @Test
+    void resposta403NaoEntregaDetalhesAoDoador() {
+        server.expect(requestTo("https://sandbox.api.pagseguro.com/checkouts"))
+                .andRespond(withStatus(org.springframework.http.HttpStatus.FORBIDDEN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body("""
+                                {"error_messages":[{"error":"invalid_authorization_header","description":"não divulgar credenciais"}]}
+                                """));
+        PagBankClient.CheckoutIndisponivelException erro = assertThrows(
+                PagBankClient.CheckoutIndisponivelException.class, () -> client.criar(checkout));
+        assertNull(erro.getMessage());
+        server.verify();
+    }
+
+    @Test
     void naoChamaApiSemToken() {
         PagBankClient semToken = new PagBankClient(builder.build(), new PagBankProperties("", PagBankProperties.Environment.sandbox, "https://exemplo.org"));
         assertThrows(PagBankClient.CheckoutIndisponivelException.class, () -> semToken.criar(checkout));
@@ -83,5 +97,16 @@ class PagBankClientTest {
                         """, MediaType.APPLICATION_JSON));
         assertThrows(PagBankClient.CheckoutIndisponivelException.class, () -> producao.criar(checkout));
         server.verify();
+    }
+
+    @Test
+    void extraiSomenteCodigoSaneadoDaRespostaDeErro() {
+        assertEquals("allowlist_access_required", PagBankClient.codigoErro("""
+                {"error_messages":[{"error":"allowlist_access_required","description":"dados privados"}]}
+                """.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+        assertEquals("indisponivel", PagBankClient.codigoErro("<html>Access denied</html>".getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+        assertEquals("indisponivel", PagBankClient.codigoErro("""
+                {"error_messages":[{"error":"token: secreto"}]}
+                """.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
     }
 }

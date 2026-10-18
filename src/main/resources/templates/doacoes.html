@@ -26,7 +26,6 @@
 
     <form class="doacoes__formulario" method="post" th:action="@{/doacoes}" novalidate>
       <!-- O servidor valida o valor mesmo se o JavaScript estiver desativado. -->
-      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
       <input type="hidden" name="valor" id="doacao-valor">
 
       <fieldset class="doacoes__valores">

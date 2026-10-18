@@ -34,6 +34,11 @@ class DoacaoFluxoMvcTest {
         mvc.perform(get("/doacoes"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("name=\"_csrf\"")))
+                .andExpect(result -> {
+                    String html = result.getResponse().getContentAsString();
+                    org.junit.jupiter.api.Assertions.assertEquals(html.indexOf("name=\"_csrf\""),
+                            html.lastIndexOf("name=\"_csrf\""));
+                })
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("data-mostrar=\"false\"")));
         mvc.perform(post("/doacoes").param("valor", "35"))
                 .andExpect(status().isForbidden());

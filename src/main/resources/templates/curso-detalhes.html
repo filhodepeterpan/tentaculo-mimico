@@ -101,6 +101,16 @@
         <span class="curso-detalhes__info-valor" th:text="${curso.cargaHoraria} + ' horas'">40 horas</span>
       </div>
       <div class="curso-detalhes__info-item">
+        <span class="curso-detalhes__info-rotulo">Início</span>
+        <span class="curso-detalhes__info-valor"
+              th:text="${curso.dataInicio != null} ? ${#temporals.format(curso.dataInicio, 'dd/MM/yyyy')} : 'Não informado'">01/01/2026</span>
+      </div>
+      <div class="curso-detalhes__info-item">
+        <span class="curso-detalhes__info-rotulo">Término</span>
+        <span class="curso-detalhes__info-valor"
+              th:text="${curso.dataFim != null} ? ${#temporals.format(curso.dataFim, 'dd/MM/yyyy')} : 'Indeterminado'">Indeterminado</span>
+      </div>
+      <div class="curso-detalhes__info-item">
         <span class="curso-detalhes__info-rotulo">Vagas</span>
         <span class="curso-detalhes__info-valor" th:text="${curso.vagasDisponiveis} + ' de ' + ${curso.vagasTotais} + ' disponíveis'">Vagas</span>
       </div>

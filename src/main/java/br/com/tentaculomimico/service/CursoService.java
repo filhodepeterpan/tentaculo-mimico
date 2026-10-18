@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,34 +62,79 @@ public class CursoService {
         return !a.getDataInicio().isAfter(fimB) && !b.getDataInicio().isAfter(fimA);
     }
 
-    // ETAPA 2: cruza todos os blocos de horário de dois cursos
-    private boolean cursosConflitam(Curso a, Curso b) {
-        if (!periodosSeSobrepoem(a, b)) {
-            return false;
+    // ETAPA 2: acha o primeiro bloco de horário de A que bate com algum de B
+    // (devolve o bloco de B, ou null se não há sobreposição). Só olha o relógio e o dia
+    // da semana; os períodos (datas) são conferidos antes, em cursosConflitam.
+    private Horario horarioEmConflito(Curso a, Curso b) {
+        if (a.getHorarios() == null || b.getHorarios() == null) {
+            return null;
         }
         for (Horario ha : a.getHorarios()) {
             for (Horario hb : b.getHorarios()) {
                 if (horariosSeSobrepoem(ha, hb)) {
-                    return true;
+                    return hb;
                 }
             }
         }
-        return false;
+        return null;
     }
 
-    // ETAPA 3: o professor já tem aula nesse horário?
-    private boolean existeConflitoParaProfessor(Curso cursoNovo) {
-        List<Curso> existentes = cursoRepository.findByProfessorId(cursoNovo.getProfessorId());
-        for (Curso existente : existentes) {
+    // ETAPA 3: algum curso (de qualquer professor) ocupa esse horário durante o
+    // mesmo período? Se sim, lança a mensagem explicando qual, quando e até quando.
+    // Cursos com períodos que não se cruzam (um termina antes do outro começar)
+    // NÃO conflitam, mesmo no mesmo dia e hora.
+    private void validarSemConflito(Curso cursoNovo) {
+        List<String> conflitos = new ArrayList<>();
+
+        for (Curso existente : cursoRepository.findAll()) {
             // Na edição, o próprio curso já está no banco: não conflita consigo mesmo.
             if (existente.getId() != null && existente.getId().equals(cursoNovo.getId())) {
                 continue;
             }
-            if (cursosConflitam(cursoNovo, existente)) {
-                return true;
+            if (!periodosSeSobrepoem(cursoNovo, existente)) {
+                continue;
+            }
+            Horario hb = horarioEmConflito(cursoNovo, existente);
+            if (hb != null) {
+                conflitos.add(descreverConflito(existente, hb));
             }
         }
-        return false;
+
+        if (!conflitos.isEmpty()) {
+            String mensagem = "Esse horário já está ocupado pelo curso " + conflitos.get(0) + ".";
+            if (conflitos.size() > 1) {
+                mensagem += " Há mais " + (conflitos.size() - 1) + " curso(s) em conflito.";
+            }
+            mensagem += " Para usar o mesmo dia e horário, ajuste as datas do seu curso para que"
+                    + " ele comece depois do término do outro (ou termine antes do início dele),"
+                    + " ou escolha outro horário.";
+            throw new RuntimeException(mensagem);
+        }
+    }
+
+    // Ex.: "Inglês Avançado (terças, 11:00 às 13:00, de 21/02/2026 a indeterminado)"
+    private String descreverConflito(Curso existente, Horario h) {
+        DateTimeFormatter dia = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter hora = DateTimeFormatter.ofPattern("HH:mm");
+        String inicio = existente.getDataInicio() != null ? existente.getDataInicio().format(dia) : "?";
+        String fim = existente.getDataFim() != null ? existente.getDataFim().format(dia) : "indeterminado";
+        return "\"" + existente.getNome() + "\" ("
+                + nomeDiaPlural(h.getDiaSemana()) + ", "
+                + h.getInicio().format(hora) + " às " + h.getFim().format(hora)
+                + ", de " + inicio + " a " + fim + ")";
+    }
+
+    private String nomeDiaPlural(DiaSemana dia) {
+        return switch (dia.name()) {
+            case "SEGUNDA" -> "segundas";
+            case "TERCA" -> "terças";
+            case "QUARTA" -> "quartas";
+            case "QUINTA" -> "quintas";
+            case "SEXTA" -> "sextas";
+            case "SABADO" -> "sábados";
+            case "DOMINGO" -> "domingos";
+            default -> dia.name().toLowerCase();
+        };
     }
 
     // =========================================================================
@@ -190,9 +236,7 @@ public class CursoService {
         Curso curso = criarCurso(nome, descricao, cargaHoraria, preco, vagasTotais,
                 diasSemana, horaInicio, horaFim, dataInicio, dataFim, urlImagem);
 
-        if (existeConflitoParaProfessor(curso)) {
-            throw new RuntimeException("Já existe um curso seu nesse horário.");
-        }
+        validarSemConflito(curso);
 
         return cursoRepository.save(curso);
     }
@@ -249,9 +293,7 @@ public class CursoService {
             curso.setImagemCapa(urlImagem);
         }
 
-        if (existeConflitoParaProfessor(curso)) {
-            throw new RuntimeException("Já existe um curso seu nesse horário.");
-        }
+        validarSemConflito(curso);
 
         return cursoRepository.save(curso);
     }

@@ -24,7 +24,7 @@ public class PagBankClient {
     private static final JsonMapper JSON = new JsonMapper();
     private static final Pattern CODIGO_SEGURO = Pattern.compile("[a-z][a-z0-9_]{0,63}");
     private static final Set<String> HOSTS_PRODUCAO = Set.of("pagamento.pagbank.com.br", "pagamento.pagseguro.uol.com.br");
-    private static final Set<String> HOSTS_SANDBOX = Set.of("sandbox.pagamento.pagseguro.uol.com.br",
+    private static final Set<String> HOSTS_SANDBOX = Set.of("pagamento.sandbox.pagbank.com.br", "sandbox.pagamento.pagseguro.uol.com.br",
             "sandbox.pagamento.pagbank.com.br", "pagamento.pagbank.com.br", "pagamento.pagseguro.uol.com.br");
     private final RestClient http;
     private final PagBankProperties properties;

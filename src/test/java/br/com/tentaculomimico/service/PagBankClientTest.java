@@ -43,6 +43,16 @@ class PagBankClientTest {
     }
 
     @Test
+    void aceitaHostPayObservadoNoSandbox() {
+        server.expect(requestTo("https://sandbox.api.pagseguro.com/checkouts"))
+                .andRespond(withSuccess("""
+                        {"links":[{"rel":"PAY","href":"https://pagamento.sandbox.pagbank.com.br/pagamento?code=teste"}]}
+                        """, MediaType.APPLICATION_JSON));
+        assertEquals(URI.create("https://pagamento.sandbox.pagbank.com.br/pagamento?code=teste"), client.criar(checkout));
+        server.verify();
+    }
+
+    @Test
     void rejeitaLinkNaoOficialERespostaSemPay() {
         String[] respostas = {
                 "{\"links\":[]}",
@@ -93,7 +103,7 @@ class PagBankClientTest {
                 new PagBankProperties("segredo", PagBankProperties.Environment.production, "https://exemplo.org"));
         server.expect(requestTo("https://api.pagseguro.com/checkouts"))
                 .andRespond(withSuccess("""
-                        {"links":[{"rel":"PAY","href":"https://sandbox.pagamento.pagseguro.uol.com.br/pagamento?code=1"}]}
+                        {"links":[{"rel":"PAY","href":"https://pagamento.sandbox.pagbank.com.br/pagamento?code=1"}]}
                         """, MediaType.APPLICATION_JSON));
         assertThrows(PagBankClient.CheckoutIndisponivelException.class, () -> producao.criar(checkout));
         server.verify();

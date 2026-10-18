@@ -1,4 +1,4 @@
-package br.com.tentaculomimico.service;
+package br.com.tentaculomimico.client;
 
 import br.com.tentaculomimico.client.PagBankClient;
 import br.com.tentaculomimico.config.PagBankProperties;

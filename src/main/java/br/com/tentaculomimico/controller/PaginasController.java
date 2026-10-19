@@ -7,6 +7,7 @@ import br.com.tentaculomimico.model.Usuario;
 import br.com.tentaculomimico.service.SessaoService;
 import br.com.tentaculomimico.service.AdminService;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestParam;
 
 // Fica separado do HomeController (que já cuida só da "/") pra não
 // dar conflito quando o time for juntar as branches.
@@ -88,7 +89,8 @@ public class PaginasController {
     }
 
     @GetMapping("/doacoes")
-    public String doacoes() {
+    public String doacoes(@RequestParam(required = false) String retorno, Model model) {
+        model.addAttribute("mostrarAgradecimentoDoacao", "pagbank".equals(retorno));
         return "doacoes";
     }
 

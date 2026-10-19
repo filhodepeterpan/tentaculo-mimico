@@ -11,6 +11,7 @@ import br.com.tentaculomimico.service.MatriculaService;
 import br.com.tentaculomimico.service.SessaoService;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,7 +59,7 @@ public class CursoController {
 
     @GetMapping("/cursos")
     public String listarCursos(Model model) {
-        model.addAttribute("cursos", cursoRepository.findAll());
+        model.addAttribute("cursos", cursoRepository.findAll(Sort.by(Sort.Direction.DESC, "id")));
 
         // O botão de cada card depende de quem está olhando:
         //  - aluno: o status da matrícula dele em cada curso (matriculasPorCurso: cursoId -> view);

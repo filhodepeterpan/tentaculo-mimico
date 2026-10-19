@@ -61,12 +61,19 @@ public class PerfilController {
     public String perfilAluno(@PathVariable String id, Model model) {
         Usuario usuarioLogado = sessaoService.usuarioLogado();
 
-        // RN confirmada com o PO: aluno não pode visualizar perfil de outro
-        // aluno — bloqueia mesmo não havendo, hoje, nenhum link que leve a
-        // essa URL diretamente.
-        if (usuarioLogado != null
-                && "ALUNO".equalsIgnoreCase(usuarioLogado.getTipoUsuario().name())
-                && !usuarioLogado.getId().equals(id)) {
+        // Quem pode ver o perfil de um aluno:
+        //   - não logado: ninguém (acesso negado);
+        //   - aluno logado: só o próprio perfil (não vê o de outro aluno);
+        //   - professor logado: qualquer aluno (a tela troca os textos de "meus cursos");
+        //   - administrador: qualquer aluno (mantido como já era).
+        // A checagem vem antes de buscar o aluno, pra quem não pode ver também não
+        // descobrir se o id existe.
+        if (usuarioLogado == null) {
+            return "redirect:/acesso-negado";
+        }
+
+        boolean ehPerfilProprio = usuarioLogado.getId().equals(id);
+        if ("ALUNO".equalsIgnoreCase(usuarioLogado.getTipoUsuario().name()) && !ehPerfilProprio) {
             return "redirect:/acesso-negado";
         }
 
@@ -74,8 +81,6 @@ public class PerfilController {
         if (aluno == null) {
             return "redirect:/cursos";
         }
-
-        boolean ehPerfilProprio = usuarioLogado != null && usuarioLogado.getId().equals(id);
 
         model.addAttribute("aluno", aluno);
         model.addAttribute("ehPerfilProprio", ehPerfilProprio);

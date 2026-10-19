@@ -145,7 +145,9 @@ db.createCollection("pagamentos", {
       properties: {
         matricula_id: { bsonType: "objectId" },
         valor: { bsonType: "decimal" },
-        status_atual: { enum: ["pendente", "aprovado", "recusado", "vencido", "estornado"] },
+        status_atual: { enum: ["PENDENTE", "APROVADO"] },
+        versao: { bsonType: ["long", "int"] },
+        conciliacao_necessaria: { bsonType: "bool" },
         metodo_pagamento: { bsonType: ["string", "null"], enum: ["pix", "cartao", null] },
         mes_referencia: { bsonType: "date" },
         data_vencimento: { bsonType: "date" },
@@ -155,10 +157,16 @@ db.createCollection("pagamentos", {
           bsonType: "array",
           items: {
             bsonType: "object",
-            required: ["transacao_externa_id", "status", "criado_em"],
+            required: ["reference_id", "status", "criado_em"],
             properties: {
               transacao_externa_id: { bsonType: "string" },
-              status: { bsonType: "string" },
+              reference_id: { bsonType: "string" },
+              checkout_id: { bsonType: "string" },
+              pay_url: { bsonType: "string" },
+              expira_em: { bsonType: "date" },
+              falhou_em: { bsonType: "date" },
+              data_pagamento: { bsonType: "date" },
+              status: { enum: ["CRIANDO", "INCERTA", "WAITING", "IN_ANALYSIS", "PAID", "DECLINED", "CANCELED", "EXPIRED"] },
               criado_em: { bsonType: "date" }
             }
           }
@@ -169,9 +177,13 @@ db.createCollection("pagamentos", {
   }
 });
 
-db.pagamentos.createIndex({ matricula_id: 1 });
+// Uma cobrança inicial por matrícula; novas tentativas ficam no mesmo documento.
+db.pagamentos.createIndex({ matricula_id: 1 }, { unique: true, name: "uniq_matricula_inicial" });
+db.pagamentos.createIndex({ "tentativas.reference_id": 1 }, { unique: true, name: "uniq_referencia_matricula" });
+db.pagamentos.createIndex({ "tentativas.checkout_id": 1 }, { unique: true, sparse: true, name: "uniq_checkout_matricula" });
 db.pagamentos.createIndex({ status_atual: 1, data_vencimento: 1 });
-db.pagamentos.createIndex({ "tentativas.transacao_externa_id": 1 });
+db.pagamentos.createIndex({ "tentativas.transacao_externa_id": 1 }, { unique: true, sparse: true, name: "uniq_transacao_matricula" });
+db.pagamentos.createIndex({ "tentativas.transacoes.transacao_externa_id": 1 }, { unique: true, sparse: true, name: "uniq_historico_transacao" });
 
 print("Criando coleção: webhooks_processados");
 db.createCollection("webhooks_processados", {

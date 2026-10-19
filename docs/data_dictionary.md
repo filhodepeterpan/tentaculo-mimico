@@ -60,13 +60,27 @@ OBS: Unifica ALUNO, PROFESSOR e ADMINISTRADOR num único documento com discrimin
 | \_id | ObjectId | sim | — |
 | matricula\_id | ObjectId (ref matriculas) | sim | — |
 | valor | decimal | sim | — |
-| status\_atual | string enum \[pendente, aprovado, recusado, vencido, estornado\] | sim | RN050 |
-| metodo\_pagamento | string enum \[pix, cartao\] ou null | não | — |
-| mes\_referencia | date (mês/ano da cobrança) | sim | RN049, RN052 |
-| data\_vencimento | date | sim | RN056 |
-| data\_pagamento | datetime ou null | não | — |
-| tentativas | array embutido \[{transacao\_externa\_id, status, criado\_em}\] | sim, a partir da 1ª tentativa | RN051 (histórico de tentativas); RN054 (nunca guardar dado sensível de cartão, só a referência do gateway) |
+| status\_atual | string enum \[PENDENTE, APROVADO\] | sim | Cobrança inicial; aprovação nunca regride por evento atrasado |
+| versao | long | sim | Optimistic locking: reserva e atualizações condicionais |
+| conciliacao\_necessaria | boolean | sim | Pagamento tardio de matrícula cancelada/recusada ou múltiplas capturas; requer avaliação/estorno externo |
+| mes\_referencia | date (primeiro dia UTC do mês da cobrança inicial) | sim | Não gera mensalidades |
+| data\_vencimento | date | sim | Prazo inicial solicitado; expiração efetiva em cada tentativa |
+| tentativas | array embutido | sim | Histórico preservado, inclusive falhas e resultados incertos |
 | criado\_em | datetime | sim | — |
+
+Cada tentativa contém `reference_id` (UUID opaco), `checkout_id` opcional, `pay_url` opcional
+(exclusivamente Sandbox), `expira_em`, `criado_em`, `falhou_em`, `status`
+(`CRIANDO`, `INCERTA`, `WAITING`, `IN_ANALYSIS`, `PAID`, `DECLINED`, `CANCELED`, `EXPIRED`),
+`transacao_externa_id`, `data_pagamento` e `metodo` quando aprovado. `transacoes` guarda somente
+ID externo, estado, `valor_centavos` inteiro, moeda, método e instante de pagamento de cada cobrança associada.
+Nunca armazenar PAN, CVV, token, dados pessoais do comprador ou corpo integral de notificações.
+
+Índices únicos: `matricula_id` (uma cobrança **inicial** por matrícula), `tentativas.reference_id`,
+`tentativas.checkout_id`, `tentativas.transacao_externa_id` e `tentativas.transacoes.transacao_externa_id`
+(os três últimos esparsos). Índices são garantidos no startup; falha de criação impede iniciar a aplicação.
+Uma nova tentativa só é reservada após `EXPIRED` confirmado em consulta autenticada, sem transações pendentes.
+Recusa permite retomar o mesmo Checkout válido, nunca criar outro em paralelo. Timeout fica `INCERTA`;
+não se presume falha de criação e não há retry automático do POST.
 
 **Coleção: webhooks\_processados**
 
@@ -74,8 +88,8 @@ OBS: existe só para deduplicar notificações assíncronas da API de pagamento;
 
 | Campo | Tipo | Obrigatório | Regra de Negócio / Requisitos |
 | :---- | :---- | :---- | :---- |
-| \_id | ObjectId | sim | — |
-| evento\_externo\_id | string (índice único) | sim | evita aplicar o mesmo webhook duas vezes |
+| \_id | string (SHA-256 hexadecimal) | sim | Chave estável sem dados pessoais |
+| evento\_externo\_id | string (índice único) | sim | Mesma chave: ID de evento, referência, checkout e estados/instantes das transações conciliadas |
 | processado\_em | datetime (índice TTL, expira em \~30 dias) | sim | — |
 
 ### **2.5.2 Justificativas de Referência** {#2.5.2-justificativas-de-referência}
@@ -87,5 +101,5 @@ OBS: existe só para deduplicar notificações assíncronas da API de pagamento;
 | curso \-\> horários | embed | pequeno, limitado, sempre lido junto |
 | curso \-\> professor | reference (+ nome denormalizado) | professor existe independente do curso, mas é comum exibir o nome do professor junto ao curso que ele ministra |
 | matrícula \-\> aluno / curso | reference | ambos existem/são consultados independentemente |
-| matrícula \-\> pagamentos | reference | cresce sem limite ao longo do tempo; status consultado direto na coleção |
+| matrícula \-\> pagamentos | reference | uma cobrança inicial por matrícula neste escopo; mensalidades não implementadas |
 | pagamento \-\> tentativas | embed | pequeno, limitado, sempre lido junto, sem relevância fora do pagamento |

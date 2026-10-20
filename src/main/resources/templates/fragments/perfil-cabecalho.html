@@ -41,11 +41,17 @@
             </div>
         </div>
 
-        <div class="perfil-cabecalho__acoes" th:if="${ehPerfilProprio != null and ehPerfilProprio}">
-            <a th:href="@{/perfil/editar}" class="botao botao--neutro botao--pequeno">Editar perfil</a>
-            <a th:href="@{/sair}" class="botao botao--neutro botao--pequeno">Sair da conta</a>
-            <button type="button" class="botao botao--perigo botao--pequeno"
-                    data-modal-abrir="modal-excluir-conta">Excluir conta</button>
+        <div class="perfil-cabecalho__acoes"
+             th:if="${(ehPerfilProprio != null and ehPerfilProprio) or (podeEditar != null and podeEditar)}">
+            <a th:if="${podeEditar != null and podeEditar}"
+               th:href="@{/perfil/editar(id=${perfilId})}"
+               class="botao botao--neutro botao--pequeno">Editar perfil</a>
+
+            <th:block th:if="${ehPerfilProprio != null and ehPerfilProprio}">
+                <a th:href="@{/sair}" class="botao botao--neutro botao--pequeno">Sair da conta</a>
+                <button type="button" class="botao botao--perigo botao--pequeno"
+                        data-modal-abrir="modal-excluir-conta">Excluir conta</button>
+            </th:block>
         </div>
     </header>
 </th:block>

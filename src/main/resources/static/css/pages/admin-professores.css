@@ -2,50 +2,48 @@
 @import url(../global.css);
 
 .admin-professores-container {
-    padding: 2rem 1.5rem 3rem;
+    width: 100%;
     max-width: 72rem;
     margin: 0 auto;
+    padding: 2rem 1.5rem 3rem;
+    box-sizing: border-box;
 }
 
 .admin-professores__titulo {
+    margin: 0 0 1.5rem;
     font-family: var(--fonte-editorial);
     font-size: var(--tipo-editorial-display-tamanho);
     line-height: var(--tipo-editorial-display-altura-linha);
     font-weight: var(--tipo-editorial-display-peso);
     color: var(--color-on-surface);
-    margin: 0 0 1.5rem;
 }
 
 .admin-professores__busca {
+    width: 100%;
     max-width: 28rem;
     margin-bottom: 2rem;
 }
 
 .admin-professores__vazio {
+    padding: 2rem 0;
+    margin: 0;
     font-family: var(--fonte-padrao);
     font-size: var(--tipo-body-lg-tamanho);
     color: var(--color-on-surface-variant);
     text-align: center;
-    padding: 2rem 0;
 }
-
-
-.admin-professores__nome a {
-    color: var(--color-link);
-    text-decoration: none;
-}
-
-.admin-professores__nome a:hover {
-    color: var(--color-link);
-    text-decoration: underline;
-}
-
 
 .admin-professores__lista {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    margin: 0;
+    padding: 0;
     list-style: none;
+}
+
+.admin-professores__item {
+    min-width: 0;
 }
 
 .admin-professores__card {
@@ -57,22 +55,26 @@
     border-bottom-width: 3px;
     border-radius: 1.25rem;
     background-color: var(--color-surface-container-low);
+    overflow-wrap: anywhere;
 }
 
 .admin-professores__cabecalho {
     display: flex;
     align-items: center;
     gap: 1rem;
+    min-width: 0;
 }
 
 .admin-professores__avatar {
-    flex-shrink: 0;
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
     width: 2.75rem;
     height: 2.75rem;
     border-radius: 50%;
+    overflow: hidden;
+    object-fit: cover;
     background-color: var(--color-surface-dim);
     font-family: var(--fonte-padrao);
     font-size: var(--tipo-body-md-tamanho);
@@ -83,8 +85,10 @@
 
 .admin-professores__dados {
     display: flex;
+    flex: 1;
     flex-direction: column;
     min-width: 0;
+    gap: 0.25rem;
 }
 
 .admin-professores__nome {
@@ -92,13 +96,36 @@
     font-size: var(--tipo-body-md-tamanho);
     font-weight: var(--tipo-title-md-peso-enfatizado);
     color: var(--color-on-surface);
+    overflow-wrap: anywhere;
+}
+
+.admin-professores__nome a {
+    color: var(--color-link);
+    text-decoration: none;
+}
+
+.admin-professores__nome a:hover {
+    color: var(--color-link);
+    text-decoration: underline;
 }
 
 .admin-professores__email {
     font-family: var(--fonte-padrao);
     font-size: var(--tipo-body-md-tamanho);
     color: var(--color-on-surface-variant);
+    overflow-wrap: anywhere;
 }
+
+
+.admin-professores__acoes {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
 
 .admin-professores__cursos {
     padding-top: 1rem;
@@ -106,6 +133,7 @@
     font-family: var(--fonte-padrao);
     font-size: var(--tipo-body-md-tamanho);
     color: var(--color-on-surface-variant);
+    overflow-x: auto;
 }
 
 .admin-professores__tabela {
@@ -116,31 +144,23 @@
 
 .admin-professores__tabela th,
 .admin-professores__tabela td {
-    padding: 0.25rem 1rem 0.25rem 0;
-}
-
-/* ===== Responsivo ===== */
-.admin-professores__item {
-    min-width: 0;
-}
-
-.admin-professores__nome,
-.admin-professores__email {
+    padding: 0.75rem 1rem 0.75rem 0;
+    vertical-align: top;
     overflow-wrap: anywhere;
 }
 
-/* Tabela de cursos rola na horizontal em vez de estourar o card */
-.admin-professores__cursos {
-    overflow-x: auto;
+.admin-professores__tabela th {
+    font-weight: var(--tipo-title-md-peso-enfatizado);
+    color: var(--color-on-surface);
+}
+
+.admin-professores__tabela tr + tr {
+    border-top: 1px solid var(--color-surface-dim);
 }
 
 @media (max-width: 600px) {
     .admin-professores-container {
         padding: 1.5rem 1rem 2rem;
-    }
-
-    .admin-professores__busca {
-        max-width: none;
     }
 
     .admin-professores__lista {
@@ -154,5 +174,10 @@
 
     .admin-professores__cabecalho {
         gap: 0.75rem;
+    }
+
+    .admin-professores__tabela th,
+    .admin-professores__tabela td {
+        padding: 0.5rem 0.5rem 0.5rem 0;
     }
 }

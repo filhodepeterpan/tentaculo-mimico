@@ -61,18 +61,13 @@ public class PerfilController {
     public String perfilAluno(@PathVariable String id, Model model) {
         Usuario usuarioLogado = sessaoService.usuarioLogado();
 
-        // Quem pode ver o perfil de um aluno:
-        //   - não logado: ninguém (acesso negado);
-        //   - aluno logado: só o próprio perfil (não vê o de outro aluno);
-        //   - professor logado: qualquer aluno (a tela troca os textos de "meus cursos");
-        //   - administrador: qualquer aluno (mantido como já era).
-        // A checagem vem antes de buscar o aluno, pra quem não pode ver também não
-        // descobrir se o id existe.
         if (usuarioLogado == null) {
             return "redirect:/acesso-negado";
         }
 
         boolean ehPerfilProprio = usuarioLogado.getId().equals(id);
+        boolean ehAdmin = "ADMINISTRADOR".equalsIgnoreCase(usuarioLogado.getTipoUsuario().name());
+
         if ("ALUNO".equalsIgnoreCase(usuarioLogado.getTipoUsuario().name()) && !ehPerfilProprio) {
             return "redirect:/acesso-negado";
         }
@@ -84,6 +79,8 @@ public class PerfilController {
 
         model.addAttribute("aluno", aluno);
         model.addAttribute("ehPerfilProprio", ehPerfilProprio);
+        model.addAttribute("podeEditar", ehPerfilProprio || ehAdmin);
+        model.addAttribute("perfilId", id);
         model.addAttribute("matriculas", matriculaService.listarCursosDoAluno(id));
         model.addAttribute("dataNascimentoFormatada", formatarData(aluno));
 
@@ -106,6 +103,8 @@ public class PerfilController {
 
         List<Curso> cursosDoProfessor = cursoRepository.findByProfessorId(id);
 
+        model.addAttribute("podeEditar", ehPerfilProprio || ehAdmin);
+        model.addAttribute("perfilId", id);
         model.addAttribute("professor", professor);
         model.addAttribute("ehPerfilProprio", ehPerfilProprio);
         model.addAttribute("podeVerDadosSensiveis", podeVerDadosSensiveis);
@@ -127,22 +126,28 @@ public class PerfilController {
     }
 
     @GetMapping("/perfil/editar")
-    public String editarPerfil(Model model) {
-        Usuario usuario = sessaoService.usuarioLogado();
-        if (usuario == null) {
+    public String editarPerfil(@RequestParam(value = "id", required = false) String id, Model model) {
+        Usuario logado = sessaoService.usuarioLogado();
+        if (logado == null) {
             return "redirect:/login";
         }
+        Usuario alvo = alvoDaEdicao(logado, id);
+        boolean editandoOutro = !alvo.getId().equals(logado.getId());
+        if (editandoOutro && !"ADMINISTRADOR".equalsIgnoreCase(logado.getTipoUsuario().name())) {
+            return "redirect:/acesso-negado";
+        }
 
-        preencherEdicao(model, usuario,
-                usuario.getNome(),
-                usuario.getEmail(),
-                formatarCpf(usuario.getCpf()),
-                usuario.getDataNascimento() != null ? usuario.getDataNascimento().toString() : "");
+        preencherEdicao(model, alvo,
+                alvo.getNome(),
+                alvo.getEmail(),
+                formatarCpf(alvo.getCpf()),
+                alvo.getDataNascimento() != null ? alvo.getDataNascimento().toString() : "");
         return "perfil-editar";
     }
 
     @PostMapping("/perfil/editar")
     public String salvarEdicaoPerfil(
+            @RequestParam(value = "id", required = false) String id,
             @RequestParam("nome") String nome,
             @RequestParam("email") String email,
             @RequestParam("cpf") String cpf,
@@ -157,13 +162,14 @@ public class PerfilController {
         if (logado == null) {
             return "redirect:/login";
         }
+        Usuario alvo = alvoDaEdicao(logado, id);
 
         try {
-            perfilService.atualizarPerfil(nome, email, cpf, dataNascimento,
+            perfilService.atualizarPerfil(id, nome, email, cpf, dataNascimento,
                     senhaAtual, novaSenha, confirmarNovaSenha, fotoPerfil);
 
-            String tipo = "PROFESSOR".equalsIgnoreCase(logado.getTipoUsuario().name()) ? "professor" : "aluno";
-            return "redirect:/perfil/" + tipo + "/" + logado.getId();
+            String tipo = "PROFESSOR".equalsIgnoreCase(alvo.getTipoUsuario().name()) ? "professor" : "aluno";
+            return "redirect:/perfil/" + tipo + "/" + alvo.getId();
         } catch (PerfilService.DadosInvalidosException e) {
             Map<String, String> erros = e.getErros();
             model.addAttribute("erroNome", erros.get("nome"));
@@ -173,13 +179,20 @@ public class PerfilController {
             model.addAttribute("erroSenhaAtual", erros.get("senhaAtual"));
             model.addAttribute("erroNovaSenha", erros.get("novaSenha"));
             model.addAttribute("erroConfirmarNovaSenha", erros.get("confirmarNovaSenha"));
-            preencherEdicao(model, logado, nome, email, cpf, dataNascimento);
+            preencherEdicao(model, alvo, nome, email, cpf, dataNascimento);
             return "perfil-editar";
         } catch (RuntimeException e) {
             model.addAttribute("erroGeral", e.getMessage());
-            preencherEdicao(model, logado, nome, email, cpf, dataNascimento);
+            preencherEdicao(model, alvo, nome, email, cpf, dataNascimento);
             return "perfil-editar";
         }
+    }
+
+    private Usuario alvoDaEdicao(Usuario logado, String id) {
+        if (id == null || id.isBlank() || id.equals(logado.getId())) {
+            return logado;
+        }
+        return usuarioRepository.findById(id).orElse(logado);
     }
 
     @PostMapping("/perfil-excluir")

@@ -4,6 +4,7 @@ import br.com.tentaculomimico.model.Autenticacao;
 import br.com.tentaculomimico.model.Curso;
 import br.com.tentaculomimico.model.Usuario;
 import br.com.tentaculomimico.model.enums.Provedor;
+import br.com.tentaculomimico.model.enums.TipoUsuario;
 import br.com.tentaculomimico.repository.CursoRepository;
 import br.com.tentaculomimico.repository.UsuarioRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,7 +21,6 @@ import java.util.regex.Pattern;
 @Service
 public class PerfilService {
 
-    // ASSUMIDO: não vi as regras de senha do cadastro. Se forem outras, mude aqui.
     private static final int TAMANHO_MINIMO_SENHA = 8;
     private static final Pattern PADRAO_EMAIL = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
 
@@ -71,7 +71,7 @@ public class PerfilService {
         usuario.setNome(nome.trim());
 
         String urlFoto = imagemService.enviar(fotoPerfil, "perfis");
-        if (urlFoto != null) { // sem arquivo novo, mantém a foto atual
+        if (urlFoto != null) {
             usuario.setFotoPerfil(urlFoto);
         }
 
@@ -79,21 +79,15 @@ public class PerfilService {
     }
 
     /**
-     * Edição completa do perfil do usuário logado. O tipo de usuário não muda.
-     *
-     * - E-mail e CPF só são revalidados (formato e unicidade) se mudaram, pra
-     *   não travar contas antigas com dados fora do padrão.
-     * - CPF é guardado só com dígitos.
-     * - Senha é opcional: só troca se vier nova senha (ou a confirmação).
-     *   Exige a senha atual, a nova com tamanho mínimo e as duas iguais.
-     *   Contas de login com Google não têm senha local e não podem trocar.
-     * - Todos os erros são coletados e lançados juntos (DadosInvalidosException).
-     * - A foto só sobe pro Cloudinary depois que tudo passou na validação.
+     * Edição completa do perfil do usuário logado ou alvo (via Admin).
      */
-    public void atualizarPerfil(String nome, String email, String cpf, String dataNascimento,
+    public void atualizarPerfil(String usuarioId, String nome, String email, String cpf, String dataNascimento,
                                 String senhaAtual, String novaSenha, String confirmarNovaSenha,
                                 MultipartFile fotoPerfil) {
-        Usuario usuario = sessaoService.exigirUsuarioLogado();
+        Usuario logado = sessaoService.exigirUsuarioLogado();
+        Usuario usuario = usuarioEditavel(usuarioId);
+        boolean editandoOutro = !logado.getId().equals(usuario.getId());
+
         Map<String, String> erros = new LinkedHashMap<>();
 
         // Nome
@@ -146,7 +140,7 @@ public class PerfilService {
         }
 
         // Senha (opcional)
-        boolean trocarSenha = !vazio(novaSenha) || !vazio(confirmarNovaSenha);
+        boolean trocarSenha = !editandoOutro && (!vazio(novaSenha) || !vazio(confirmarNovaSenha));
         if (trocarSenha) {
             Autenticacao auth = usuario.getAutenticacao();
             boolean contaLocal = auth == null || auth.getProvedor() == Provedor.LOCAL;
@@ -188,30 +182,47 @@ public class PerfilService {
         }
 
         String urlFoto = imagemService.enviar(fotoPerfil, "perfis");
-        if (urlFoto != null) { // sem arquivo novo, mantém a foto atual
+        if (urlFoto != null) {
             usuario.setFotoPerfil(urlFoto);
         }
 
         usuarioRepository.save(usuario);
     }
 
-    private static boolean vazio(String texto) {
-        return texto == null || texto.isEmpty();
-    }
-
     /**
      * Exclui a conta do usuário logado (apaga o Usuario de vez) e encerra a sessão.
-     *  - Professor: bloqueia se algum curso tem aluno ATIVO ou AGUARDANDO_PAGAMENTO;
-     *    senão exclui todos os cursos dele (pendentes viram recusadas).
-     *  - Aluno: bloqueia se tem matrícula ATIVA ou AGUARDANDO_PAGAMENTO; as PENDENTES
-     *    são canceladas (e somem da lista do professor).
-     * A validação roda ANTES de apagar qualquer coisa, então um bloqueio não deixa
-     * a conta pela metade. Quem bloqueia lança RuntimeException com o motivo.
      */
     public void excluirContaDoUsuarioLogado() {
         Usuario usuario = sessaoService.exigirUsuarioLogado();
-        String tipo = usuario.getTipoUsuario().name();
 
+        // Regra do TASK-62: Administrador não pode excluir a própria conta por aqui
+        if (usuario.getTipoUsuario() == TipoUsuario.ADMINISTRADOR ||
+                "ADMINISTRADOR".equalsIgnoreCase(usuario.getTipoUsuario().name())) {
+            throw new RuntimeException("Administradores não podem excluir suas próprias contas.");
+        }
+
+        apagarUsuarioComDependencias(usuario);
+        sessaoService.encerrarSessao();
+    }
+
+    /**
+     * Exclui um usuário específico através da visão de Administrador.
+     */
+    public void excluirUsuarioComoAdmin(String usuarioId) {
+        Usuario admin = sessaoService.exigirUsuarioLogado();
+        if (admin.getTipoUsuario() != TipoUsuario.ADMINISTRADOR) {
+            throw new RuntimeException("Você não tem permissão para excluir este usuário.");
+        }
+        if (admin.getId().equals(usuarioId)) {
+            throw new RuntimeException("O administrador não pode excluir a própria conta.");
+        }
+        Usuario alvo = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+        apagarUsuarioComDependencias(alvo);
+    }
+
+    private void apagarUsuarioComDependencias(Usuario usuario) {
+        String tipo = usuario.getTipoUsuario().name();
         if ("PROFESSOR".equalsIgnoreCase(tipo)) {
             matriculaService.exigirProfessorPodeExcluirConta(usuario.getId());
             for (Curso curso : cursoRepository.findByProfessorId(usuario.getId())) {
@@ -221,8 +232,22 @@ public class PerfilService {
             matriculaService.exigirAlunoPodeExcluirConta(usuario.getId());
             matriculaService.cancelarEmAbertoDoAluno(usuario.getId());
         }
-
         usuarioRepository.delete(usuario);
-        sessaoService.encerrarSessao();
+    }
+
+    private static boolean vazio(String texto) {
+        return texto == null || texto.isEmpty();
+    }
+
+    private Usuario usuarioEditavel(String usuarioId) {
+        Usuario logado = sessaoService.exigirUsuarioLogado();
+        if (usuarioId == null || usuarioId.isBlank() || usuarioId.equals(logado.getId())) {
+            return logado;
+        }
+        if (logado.getTipoUsuario() != TipoUsuario.ADMINISTRADOR) {
+            throw new RuntimeException("Você não tem permissão para editar este usuário.");
+        }
+        return usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
     }
 }

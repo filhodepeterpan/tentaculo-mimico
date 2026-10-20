@@ -72,7 +72,11 @@ public class SecurityConfig {
                                         "/admin-alunos",
                                         "/admin-professores",
                                         "/admin-cursos",
-                                        "/acesso-negado"
+                                        "/acesso-negado",
+                                        "/admin-alunos/**",
+                                        "/admin-professores/**",
+                                        "/admin-cursos/**",
+                                        "/admin/usuarios/**"
                                 )
                                 .permitAll()
                                 .requestMatchers(

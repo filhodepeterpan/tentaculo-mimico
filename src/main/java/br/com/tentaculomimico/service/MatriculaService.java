@@ -11,6 +11,7 @@ import br.com.tentaculomimico.model.view.MatriculaCursoView;
 import br.com.tentaculomimico.repository.CursoRepository;
 import br.com.tentaculomimico.repository.MatriculaRepository;
 import br.com.tentaculomimico.repository.UsuarioRepository;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -236,7 +237,13 @@ public class MatriculaService {
         if (cursos.isEmpty()) {
             return;
         }
-        List<Matricula> ocupando = matriculaRepository.findByCursoIdIn(cursos.keySet()).stream()
+        List<String> idsValidos = cursos.keySet().stream()
+                .filter(ObjectId::isValid)
+                .toList();
+        if (idsValidos.isEmpty()) {
+            return;
+        }
+        List<Matricula> ocupando = matriculaRepository.findByCursoIdIn(idsValidos).stream()
                 .filter(m -> m.getStatusMatricula() != null && m.getStatusMatricula().ocupaVaga())
                 .toList();
         if (ocupando.isEmpty()) {

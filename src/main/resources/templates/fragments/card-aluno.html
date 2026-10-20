@@ -9,6 +9,7 @@
 <article th:fragment="cardAluno(aluno)" class="admin-alunos__card">
 
     <header class="admin-alunos__cabecalho">
+
         <img th:if="${aluno.fotoPerfil != null and !aluno.fotoPerfil.isEmpty()}" th:src="${aluno.fotoPerfil}" th:alt="'Foto de ' + ${aluno.nome}"  class="admin-alunos__avatar">
         <span th:unless="${aluno.fotoPerfil != null and !aluno.fotoPerfil.isEmpty()}" class="admin-alunos__avatar" aria-hidden="true"
               th:text="${#strings.substring(aluno.nome, 0, 1)}">
@@ -20,6 +21,12 @@
             </h3>
             <p class="admin-alunos__email" th:text="${aluno.email}">email</p>
         </div>
+        <form class="admin-alunos__acoes"
+              th:action="@{/admin-alunos/{id}/remover(id=${aluno.id})}"
+              method="post"
+              onsubmit="return confirm('Confirma a exclusão? O aluno e o seu histórico de matrículas em aberto serão removidos permanentemente.')">
+            <button type="submit" class="botao botao--perigo botao--pequeno">Remover Aluno</button>
+        </form>
     </header>
 
     <div class="admin-alunos__cursos">

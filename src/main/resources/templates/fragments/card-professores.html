@@ -1,3 +1,7 @@
+<!-- =======================================================================
+     Card no painel do administrador (/admin-professores).
+     ======================================================================= -->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
@@ -18,7 +22,7 @@
                   class="admin-professores__avatar"
                   aria-hidden="true"
                   th:text="${#strings.substring(professor.nome, 0, 1)}">
-    </span>
+            </span>
 
             <div class="admin-professores__dados">
                 <h3 class="admin-professores__nome">
@@ -26,6 +30,12 @@
                 </h3>
                 <p class="admin-professores__email" th:text="${professor.email}">email</p>
             </div>
+            <form class="admin-professores__acoes"
+                  th:action="@{/admin/usuarios/{id}/excluir(id=${professor.id})}"
+                  method="post"
+                  onsubmit="return confirm('Confirma a exclusão? O professor, seus cursos criados e o histórico de matrículas dessas turmas serão afetados permanentemente')">
+                <button type="submit" class="botao botao--perigo botao--pequeno">Remover Professor</button>
+            </form>
         </header>
 
         <div class="admin-professores__cursos">
@@ -44,18 +54,20 @@
                 <tr th:each="curso : ${professor.cursos}">
                     <td th:text="${curso.nome}"></td>
                     <td th:text="${curso.status}"></td>
+
                     <td><a th:href="@{/perfil/professor/{id}(id=${professor.id})}" th:text="${professor.nome}"></a></td>
                     <td>
                         <span th:if="${#lists.isEmpty(curso.horarios)}">Não Informado</span>
                         <th:block th:unless="${#lists.isEmpty(curso.horarios)}">
                          <span th:each="h : ${curso.horarios}"
-                         th:text="${h.diaSemana} + ' ' + ${#temporals.format(h.inicio, 'HH:mm')} + '-' + ${#temporals.format(h.fim, 'HH:mm')} + ' '"></span>
+                               th:text="${h.diaSemana} + ' ' + ${#temporals.format(h.inicio, 'HH:mm')} + '-' + ${#temporals.format(h.fim, 'HH:mm')} + ' '"></span>
                         </th:block>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
+
     </article>
 </main>
 </body>

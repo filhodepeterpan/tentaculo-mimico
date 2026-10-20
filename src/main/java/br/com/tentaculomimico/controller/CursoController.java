@@ -214,7 +214,7 @@ public class CursoController {
 
             cursoService.atualizarCurso(id, nome, descricao, cargaHoraria, preco, vagasTotais,
                     diasSemana, horaInicio, horaFim, dataInicio, dataFim, urlImagem);
-            return "redirect:/cursos/" + id;
+            return ehAdmin() ? "redirect:/admin-cursos" : "redirect:/cursos/" + id;
         } catch (RuntimeException | IOException e) {
             // Devolve o formulário com o que a pessoa digitou, não com o valor salvo.
             model.addAttribute("curso", curso);
@@ -258,7 +258,11 @@ public class CursoController {
             return "curso-detalhes";
         }
     }
-
+    private boolean ehAdmin() {
+        Usuario logado = sessaoService.usuarioLogado();
+        return logado != null
+                && "ADMINISTRADOR".equalsIgnoreCase(logado.getTipoUsuario().name());
+    }
     // Preenche os campos do formulário a partir de um curso salvo. Os nomes
     // (*Preenchida/*Preenchido, diasSemanaSelecionados) são os que
     // cadastro-curso.html lê. Tudo vai como String, no formato dos inputs HTML

@@ -24,6 +24,10 @@
               th:action="@{/admin-cursos/{id}/remover(id=${item.curso.id})}"
               method="post"
               onsubmit="return confirm('Confirma a exclusão deste curso? Essa ação não pode ser desfeita.')">
+            <a th:href="@{/cursos/{id}/editar(id=${item.curso.id})}"
+               class="botao botao--neutro botao--pequeno"
+               th:aria-label="'Editar curso ' + ${item.curso.nome}">Editar</a>
+
             <button type="submit" class="botao botao--perigo botao--pequeno">Remover Curso</button>
         </form>
     </header>

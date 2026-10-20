@@ -112,6 +112,15 @@
     color: var(--color-on-surface-variant);
 }
 
+.admin-cursos__acoes {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
 .admin-cursos__tabela {
     width: 100%;
     border-collapse: collapse;

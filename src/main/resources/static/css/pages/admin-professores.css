@@ -126,6 +126,17 @@
     margin-left: auto;
 }
 
+.admin-professores__identificacao {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    min-width: 0;
+}
+.admin-professores__editar {
+    flex-shrink: 0;
+    margin-left: auto;
+}
 
 .admin-professores__cursos {
     padding-top: 1rem;
@@ -172,6 +183,8 @@
         border-radius: 1rem;
     }
 
+
+
     .admin-professores__cabecalho {
         gap: 0.75rem;
     }
@@ -179,5 +192,9 @@
     .admin-professores__tabela th,
     .admin-professores__tabela td {
         padding: 0.5rem 0.5rem 0.5rem 0;
+    }
+
+    .admin-professores__identificacao {
+        gap: 0.5rem;
     }
 }

@@ -24,7 +24,8 @@ public class PagBankMatriculaClient implements CheckoutMatriculaGateway, Consult
     @Override
     public Criado criar(String referencia, String nome, int centavos, String retorno, String pagamento, String checkout) {
         try {
-            if (centavos <= 0 || nome == null || nome.isBlank()) throw new IllegalArgumentException();
+            if (centavos <= 0 || centavos > 999999900 || nome == null || nome.isBlank() || nome.length() > 100)
+                throw new IllegalArgumentException();
             var body = Map.of("reference_id", referencia,
                     "expiration_date", Instant.now().plusSeconds(7200).toString(), "customer_modifiable", true,
                     "items", List.of(Map.of("name", nome, "quantity", 1, "unit_amount", centavos)),

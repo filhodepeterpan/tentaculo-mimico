@@ -34,10 +34,12 @@ public class SecurityConfig {
             OAuth2LoginSucessoHandler oauth2SucessoHandler
     ) throws Exception {
 
-        // Só o POST de doação usa CSRF por enquanto: formulários antigos ainda não têm token.
+        // Formulários de pagamento exigem CSRF; o webhook autenticado não usa sessão.
         http.csrf(csrf -> csrf.requireCsrfProtectionMatcher(request ->
                 "POST".equals(request.getMethod())
-                        && (request.getContextPath() + "/doacoes").equals(request.getRequestURI())))
+                        && ((request.getContextPath() + "/doacoes").equals(request.getRequestURI())
+                        || request.getRequestURI().matches(java.util.regex.Pattern.quote(request.getContextPath())
+                                + "/pagamentos/[^/]+/iniciar"))))
                 .authorizeHttpRequests(auth ->
                         auth
                                 .requestMatchers("/api/auth/**", "/api/calendario/**")
@@ -66,6 +68,7 @@ public class SecurityConfig {
                                         "/perfil-excluir",
                                         "/matriculas/**",
                                         "/pagamentos/**",
+                                        "/webhooks/pagbank/matriculas",
                                         "/sair",
                                         "/api/admin/**",
                                         "/admin",

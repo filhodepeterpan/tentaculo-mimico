@@ -124,31 +124,6 @@ public class MatriculaService {
         return matricula;
     }
 
-    /**
-     * Pagamento concluído: AGUARDANDO_PAGAMENTO vira ATIVA e libera o acesso (o aluno passa a
-     * aparecer em "alunos matriculados" do professor). Devolve o cursoId.
-     *
-     * ATENÇÃO, PROVISÓRIO: ainda não existe gateway de pagamento, então este método CONFIA no clique
-     * do aluno. Quando houver gateway, quem chama isto deve ser o webhook de "pagamento aprovado",
-     * e o endpoint do aluno deve deixar de existir (ver PagamentoController).
-     * Idempotente: chamar de novo numa matrícula já ATIVA não faz nada (duplo clique, reenvio).
-     */
-    public String confirmarPagamento(String matriculaId) {
-        Matricula matricula = buscarMatriculaDoAlunoLogado(matriculaId);
-
-        if (matricula.getStatusMatricula() == StatusMatricula.ATIVA) {
-            return matricula.getCursoId();
-        }
-        if (matricula.getStatusMatricula() != StatusMatricula.AGUARDANDO_PAGAMENTO) {
-            throw new RuntimeException("Esta matrícula não está aguardando pagamento.");
-        }
-
-        matricula.setStatusMatricula(StatusMatricula.ATIVA);
-        matricula.setAcessoLiberado(true);
-        matriculaRepository.save(matricula);
-        return matricula.getCursoId();
-    }
-
     /** Aluno desiste (RN039/RN044): vira CANCELADA, o registro fica no histórico. */
     public void cancelar(String matriculaId) {
         Matricula matricula = buscarMatricula(matriculaId);

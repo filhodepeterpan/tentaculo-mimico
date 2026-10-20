@@ -8,8 +8,8 @@ import java.net.URI;
 public class MatriculaPagBankProperties {
     private final String token;
     private final String baseUrl;
-    public MatriculaPagBankProperties(@Value("${matricula.pagbank.sandbox-token:}") String token,
-                                     @Value("${matricula.pagbank.public-base-url:}") String baseUrl) {
+    public MatriculaPagBankProperties(@Value("${pagbank.token:}") String token,
+                                     @Value("${pagbank.public-base-url:https://google.com}") String baseUrl) {
         this.token = token;
         this.baseUrl = baseUrl;
     }

@@ -49,8 +49,12 @@ class PagBankMatriculaClientTest {
         assertThrows(PagBankMatriculaClient.Indisponivel.class, this::criar); server.verify();
     }
     @Test void falhaETimeoutNaoRepetemPost() {
+        server.expect(requestTo(PagBankMatriculaClient.ENDPOINT)).andRespond(withStatus(HttpStatus.FORBIDDEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{\"error_messages\":[{\"error\":\"allowlist_access_required\"}]}"));
         server.expect(requestTo(PagBankMatriculaClient.ENDPOINT)).andRespond(withServerError());
         server.expect(requestTo(PagBankMatriculaClient.ENDPOINT)).andRespond(withException(new IOException("timeout")));
+        assertThrows(PagBankMatriculaClient.Indisponivel.class, this::criar);
         assertThrows(PagBankMatriculaClient.Indisponivel.class, this::criar);
         assertThrows(PagBankMatriculaClient.Indisponivel.class, this::criar); server.verify();
     }

@@ -7,12 +7,15 @@ import br.com.tentaculomimico.controller.WebhookMatriculaController;
 import br.com.tentaculomimico.model.*;
 import br.com.tentaculomimico.model.enums.TipoUsuario;
 import br.com.tentaculomimico.repository.CursoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.time.Instant;
 
 @Service
 public class PagamentoMatriculaService {
+    private static final Logger LOG = LoggerFactory.getLogger(PagamentoMatriculaService.class);
     private final MatriculaService matriculas;
     private final SessaoService sessao;
     private final CursoRepository cursos;
@@ -27,6 +30,8 @@ public class PagamentoMatriculaService {
         this.confirmacao = confirmacao; this.gateway = gateway; this.config = config;
     }
     public URI iniciar(String id) {
+        String matriculaLogId = safeId(id);
+        LOG.info("Starting matrícula payment checkout: matriculaId={}", matriculaLogId);
         if (sessao.exigirUsuarioLogado().getTipoUsuario() != TipoUsuario.ALUNO)
             throw new IllegalArgumentException("Somente o aluno pode iniciar o pagamento.");
         Matricula m = matriculas.buscarMatriculaDoAlunoLogado(id);
@@ -40,12 +45,17 @@ public class PagamentoMatriculaService {
         int centavos = c.getPreco().movePointRight(2).intValueExact();
         if (centavos > 999999900) throw new IllegalArgumentException("Valor acima do limite do Checkout.");
         config.token();
+        System.out.println("TOKEN AQUI: " + config.token());
         String retorno = config.url("/pagamentos/" + id);
         String webhook = config.url(WebhookMatriculaController.ROTA);
         var reserva = registros.reservarInicio(id, centavos);
         var t = reserva.tentativa();
+        LOG.info("Matrícula payment reservation ready: matriculaId={}, reference={}, createCheckout={}",
+                matriculaLogId, t.getReferencia(), reserva.criar());
         if (!reserva.criar()) {
             if (t.getCheckoutId() != null) {
+                LOG.info("Reconciling existing matrícula Checkout: matriculaId={}, reference={}, checkoutId={}",
+                        matriculaLogId, t.getReferencia(), t.getCheckoutId());
                 confirmacao.reconciliarCheckout(t.getReferencia());
                 var p = registros.buscar(t.getReferencia());
                 t = registros.tentativa(p, t.getReferencia());
@@ -54,18 +64,31 @@ public class PagamentoMatriculaService {
                 if (t.getStatus() == PagamentoMatricula.EstadoTentativa.EXPIRED)
                     throw new IllegalStateException("Checkout expirado. Inicie uma nova tentativa.");
             }
-            if (t.getPayUrl() != null && t.getExpiracao() != null && t.getExpiracao().isAfter(Instant.now()))
+            if (t.getPayUrl() != null && t.getExpiracao() != null && t.getExpiracao().isAfter(Instant.now())) {
+                LOG.info("Reusing validated matrícula Checkout: matriculaId={}, reference={}, checkoutId={}",
+                        matriculaLogId, t.getReferencia(), t.getCheckoutId());
                 return PagBankMatriculaClient.validarPay(t.getPayUrl());
+            }
             throw new IllegalStateException("Aguardando conciliação do pagamento anterior. Não crie outra cobrança.");
         }
         try {
+            LOG.info("Creating matrícula Checkout in Sandbox: matriculaId={}, reference={}",
+                    matriculaLogId, t.getReferencia());
             var criado = gateway.criar(t.getReferencia(), c.getNome(), centavos, retorno, webhook, webhook);
             URI pay = PagBankMatriculaClient.validarPay(criado.payUrl().toString());
             registros.registrarCheckout(t.getReferencia(), criado.checkoutId(), pay.toString(), criado.expiracao());
+            LOG.info("Matrícula Checkout persisted before redirect: matriculaId={}, reference={}, checkoutId={}, expiresAt={}",
+                    matriculaLogId, t.getReferencia(), criado.checkoutId(), criado.expiracao());
             return pay;
         } catch (RuntimeException e) {
+            LOG.warn("Matrícula Checkout creation/persistence failed: matriculaId={}, reference={}, exceptionType={}",
+                    matriculaLogId, t.getReferencia(), e.getClass().getSimpleName());
             registros.falharInicio(t.getReferencia());
             throw new PagBankMatriculaClient.Indisponivel();
         }
+    }
+
+    private static String safeId(String id) {
+        return id != null && id.matches("[A-Za-z0-9_-]{1,100}") ? id : "invalid";
     }
 }

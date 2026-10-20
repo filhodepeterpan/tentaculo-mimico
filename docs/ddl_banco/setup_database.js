@@ -141,7 +141,7 @@ db.createCollection("pagamentos", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
-      required: ["matricula_id", "valor", "status_atual", "mes_referencia", "data_vencimento", "criado_em"],
+      required: ["matricula_id", "valor", "status_atual", "mes_referencia", "data_vencimento", "criado_em", "versao", "tentativas"],
       properties: {
         matricula_id: { bsonType: "objectId" },
         valor: { bsonType: "decimal" },

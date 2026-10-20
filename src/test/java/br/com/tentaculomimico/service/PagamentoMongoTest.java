@@ -77,6 +77,18 @@ class PagamentoMongoTest {
         assertEquals("PENDENTE", p.get("status_atual"));
         assertFalse(p.toJson().contains("sandbox-teste"));
         assertEquals(1, repository.count());
+        Document ttl = mongo.getCollection("webhooks_processados").listIndexes().into(new ArrayList<>()).stream()
+                .filter(index -> "ttl_processado_em".equals(index.getString("name"))).findFirst().orElseThrow();
+        assertEquals(2592000, ((Number) ttl.get("expireAfterSeconds")).longValue());
+    }
+    @Test void referenciaECheckoutExternosNaoPodemPertencerADuasMatriculas() {
+        var outra = registros.reservarInicio(new ObjectId().toHexString(), 12990);
+        String outraReferencia = outra.tentativa().getReferencia();
+        var p = outra.pagamento(); p.getTentativas().getFirst().setReferencia(referencia);
+        assertThrows(org.springframework.dao.DuplicateKeyException.class, () -> repository.save(p));
+        registros.registrarCheckout(referencia,"CHEC_teste","https://pagamento.sandbox.pagbank.com.br/pagamento?code=teste",Instant.now().plusSeconds(60));
+        assertThrows(org.springframework.dao.DuplicateKeyException.class, () -> registros.registrarCheckout(
+                outraReferencia,"CHEC_teste","https://pagamento.sandbox.pagbank.com.br/pagamento?code=teste",Instant.now().plusSeconds(60)));
     }
     @Test void cliquesConcorrentesCriamUmaUnicaReserva() throws Exception {
         String id = new ObjectId().toHexString();

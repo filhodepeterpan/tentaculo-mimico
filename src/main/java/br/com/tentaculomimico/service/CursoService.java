@@ -9,6 +9,7 @@ import br.com.tentaculomimico.model.StatusMatricula;
 import br.com.tentaculomimico.model.Usuario;
 import br.com.tentaculomimico.repository.CursoRepository;
 import br.com.tentaculomimico.repository.MatriculaRepository;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -319,7 +320,7 @@ public class CursoService {
             throw new RuntimeException("Você não tem permissão para excluir este curso.");
         }
 
-        List<Matricula> matriculas = matriculaRepository.findByCursoId(cursoId);
+        List<Matricula> matriculas = ObjectId.isValid(cursoId) ? matriculaRepository.findByCursoId(cursoId) : List.of();
 
         boolean temAlunoMatriculado = matriculas.stream()
                 .anyMatch(m -> m.getStatusMatricula() != null && m.getStatusMatricula().ocupaVaga());

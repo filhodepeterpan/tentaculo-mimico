@@ -27,5 +27,16 @@ function inicializarBusca() {
         mensagemVazio.hidden = algumVisivel;
     });
 }
+function guardarPosicaoAoRemover() {
+    document.querySelectorAll('.admin-alunos__acoes').forEach((form) => {
+        form.addEventListener('submit', (evento) => {
+            if (evento.defaultPrevented) return;
+            sessionStorage.setItem('admin-alunos-scroll', String(window.scrollY));
+            sessionStorage.setItem('admin-alunos-busca', document.getElementById('admin-alunos-busca').value);
+        });
+    });
+}
 
+
+}
 document.addEventListener('DOMContentLoaded', inicializarBusca);

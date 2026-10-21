@@ -12,6 +12,9 @@
 
 <main class="admin-cursos-container">
     <h1 class="admin-cursos__titulo">Gestão de Cursos</h1>
+    <th:block th:if="${erroExclusao != null}">
+        <div th:replace="~{fragments/alert :: alerta(titulo='Não foi possível excluir', mensagem=${erroExclusao}, variante='erro')}"></div>
+    </th:block>
 
     <div class="admin-cursos__busca">
         <div th:replace="~{fragments/inputs :: input(id='admin-cursos-busca', tipo='search', rotulo='Buscar cursos', placeholder='Ex: Nome, professor, status...', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>

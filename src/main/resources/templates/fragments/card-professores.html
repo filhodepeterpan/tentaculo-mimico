@@ -24,18 +24,18 @@
                   th:text="${#strings.substring(professor.nome, 0, 1)}">
             </span>
 
-            <div class="admin-professores__dados">
-                <h3 class="admin-professores__nome">
-                    <a th:href="@{/perfil/professor/{id}(id=${professor.id})}" th:text="${professor.nome}">Nome</a>
-                </h3>
-                <p class="admin-professores__email" th:text="${professor.email}">email</p>
+            <div class="admin-professores__acoes">
+                <a th:href="@{/perfil/editar(id=${professor.id}, voltar='/admin-professores')}"
+                   class="botao botao--neutro botao--pequeno"
+                   th:aria-label="'Editar professor ' + ${professor.nome}">Editar</a>
+
+                <form th:action="@{/admin/usuarios/{id}/excluir(id=${professor.id})}"
+                      method="post"
+                      style="display:inline"
+                      onsubmit="return confirm('Confirma a exclusão? O professor, seus cursos criados e o histórico de matrículas dessas turmas serão afetados permanentemente')">
+                    <button type="submit" class="botao botao--perigo botao--pequeno">Remover Professor</button>
+                </form>
             </div>
-            <form class="admin-professores__acoes"
-                  th:action="@{/admin/usuarios/{id}/excluir(id=${professor.id})}"
-                  method="post"
-                  onsubmit="return confirm('Confirma a exclusão? O professor, seus cursos criados e o histórico de matrículas dessas turmas serão afetados permanentemente')">
-                <button type="submit" class="botao botao--perigo botao--pequeno">Remover Professor</button>
-            </form>
         </header>
 
         <div class="admin-professores__cursos">

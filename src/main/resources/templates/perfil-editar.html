@@ -23,6 +23,7 @@
               th:with="editandoOutro=${usuarioLogado != null and usuarioLogado.id != usuario.id}">
 
             <input type="hidden" name="id" th:value="${usuario.id}">
+            <input type="hidden" name="voltar" th:value="${param.voltar != null ? param.voltar[0] : ''}">
 
             <div th:replace="~{fragments/imagem :: imagem(id='foto-perfil', rotulo='Foto de perfil (opcional)', obrigatorio=false, mensagemErro=${erroFotoPerfil ?: ''}, desabilitado=false)}"></div>
 

@@ -20,24 +20,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
-// URLs deste controller:
-//   GET  /perfil/aluno/{id}       GET  /perfil/professor/{id}
-//   GET  /perfil/editar           POST /perfil/editar
-//   POST /perfil-excluir
-//
-// PREMISSAS assumidas neste controller (o back deve se adaptar a elas):
-//   - UsuarioRepository já existe (mesmo padrão do CursoRepository).
-//   - SessaoService.usuarioLogado() devolve o Usuario autenticado, ou null
-//     se ninguém estiver logado — é o back quem decide como isso é resolvido
-//     (Spring Security, sessão própria, etc.), aqui só se consome o método.
-//   - Usuario.getTipoUsuario() é um enum cujo .name() vem em maiúsculas
-//     (ALUNO/PROFESSOR/ADMINISTRADOR); convertido pra minúsculo ao passar
-//     pro model, porque é assim que os templates comparam.
-//   - CursoRepository precisa do método findByProfessorId(String).
-//   - MatriculaService precisa de: listarCursosDoAluno(alunoId),
-//     listarAlunosMatriculados(professorId), listarAlunosPendentes(professorId).
-//   - PerfilService precisa de: atualizarPerfil(...) e
-//     excluirContaDoUsuarioLogado() — este último deve respeitar RN011/012/019.
 @Controller
 public class PerfilController {
 
@@ -111,8 +93,6 @@ public class PerfilController {
         model.addAttribute("cursosDoProfessor", cursosDoProfessor);
         model.addAttribute("dataNascimentoFormatada", formatarData(professor));
 
-        // Alunos matriculados e pendentes só importam pro próprio professor
-        // ver (dado sensível de terceiros) — nem busca se não for o dono.
         if (ehPerfilProprio) {
             List<AlunoMatriculadoView> alunosMatriculados = matriculaService.listarAlunosMatriculados(id);
             List<AlunoPendenteView> alunosPendentes = matriculaService.listarAlunosPendentes(id);
@@ -156,6 +136,7 @@ public class PerfilController {
             @RequestParam(value = "nova-senha", required = false) String novaSenha,
             @RequestParam(value = "confirmar-nova-senha", required = false) String confirmarNovaSenha,
             @RequestParam(value = "foto-perfil", required = false) MultipartFile fotoPerfil,
+            @RequestParam(value = "voltar", required = false) String voltar,
             Model model
     ) {
         Usuario logado = sessaoService.usuarioLogado();
@@ -165,9 +146,12 @@ public class PerfilController {
         Usuario alvo = alvoDaEdicao(logado, id);
 
         try {
-            perfilService.atualizarPerfil(id, nome, email, cpf, dataNascimento,
+            perfilService.atualizarPerfil(alvo.getId(), nome, email, cpf, dataNascimento,
                     senhaAtual, novaSenha, confirmarNovaSenha, fotoPerfil);
 
+            if ("/admin-alunos".equals(voltar) || "/admin-professores".equals(voltar)) {
+                return "redirect:" + voltar;
+            }
             String tipo = "PROFESSOR".equalsIgnoreCase(alvo.getTipoUsuario().name()) ? "professor" : "aluno";
             return "redirect:/perfil/" + tipo + "/" + alvo.getId();
         } catch (PerfilService.DadosInvalidosException e) {
@@ -202,26 +186,20 @@ public class PerfilController {
             return "redirect:/login";
         }
 
-        // Critério do TASK-62: administrador não pode excluir a própria conta.
         if ("ADMINISTRADOR".equalsIgnoreCase(logado.getTipoUsuario().name())) {
             return "redirect:/acesso-negado";
         }
 
         try {
-            perfilService.excluirContaDoUsuarioLogado(); // apaga a conta e encerra a sessão
+            perfilService.excluirContaDoUsuarioLogado();
             return "redirect:/login";
         } catch (RuntimeException e) {
-            // Não atendeu as condições: volta pro perfil e a página abre um modal com o motivo
-            // (flash attribute "erroExclusaoConta", lido por fragments/modal-exclusao-bloqueada).
             redirectAttributes.addFlashAttribute("erroExclusaoConta", e.getMessage());
             String tipo = "PROFESSOR".equalsIgnoreCase(logado.getTipoUsuario().name()) ? "professor" : "aluno";
             return "redirect:/perfil/" + tipo + "/" + logado.getId();
         }
     }
 
-    // Campos do formulário de edição: no GET vêm do usuário salvo; no POST com
-    // erro voltam com o que a pessoa digitou. "contaLocal" esconde a seção de
-    // senha pra quem entra com Google (não tem senha local).
     private void preencherEdicao(Model model, Usuario usuario, String nome, String email,
                                  String cpf, String dataNascimento) {
         boolean contaLocal = usuario.getAutenticacao() == null
@@ -235,7 +213,6 @@ public class PerfilController {
         model.addAttribute("dataNascimentoPreenchida", dataNascimento);
     }
 
-    // O CPF é guardado só com dígitos; na tela aparece como 000.000.000-00.
     private String formatarCpf(String cpf) {
         if (cpf == null) {
             return "";

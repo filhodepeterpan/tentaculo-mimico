@@ -9,7 +9,6 @@ import br.com.tentaculomimico.model.StatusMatricula;
 import br.com.tentaculomimico.repository.CursoRepository;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -88,8 +87,9 @@ public class CheckoutCursoService {
                 throw new IllegalStateException("URL pública inválida.");
             String url = retorno.replaceAll("/$", "") + "/pagamentos/" + matriculaId;
             CheckoutRequest pedido = new CheckoutRequest(referencia, OffsetDateTime.now(ZoneOffset.UTC).plusMinutes(30),
-                    false, List.of(new CheckoutRequest.Item(curso.getNome(), 1, centavos)),
-                    url, url, List.of(new CheckoutRequest.MetodoConfig("credito".equals(metodo) ? "CREDIT_CARD" : "DEBIT_CARD", List.of())));
+                    true, List.of(new CheckoutRequest.Item(curso.getNome(), 1, centavos)),
+                    url, url, List.of(),
+                    List.of(new CheckoutRequest.Metodo("credito".equals(metodo) ? "CREDIT_CARD" : "DEBIT_CARD")));
             URI checkout = pagbank.criar(pedido);
             mongo.getCollection("pagamentos").updateOne(new Document("_id", registro.getObjectId("_id")),
                     new Document("$set", new Document("tentativas.0.status", "checkout_criado")));

@@ -4,6 +4,7 @@ import br.com.tentaculomimico.model.Curso;
 import br.com.tentaculomimico.model.Matricula;
 import br.com.tentaculomimico.model.StatusMatricula;
 import br.com.tentaculomimico.repository.CursoRepository;
+import br.com.tentaculomimico.service.CheckoutCursoService;
 import br.com.tentaculomimico.service.MatriculaService;
 import br.com.tentaculomimico.service.SessaoService;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,11 +15,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.Set;
-import br.com.tentaculomimico.service.CheckoutCursoService;
-import java.net.URI;
 import org.springframework.web.servlet.view.RedirectView;
+
+import java.net.URI;
+import java.util.Set;
 
 /**
  * Tela de pagamento da matrícula (Pix, cartão de crédito e cartão de débito).

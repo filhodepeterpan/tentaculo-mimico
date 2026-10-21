@@ -1,6 +1,7 @@
 package br.com.tentaculomimico.dto.pagbank;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -11,8 +12,15 @@ public record CheckoutRequest(@JsonProperty("reference_id") String referenceId,
                            List<Item> items,
                            @JsonProperty("redirect_url") String redirectUrl,
                            @JsonProperty("return_url") String returnUrl,
-                           @JsonProperty("payment_methods_configs") List<MetodoConfig> paymentMethodsConfigs) {
+                           @JsonProperty("payment_methods_configs") List<MetodoConfig> paymentMethodsConfigs,
+                           @JsonProperty("payment_methods") @JsonInclude(JsonInclude.Include.NON_NULL) List<Metodo> paymentMethods) {
+    public CheckoutRequest(String referenceId, OffsetDateTime expirationDate, boolean customerModifiable,
+                           List<Item> items, String redirectUrl, String returnUrl,
+                           List<MetodoConfig> paymentMethodsConfigs) {
+        this(referenceId, expirationDate, customerModifiable, items, redirectUrl, returnUrl, paymentMethodsConfigs, null);
+    }
     public record Item(String name, int quantity, @JsonProperty("unit_amount") int unitAmount) {}
+    public record Metodo(String type) {}
     public record MetodoConfig(String type, @JsonProperty("config_options") List<Opcao> configOptions) {}
     public record Opcao(String option, String value) {}
 }

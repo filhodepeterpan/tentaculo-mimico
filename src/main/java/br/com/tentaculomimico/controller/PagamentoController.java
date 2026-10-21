@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Set;
+import br.com.tentaculomimico.service.CheckoutCursoService;
+import java.net.URI;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * Tela de pagamento da matrícula (Pix, cartão de crédito e cartão de débito).
@@ -38,14 +41,16 @@ public class PagamentoController {
     private final CursoRepository cursoRepository;
     private final SessaoService sessaoService;
     private final boolean pagamentoSimulado;
+    private final CheckoutCursoService checkoutCursoService;
 
     public PagamentoController(MatriculaService matriculaService,
                                CursoRepository cursoRepository,
-                               SessaoService sessaoService,
+                               SessaoService sessaoService, CheckoutCursoService checkoutCursoService,
                                @Value("${app.pagamento.simulado:true}") boolean pagamentoSimulado) {
         this.matriculaService = matriculaService;
         this.cursoRepository = cursoRepository;
         this.sessaoService = sessaoService;
+        this.checkoutCursoService = checkoutCursoService;
         this.pagamentoSimulado = pagamentoSimulado;
     }
 
@@ -91,6 +96,21 @@ public class PagamentoController {
         // Pix válido de propósito: se alguém escanear, o banco recusa em vez de pagar a pessoa errada.
         model.addAttribute("pixCopiaECola", "PIX-SIMULADO-" + matricula.getId());
         return "pagamento";
+    }
+
+    @PostMapping("/pagamentos/{matriculaId}/checkout-cartao")
+    public Object checkoutCartao(@PathVariable String matriculaId,
+                                 @RequestParam String metodo,
+                                 @RequestParam(required = false) String valor,
+                                 RedirectAttributes redirect) {
+        if (sessaoService.usuarioLogado() == null) return new RedirectView("/login");
+        try {
+            URI destino = checkoutCursoService.iniciar(matriculaId, metodo, valor);
+            return new RedirectView(destino.toString());
+        } catch (RuntimeException e) {
+            redirect.addFlashAttribute("erroPagamento", e.getMessage());
+            return new RedirectView("/pagamentos/" + matriculaId);
+        }
     }
 
     @PostMapping("/pagamentos/{matriculaId}/confirmar")

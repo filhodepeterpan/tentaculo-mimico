@@ -173,9 +173,12 @@ function bloquearBotoes(bloqueado) {
 function enviar(metodo) {
   $('campo-metodo').value = metodo;
   bloquearBotoes(true);
-  // Apaga o que foi digitado: o dado do cartão não precisa ficar na página depois do envio.
-  CAMPOS_CARTAO.forEach((id) => { if ($(id)) $(id).value = ''; });
-  $('form-pagamento').submit();
+  if (metodo === 'credito' || metodo === 'debito') {
+    $('checkout-metodo').value = metodo;
+    $('form-checkout-cartao').submit();
+  } else {
+    $('form-pagamento').submit();
+  }
 }
 
 function iniciar() {
@@ -190,7 +193,7 @@ function iniciar() {
   $('pix-copiar')?.addEventListener('click', copiarCodigo);
   $('pix-confirmar')?.addEventListener('click', () => enviar('pix'));
   $('cartao-confirmar')?.addEventListener('click', () => {
-    if (validarCartao()) enviar(metodoSelecionado());
+    enviar(metodoSelecionado());
   });
 
   // Voltar pelo histórico restaura a página do cache com os botões travados: destrava.

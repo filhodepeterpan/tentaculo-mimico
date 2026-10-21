@@ -121,6 +121,13 @@
     overflow-wrap: anywhere;
 }
 
+.admin-alunos__acoes {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .admin-alunos__cursos {
     padding-top: 1rem;
     border-top: 1px solid var(--color-on-surface-variant);
@@ -172,6 +179,14 @@
 
     .admin-alunos__cabecalho {
         gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .admin-alunos__acoes {
+        flex-basis: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
     }
 
     .admin-alunos__tabela th,

@@ -10,55 +10,62 @@
 </head>
 <body>
 <main class="card-alunos-container">
-<article th:fragment="cardAluno(aluno)" class="admin-alunos__card">
+    <article th:fragment="cardAluno(aluno)" class="admin-alunos__card">
 
-    <header class="admin-alunos__cabecalho">
+        <header class="admin-alunos__cabecalho">
 
-        <img th:if="${aluno.fotoPerfil != null and !aluno.fotoPerfil.isEmpty()}" th:src="${aluno.fotoPerfil}" th:alt="'Foto de ' + ${aluno.nome}"  class="admin-alunos__avatar">
-        <span th:unless="${aluno.fotoPerfil != null and !aluno.fotoPerfil.isEmpty()}" class="admin-alunos__avatar" aria-hidden="true"
-              th:text="${#strings.substring(aluno.nome, 0, 1)}">
+            <img th:if="${aluno.fotoPerfil != null and !aluno.fotoPerfil.isEmpty()}" th:src="${aluno.fotoPerfil}" th:alt="'Foto de ' + ${aluno.nome}"  class="admin-alunos__avatar">
+            <span th:unless="${aluno.fotoPerfil != null and !aluno.fotoPerfil.isEmpty()}" class="admin-alunos__avatar" aria-hidden="true"
+                  th:text="${#strings.substring(aluno.nome, 0, 1)}">
         </span>
 
-        <div class="admin-alunos__acoes">
-            <a th:href="@{/perfil/editar(id=${aluno.id}, voltar='/admin-alunos')}"
-               class="botao botao--neutro botao--pequeno"
-               th:aria-label="'Editar aluno ' + ${aluno.nome}">Editar</a>
+            <div class="admin-alunos__dados">
+                <h3 class="admin-alunos__nome">
+                    <a th:href="@{/perfil/aluno/{id}(id=${aluno.id})}" th:text="${aluno.nome}">Nome</a>
+                </h3>
+                <p class="admin-alunos__email" th:text="${aluno.email}">email</p>
+            </div>
 
-            <form th:action="@{/admin-alunos/{id}/remover(id=${aluno.id})}"
-                  method="post"
-                  style="display:inline"
-                  onsubmit="return confirm('Confirma a exclusão? O aluno e o seu histórico de matrículas em aberto serão removidos permanentemente.')">
-                <button type="submit" class="botao botao--perigo botao--pequeno">Remover Aluno</button>
-            </form>
-        </div>
-    </header>
+            <div class="admin-alunos__acoes">
+                <a th:href="@{/perfil/editar(id=${aluno.id}, voltar='/admin-alunos')}"
+                   class="botao botao--neutro botao--pequeno"
+                   th:aria-label="'Editar aluno ' + ${aluno.nome}">Editar</a>
 
-    <div class="admin-alunos__cursos">
-        <p th:if="${#lists.isEmpty(aluno.cursos)}">Sem cursos</p>
+                <form th:action="@{/admin-alunos/{id}/remover(id=${aluno.id})}"
+                      method="post"
+                      style="display:inline"
+                      onsubmit="return confirm('Confirma a exclusão? O aluno e o seu histórico de matrículas em aberto serão removidos permanentemente.')">
+                    <button type="submit" class="botao botao--perigo botao--pequeno">Remover Aluno</button>
+                </form>
+            </div>
+        </header>
 
-        <table class="admin-alunos__tabela" th:unless="${#lists.isEmpty(aluno.cursos)}">
-            <thead>
-            <tr>
-                <th scope="col">Curso</th>
-                <th scope="col">Status</th>
-                <th scope="col">Professor</th>
-                <th scope="col">Horários</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="curso : ${aluno.cursos}">
-                <td th:text="${curso.nome}"></td>
-                <td th:text="${curso.status}"></td>
-                <td th:text="${curso.professorNome}"></td>
-                <td>
+        <div class="admin-alunos__cursos">
+            <p th:if="${#lists.isEmpty(aluno.cursos)}">Sem cursos</p>
+
+            <table class="admin-alunos__tabela" th:unless="${#lists.isEmpty(aluno.cursos)}">
+                <thead>
+                <tr>
+                    <th scope="col">Curso</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Professor</th>
+                    <th scope="col">Horários</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="curso : ${aluno.cursos}">
+                    <td th:text="${curso.nome}"></td>
+                    <td th:text="${curso.status}"></td>
+                    <td th:text="${curso.professorNome}"></td>
+                    <td>
                     <span th:each="h : ${curso.horarios}"
                           th:text="${h.diaSemana} + ' ' + ${#temporals.format(h.inicio, 'HH:mm')} + '-' + ${#temporals.format(h.fim, 'HH:mm')} + ' '"></span>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-</article>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </article>
 </main>
 </body>
 </html>

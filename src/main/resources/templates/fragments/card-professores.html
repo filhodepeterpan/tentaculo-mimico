@@ -24,6 +24,13 @@
                   th:text="${#strings.substring(professor.nome, 0, 1)}">
             </span>
 
+            <div class="admin-professores__dados">
+                <h3 class="admin-professores__nome">
+                    <a th:href="@{/perfil/professor/{id}(id=${professor.id})}" th:text="${professor.nome}">Nome</a>
+                </h3>
+                <p class="admin-professores__email" th:text="${professor.email}">email</p>
+            </div>
+
             <div class="admin-professores__acoes">
                 <a th:href="@{/perfil/editar(id=${professor.id}, voltar='/admin-professores')}"
                    class="botao botao--neutro botao--pequeno"

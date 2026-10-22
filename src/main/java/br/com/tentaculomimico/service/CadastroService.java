@@ -6,6 +6,7 @@ import br.com.tentaculomimico.model.Usuario;
 import br.com.tentaculomimico.model.enums.Provedor;
 import br.com.tentaculomimico.model.enums.TipoUsuario;
 import br.com.tentaculomimico.repository.UsuarioRepository;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,17 +15,20 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
+@Getter
 @Service
 @RequiredArgsConstructor
 public class CadastroService {
 
-    private static final int TAMANHO_MINIMO_SENHA = 8;
+    public static final int TAMANHO_MINIMO_SENHA = 8;
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
+
     /** Erros por campo. As chaves são: nome, email, cpf, dataNascimento, tipoUsuario, senha, confirmarSenha. */
+
+
     public static class CadastroInvalidoException extends RuntimeException {
         private final Map<String, String> erros;
 
@@ -42,7 +46,7 @@ public class CadastroService {
         Map<String, String> erros = new LinkedHashMap<>();
 
         String nome = dto.nome() == null ? "" : dto.nome().trim();
-        String email = dto.email() == null ? "" : dto.email().trim();
+        String email = dto.email() == null ? "" : dto.email().trim().toLowerCase();
         String cpf = dto.cpf() == null ? "" : dto.cpf().replaceAll("\\D", "");
         // O login faz trim() na senha digitada, então o cadastro precisa fazer o mesmo.
         String senha = dto.senha() == null ? "" : dto.senha().trim();
@@ -112,7 +116,12 @@ public class CadastroService {
         usuario.setTipoUsuario(tipo);
         usuario.setAutenticacao(autenticacao);
 
-        return usuarioRepository.save(usuario);
+        try {
+            return usuarioRepository.save(usuario);
+        } catch (org.springframework.dao.DuplicateKeyException e) {
+            erros.put("email", "Já existe uma conta com este e-mail.");
+            throw new CadastroInvalidoException(erros);
+        }
     }
 
     private boolean cpfValido(String cpf) {

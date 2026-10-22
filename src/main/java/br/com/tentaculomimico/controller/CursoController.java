@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -63,6 +64,7 @@ public class CursoController {
     public String novoCurso(@RequestParam(value = "dia", required = false) String dia,
                             @RequestParam(value = "inicio", required = false) String inicio,
                             @RequestParam(value = "fim", required = false) String fim,
+                            @RequestParam(value = "data", required = false) String data,
                             Model model) {
         if (dia == null || inicio == null || fim == null) {
             return ehProfessor() ? "redirect:/calendario" : "cadastro-curso";
@@ -77,6 +79,10 @@ public class CursoController {
                 model.addAttribute("diasSemanaSelecionados", List.of(diaSemana.name()));
                 model.addAttribute("horaInicioPreenchida", horaInicio.format(hhmm));
                 model.addAttribute("horaFimPreenchida", horaFim.format(hhmm));
+                if (data != null) {
+                    // Data do dia clicado no calendário (yyyy-MM-dd) vira a data de início.
+                    model.addAttribute("dataInicioPreenchida", LocalDate.parse(data).toString());
+                }
             }
         } catch (IllegalArgumentException | DateTimeParseException e) {
             // Parâmetros inválidos na URL: abre o formulário em branco.
@@ -112,7 +118,7 @@ public class CursoController {
             @RequestParam("hora-inicio") String horaInicio,
             @RequestParam("hora-fim") String horaFim,
             @RequestParam("data-inicio") String dataInicio,
-            @RequestParam(value = "data-fim", required = false) String dataFim,
+            @RequestParam("data-fim") String dataFim,
             @RequestParam(value = "imagem-capa", required = false) MultipartFile imagemCapa,
             Model model
     ) {
@@ -220,7 +226,7 @@ public class CursoController {
             @RequestParam("hora-inicio") String horaInicio,
             @RequestParam("hora-fim") String horaFim,
             @RequestParam("data-inicio") String dataInicio,
-            @RequestParam(value = "data-fim", required = false) String dataFim,
+            @RequestParam("data-fim") String dataFim,
             @RequestParam(value = "imagem-capa", required = false) MultipartFile imagemCapa,
             Model model
     ) {

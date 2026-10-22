@@ -19,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CursoService {
@@ -142,6 +143,29 @@ public class CursoService {
     // Cadastro
     // =========================================================================
 
+    // A data cai num dos dias da semana escolhidos? Ex.: curso só às terças e quintas
+    // não pode começar (nem terminar) num sábado.
+    private void validarDataNosDias(String qual, LocalDate data, List<String> diasSemana) {
+        String diaDaData = switch (data.getDayOfWeek()) {
+            case MONDAY -> "SEGUNDA";
+            case TUESDAY -> "TERCA";
+            case WEDNESDAY -> "QUARTA";
+            case THURSDAY -> "QUINTA";
+            case FRIDAY -> "SEXTA";
+            case SATURDAY -> "SABADO";
+            case SUNDAY -> "DOMINGO";
+        };
+        if (!diasSemana.contains(diaDaData)) {
+            String dias = diasSemana.stream()
+                    .map(d -> nomeDiaPlural(DiaSemana.valueOf(d)))
+                    .collect(Collectors.joining(", "));
+            throw new RuntimeException("A data de " + qual + " ("
+                    + data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    + ", " + nomeDiaPlural(DiaSemana.valueOf(diaDaData)).replaceFirst("s$", "")
+                    + ") precisa cair em um dos dias do curso: " + dias + ".");
+        }
+    }
+
     // Lê e valida os campos do formulário (cadastro e edição usam o mesmo).
     // Não mexe em dono, status nem datas de cadastro: isso é de quem chama.
     private Curso lerFormulario(String nome, String descricao, String cargaHoraria,
@@ -193,13 +217,17 @@ public class CursoService {
 
             LocalDate dtInicio = LocalDate.parse(dataInicio);
             curso.setDataInicio(dtInicio);
-            if (dataFim != null && !dataFim.isBlank()) {
-                LocalDate dtFim = LocalDate.parse(dataFim);
-                if (dtFim.isBefore(dtInicio)) {
-                    throw new RuntimeException("A data de término não pode ser antes da data de início.");
-                }
-                curso.setDataFim(dtFim);
+            if (dataFim == null || dataFim.isBlank()) {
+                throw new RuntimeException("Informe a data de término do curso.");
             }
+            LocalDate dtFim = LocalDate.parse(dataFim);
+            if (dtFim.isBefore(dtInicio)) {
+                throw new RuntimeException("A data de término não pode ser antes da data de início.");
+            }
+            // As duas datas precisam cair num dos dias da semana marcados no formulário.
+            validarDataNosDias("início", dtInicio, diasSemana);
+            validarDataNosDias("término", dtFim, diasSemana);
+            curso.setDataFim(dtFim);
         } catch (DateTimeParseException | IllegalArgumentException e) {
             // IllegalArgumentException já cobre NumberFormatException e DiaSemana.valueOf inválido
             throw new RuntimeException("Dados inválidos no formulário. Confira números, datas, horários e dias da semana.");

@@ -6,9 +6,10 @@
 // O bloco nunca fica por cima de outro curso: ao encostar, ele para na beirada ou
 // pula para o espaço livre mais próximo.
 //
-// Só os cursos da semana mostrada bloqueiam. As datas de início e de término ainda não
-// existem nesta etapa, então a conferência completa de conflitos (que considera o
-// período de cada curso) continua sendo feita pelo servidor ao salvar o cadastro.
+// Só os cursos da semana mostrada bloqueiam. A data do dia escolhido vai junto na URL
+// (como data de início sugerida), mas a data de término é escolhida no formulário; a
+// conferência completa de conflitos (que considera o período de cada curso) continua
+// sendo feita pelo servidor ao salvar o cadastro.
 //
 // Teclado: Tab até o dia, Enter escolhe um horário livre; setas movem (esquerda e direita
 // trocam o dia), Shift + setas para cima/baixo esticam, Enter confirma e Esc cancela.
@@ -197,6 +198,7 @@ export function ativarSelecao(raiz, { faixa, dias, colunas, eventos, urlNovoCurs
     if (!selecao) return;
     const url = new URL(urlNovoCurso, location.href);
     url.searchParams.set('dia', DIAS_ENUM[selecao.dia]);
+    url.searchParams.set('data', dias[selecao.dia].data); // yyyy-MM-dd do dia escolhido
     url.searchParams.set('inicio', hhmm(selecao.ini));
     url.searchParams.set('fim', hhmm(selecao.fim));
     location.assign(url);

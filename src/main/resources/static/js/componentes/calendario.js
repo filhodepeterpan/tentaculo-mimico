@@ -5,6 +5,7 @@
 
 const HORAS_MINIMAS_VISIVEIS = 6;
 const FAIXA_PADRAO = { inicio: 8, fim: 18 }; // semana sem aulas
+const FAIXA_PROFESSOR = { inicio: 7, fim: 22 }; // professor vê ao menos isso, para poder escolher horários livres
 
 function emMinutos(hhmm) {
   const [h, m] = hhmm.split(':').map(Number);
@@ -29,19 +30,28 @@ function criar(tag, classe, texto) {
 
 // Faixa de horas exibida: da hora cheia da primeira aula até a hora cheia seguinte
 // ao fim da última, com um mínimo de linhas para a grade não ficar achatada.
-function calcularFaixa(eventos) {
-  if (eventos.length === 0) return { ...FAIXA_PADRAO };
+// Para o professor (ampliar) a faixa nunca é menor que FAIXA_PROFESSOR.
+function calcularFaixa(eventos, ampliar) {
+  let inicio = FAIXA_PADRAO.inicio;
+  let fim = FAIXA_PADRAO.fim;
 
-  const primeiroInicio = Math.min(...eventos.map((e) => emMinutos(e.inicio)));
-  const ultimoFim = Math.max(...eventos.map((e) => emMinutos(e.fim)));
+  if (eventos.length > 0) {
+    const primeiroInicio = Math.min(...eventos.map((e) => emMinutos(e.inicio)));
+    const ultimoFim = Math.max(...eventos.map((e) => emMinutos(e.fim)));
 
-  let inicio = Math.floor(primeiroInicio / 60);
-  let fim = Math.ceil(ultimoFim / 60);
+    inicio = Math.floor(primeiroInicio / 60);
+    fim = Math.ceil(ultimoFim / 60);
 
-  while (fim - inicio < HORAS_MINIMAS_VISIVEIS) {
-    if (fim < 24) fim += 1;
-    else if (inicio > 0) inicio -= 1;
-    else break;
+    while (fim - inicio < HORAS_MINIMAS_VISIVEIS) {
+      if (fim < 24) fim += 1;
+      else if (inicio > 0) inicio -= 1;
+      else break;
+    }
+  }
+
+  if (ampliar) {
+    inicio = Math.min(inicio, FAIXA_PROFESSOR.inicio);
+    fim = Math.max(fim, FAIXA_PROFESSOR.fim);
   }
   return { inicio, fim };
 }
@@ -116,6 +126,7 @@ function desenhar(raiz, semana) {
   const periodo = raiz.querySelector('[data-calendario-periodo]');
   const urlCurso = raiz.dataset.urlCurso;
   const imgPadrao = raiz.dataset.imgPadrao;
+  const ehProfessor = raiz.dataset.professor === 'true';
 
   const { dias } = semana;
   periodo.textContent = `${formatarDataCurta(dias[0].data)} a ${formatarDataCurta(dias[6].data)}`;
@@ -125,7 +136,7 @@ function desenhar(raiz, semana) {
     iniMin: emMinutos(e.inicio),
     fimMin: emMinutos(e.fim),
   }));
-  const faixa = calcularFaixa(eventos);
+  const faixa = calcularFaixa(eventos, ehProfessor);
   const totalHoras = faixa.fim - faixa.inicio;
 
   grade.replaceChildren();
@@ -155,6 +166,7 @@ function desenhar(raiz, semana) {
   }
   grade.appendChild(horas);
 
+  const colunas = [];
   dias.forEach((dia) => {
     const coluna = criar('div', 'calendario__coluna' + (dia.hoje ? ' calendario__coluna--hoje' : ''));
     coluna.setAttribute('role', 'group');
@@ -165,6 +177,7 @@ function desenhar(raiz, semana) {
     doDia.forEach((e) => coluna.appendChild(criarEvento(e, faixa, dia, urlCurso, imgPadrao)));
 
     grade.appendChild(coluna);
+    colunas.push(coluna);
   });
 
   rolagem.hidden = false;
@@ -174,6 +187,19 @@ function desenhar(raiz, semana) {
     mensagem.hidden = false;
   } else {
     mensagem.hidden = true;
+  }
+
+  return { faixa, dias, colunas, eventos };
+}
+
+// Só professores escolhem horário no calendário: o código disso fica num módulo à parte,
+// carregado apenas para eles. Se falhar, o calendário continua funcionando só para consulta.
+async function liberarSelecao(raiz, contexto) {
+  try {
+    const { ativarSelecao } = await import('./calendario-selecao.js');
+    ativarSelecao(raiz, { ...contexto, urlNovoCurso: raiz.dataset.urlNovoCurso });
+  } catch (erro) {
+    console.error('Calendário: não foi possível ativar a escolha de horário.', erro);
   }
 }
 
@@ -185,7 +211,8 @@ async function iniciar(raiz) {
   try {
     const resposta = await fetch(raiz.dataset.url, { headers: { Accept: 'application/json' } });
     if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
-    desenhar(raiz, await resposta.json());
+    const contexto = desenhar(raiz, await resposta.json());
+    if (raiz.dataset.professor === 'true') liberarSelecao(raiz, contexto);
   } catch (erro) {
     console.error('Calendário: não foi possível carregar a semana.', erro);
     mensagem.textContent = 'Não foi possível carregar a agenda da semana. Tente novamente mais tarde.';

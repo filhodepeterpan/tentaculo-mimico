@@ -20,12 +20,19 @@
   <section class="calendario"
            aria-labelledby="calendario-titulo"
            data-calendario
-           th:attr="data-url=@{/api/calendario/semana},data-url-curso=@{/cursos/},data-img-padrao=@{/img/mascara.png}">
+           th:attr="data-url=@{/api/calendario/semana},data-url-curso=@{/cursos/},data-img-padrao=@{/img/mascara.png},data-url-novo-curso=@{/cursos/novo},data-professor=${ehProfessor}">
 
     <header class="calendario__cabecalho">
       <h2 id="calendario-titulo" class="calendario__titulo">Agenda da semana</h2>
       <p class="calendario__periodo" data-calendario-periodo></p>
     </header>
+
+    <!-- Só aparece para professores (o JavaScript mostra): como escolher o horário de um curso novo. -->
+    <p id="calendario-dica" class="calendario__dica" data-calendario-dica hidden>
+      Para cadastrar um curso, clique em um horário livre, arraste para mover, puxe as bordas para esticar e confirme em ✓.
+      Pelo teclado: Tab até o dia, Enter para escolher, setas para mover, Shift + setas para esticar, Enter para confirmar e Esc para cancelar.
+    </p>
+    <p class="calendario__aviso-leitor" data-calendario-aviso aria-live="polite"></p>
 
     <p class="calendario__mensagem" data-calendario-mensagem role="status">Carregando agenda...</p>
 

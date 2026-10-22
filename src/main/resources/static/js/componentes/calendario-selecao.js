@@ -12,11 +12,13 @@
 // sendo feita pelo servidor ao salvar o cadastro.
 //
 // Teclado: Tab até o dia, Enter escolhe um horário livre; setas movem (esquerda e direita
-// trocam o dia), Shift + setas para cima/baixo esticam, Enter confirma e Esc cancela.
+// trocam o dia), Shift + setas para cima/baixo esticam, + aumenta 30 min (estica para baixo),
+// - diminui 30 min (recolhe para cima), Enter confirma e Esc cancela.
 
 const PASSO = 15; // minutos: precisão ao clicar, arrastar e esticar
 const DURACAO_PADRAO = 60; // minutos: tamanho do bloco ao clicar
 const DURACAO_MINIMA = 15; // minutos
+const PASSO_MAIS_MENOS = 30; // minutos: quanto as teclas + e - esticam ou recolhem o bloco
 const ULTIMO_MINUTO = 24 * 60 - 1; // um curso não passa de 23:59
 const DIAS_ENUM = ['DOMINGO', 'SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO'];
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -366,6 +368,13 @@ export function ativarSelecao(raiz, { faixa, dias, colunas, eventos, urlNovoCurs
         else moverPorTeclado(direcao);
         break;
       }
+      case '+':
+      case '=': // o "+" sem Shift em muitos teclados é a tecla "="
+        esticarPorTeclado(PASSO_MAIS_MENOS);
+        break;
+      case '-':
+        esticarPorTeclado(-PASSO_MAIS_MENOS);
+        break;
       case 'ArrowLeft':
         trocarDia(-1);
         break;

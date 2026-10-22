@@ -1,0 +1,34 @@
+@import url(../root.css);
+@import url(../global.css);
+
+/* Página /calendario. O calendário em si é o componente componentes/calendario.css
+   (importado pelo global.css); aqui fica só o título da página. */
+
+.calendario-pagina {
+    padding: 2rem 1.5rem 0;
+    max-width: 72rem;
+    margin: 0 auto;
+}
+
+.calendario-pagina__titulo {
+    font-family: var(--fonte-editorial);
+    font-size: var(--tipo-editorial-display-tamanho);
+    line-height: var(--tipo-editorial-display-altura-linha);
+    font-weight: var(--tipo-editorial-display-peso);
+    color: var(--color-on-surface);
+    margin: 0 0 0.5rem;
+}
+
+.calendario-pagina__descricao {
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-body-lg-tamanho);
+    line-height: var(--tipo-body-lg-altura-linha);
+    color: var(--color-on-surface-variant);
+}
+
+/* O componente já tem padding e largura máxima próprios: aqui ele só precisa
+   alinhar com o título da página. */
+.calendario-pagina .calendario {
+    padding-left: 0;
+    padding-right: 0;
+}

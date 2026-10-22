@@ -34,10 +34,13 @@ public class SecurityConfig {
             OAuth2LoginSucessoHandler oauth2SucessoHandler
     ) throws Exception {
 
-        http.csrf(csrf -> csrf.disable())
+        // Só o POST de doação usa CSRF por enquanto: formulários antigos ainda não têm token.
+        http.csrf(csrf -> csrf.requireCsrfProtectionMatcher(request ->
+                "POST".equals(request.getMethod())
+                        && (request.getContextPath() + "/doacoes").equals(request.getRequestURI())))
                 .authorizeHttpRequests(auth ->
                         auth
-                                .requestMatchers("/api/auth/**")
+                                .requestMatchers("/api/auth/**", "/api/calendario/**")
                                 .permitAll()
                                 .requestMatchers(
                                         "/",
@@ -51,6 +54,7 @@ public class SecurityConfig {
                                         "/contato",
                                         "/cursos",
                                         "/cursos/**",
+                                        "/calendario",
                                         "/curso-detalhes",
                                         "/curso-detalhes/**",
                                         "/cadastro-curso",
@@ -70,7 +74,11 @@ public class SecurityConfig {
                                         "/admin-alunos",
                                         "/admin-professores",
                                         "/admin-cursos",
-                                        "/acesso-negado"
+                                        "/acesso-negado",
+                                        "/admin-alunos/**",
+                                        "/admin-professores/**",
+                                        "/admin-cursos/**",
+                                        "/admin/usuarios/**"
                                 )
                                 .permitAll()
                                 .requestMatchers(

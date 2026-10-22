@@ -8,13 +8,28 @@
 <article th:fragment="cardCurso(item)" class="admin-cursos__card">
 
     <header class="admin-cursos__cabecalho">
-        <span class="admin-cursos__avatar" aria-hidden="true"
-              th:text="${#strings.substring(item.curso.nome, 0, 1)}">C</span>
+        <img th:if="${item.curso.imagemCapa != null and !item.curso.imagemCapa.isEmpty()}"
+             th:src="@{${item.curso.imagemCapa}}"
+             th:alt="'Capa do curso ' + ${item.curso.nome}"
+             class="admin-cursos__avatar">
+        <span th:unless="${item.curso.imagemCapa != null and !item.curso.imagemCapa.isEmpty()}"
+              class="admin-cursos__avatar" aria-hidden="true"
+              th:text="${#strings.substring(item.curso.nome, 0, 1)}"></span>
 
         <div class="admin-cursos__dados">
             <h3 class="admin-cursos__nome" th:text="${item.curso.nome}">Nome</h3>
             <p class="admin-cursos__professor" th:text="${item.curso.professorNome}">Professor</p>
         </div>
+        <form class="admin-cursos__acoes"
+              th:action="@{/admin-cursos/{id}/remover(id=${item.curso.id})}"
+              method="post"
+              onsubmit="return confirm('Confirma a exclusão deste curso? Essa ação não pode ser desfeita.')">
+            <a th:href="@{/cursos/{id}/editar(id=${item.curso.id})}"
+               class="botao botao--neutro botao--pequeno"
+               th:aria-label="'Editar curso ' + ${item.curso.nome}">Editar</a>
+
+            <button type="submit" class="botao botao--perigo botao--pequeno">Remover Curso</button>
+        </form>
     </header>
 
     <div class="admin-cursos__cursos">

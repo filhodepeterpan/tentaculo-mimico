@@ -16,9 +16,42 @@
     margin: 0 0 1.5rem;
 }
 
-.cursos__busca {
-    max-width: 28rem;
+/* Busca + botão "Ver calendário" na mesma linha (quebra em telas estreitas). */
+.cursos__barra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1rem;
     margin-bottom: 2rem;
+}
+
+.cursos__busca {
+    flex: 1 1 16rem;
+    max-width: 28rem;
+}
+
+/* Amarelo da marca (tokens secundários do root.css: mudam com tema e contraste). */
+.cursos__botao-calendario {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0 1.25rem;
+    border-radius: 0.75rem;
+    background-color: var(--color-secondary);
+    color: var(--color-on-secondary);
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-label-lg-tamanho);
+    line-height: var(--tipo-label-lg-altura-linha);
+    letter-spacing: var(--tipo-label-lg-espacamento);
+    font-weight: var(--tipo-label-lg-peso-enfatizado);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.cursos__botao-calendario:hover {
+    background-color: var(--color-secondary-fixed-dim);
 }
 
 .cursos__vazio {

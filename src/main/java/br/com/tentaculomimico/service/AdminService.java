@@ -19,13 +19,19 @@ public class AdminService {
     private final UsuarioRepository usuarioRepository;
     private final CursoRepository cursoRepository;
     private final MatriculaRepository matriculaRepository;
+    private final MatriculaService matriculaService;
+    private final SessaoService sessaoService;
 
     public AdminService(UsuarioRepository usuarioRepository,
                         CursoRepository cursoRepository,
-                        MatriculaRepository matriculaRepository) {
+                        MatriculaRepository matriculaRepository,
+                        MatriculaService matriculaService,
+                        SessaoService sessaoService) {
         this.usuarioRepository = usuarioRepository;
         this.cursoRepository = cursoRepository;
         this.matriculaRepository = matriculaRepository;
+        this.matriculaService = matriculaService;
+        this.sessaoService = sessaoService;
     }
 
     public ResumoAdminResposta resumo() {
@@ -91,9 +97,26 @@ public class AdminService {
         }
         return resultado;
     }
+    //===============================================================================
 
+    public void removerAluno(String alunoId) {
+        Usuario logado = sessaoService.exigirUsuarioLogado();
+        if (logado.getTipoUsuario() != TipoUsuario.ADMINISTRADOR) {
+            throw new RuntimeException("Acesso liberado apenas para administradores");
+        }
+        if (logado.getId().equals(alunoId)) {
+            throw new RuntimeException("Não é possivel deletar a conta de administrador");
+        }
 
+        Usuario aluno = usuarioRepository.findById(alunoId)
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado."));
+        if (aluno.getTipoUsuario() != TipoUsuario.ALUNO) {
+            throw new RuntimeException("O usuário informado não é um aluno.");
+        }
 
+        matriculaService.cancelarEmAbertoDoAluno(alunoId);
+        usuarioRepository.delete(aluno);
+    }
 
     //===============================================================================
     public List<Curso> listarCursos() {

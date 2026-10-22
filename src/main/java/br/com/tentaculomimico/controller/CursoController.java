@@ -11,6 +11,7 @@ import br.com.tentaculomimico.service.MatriculaService;
 import br.com.tentaculomimico.service.SessaoService;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,7 +59,7 @@ public class CursoController {
 
     @GetMapping("/cursos")
     public String listarCursos(Model model) {
-        model.addAttribute("cursos", cursoRepository.findAll());
+        model.addAttribute("cursos", cursoRepository.findAll(Sort.by(Sort.Direction.DESC, "id")));
 
         // O botão de cada card depende de quem está olhando:
         //  - aluno: o status da matrícula dele em cada curso (matriculasPorCurso: cursoId -> view);
@@ -95,6 +96,18 @@ public class CursoController {
                     diasSemana, horaInicio, horaFim, dataInicio, dataFim, urlImagem);
             return "redirect:/cursos";
         } catch (RuntimeException | IOException e) {
+            // Devolve o formulário com o que a pessoa digitou (a imagem de capa é a
+            // única exceção: o navegador não permite reenviar um arquivo já escolhido).
+            model.addAttribute("nomePreenchido", nome);
+            model.addAttribute("descricaoPreenchida", descricao);
+            model.addAttribute("cargaHorariaPreenchida", cargaHoraria);
+            model.addAttribute("precoPreenchido", preco);
+            model.addAttribute("vagasTotaisPreenchidas", vagasTotais);
+            model.addAttribute("diasSemanaSelecionados", diasSemana);
+            model.addAttribute("horaInicioPreenchida", horaInicio);
+            model.addAttribute("horaFimPreenchida", horaFim);
+            model.addAttribute("dataInicioPreenchida", dataInicio);
+            model.addAttribute("dataFimPreenchida", dataFim);
             model.addAttribute("erroGeral", e.getMessage());
             return "cadastro-curso";
         }
@@ -201,7 +214,7 @@ public class CursoController {
 
             cursoService.atualizarCurso(id, nome, descricao, cargaHoraria, preco, vagasTotais,
                     diasSemana, horaInicio, horaFim, dataInicio, dataFim, urlImagem);
-            return "redirect:/cursos/" + id;
+            return ehAdmin() ? "redirect:/admin-cursos" : "redirect:/cursos/" + id;
         } catch (RuntimeException | IOException e) {
             // Devolve o formulário com o que a pessoa digitou, não com o valor salvo.
             model.addAttribute("curso", curso);
@@ -245,7 +258,11 @@ public class CursoController {
             return "curso-detalhes";
         }
     }
-
+    private boolean ehAdmin() {
+        Usuario logado = sessaoService.usuarioLogado();
+        return logado != null
+                && "ADMINISTRADOR".equalsIgnoreCase(logado.getTipoUsuario().name());
+    }
     // Preenche os campos do formulário a partir de um curso salvo. Os nomes
     // (*Preenchida/*Preenchido, diasSemanaSelecionados) são os que
     // cadastro-curso.html lê. Tudo vai como String, no formato dos inputs HTML

@@ -10,6 +10,17 @@
   padding: 3rem 2rem;
 }
 
+/* Com capa: a imagem define a altura da seção e fica colada no topo, na base e à direita */
+.curso-detalhes__topo:has(.curso-detalhes__capa) {
+  padding: 0 0 0 2rem;
+  align-items: stretch;
+}
+
+.curso-detalhes__topo:has(.curso-detalhes__capa) .curso-detalhes__topo-texto {
+  justify-content: center;
+  padding: 3rem 0;
+}
+
 .curso-detalhes__topo-texto {
   display: flex;
   flex-direction: column;
@@ -85,10 +96,10 @@
 }
 
 .curso-detalhes__capa {
-  width: 16rem;
-  height: 12rem;
+  width: 24rem;
+  height: 18rem;
   object-fit: cover;
-  border-radius: 1.25rem;
+  border-radius: 0;
   flex-shrink: 0;
 }
 
@@ -291,10 +302,19 @@
     width: 6rem;
   }
 
+  .curso-detalhes__topo:has(.curso-detalhes__capa) {
+    padding: 0 0 2rem;
+    align-items: center;
+  }
+
   .curso-detalhes__capa {
     order: -1;
     width: 100%;
     height: 10rem;
+  }
+
+  .curso-detalhes__topo:has(.curso-detalhes__capa) .curso-detalhes__topo-texto {
+    padding: 0 1.5rem;
   }
 
   .curso-detalhes__acoes{

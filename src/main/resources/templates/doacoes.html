@@ -25,9 +25,8 @@
     </th:block>
 
     <form class="doacoes__formulario" method="post" th:action="@{/doacoes}" novalidate>
-      <!-- Preenchidos pelo doacoes.js antes do envio: valor final (do botão ou do campo "Outro") e a mensagem. -->
+      <!-- O servidor valida o valor mesmo se o JavaScript estiver desativado. -->
       <input type="hidden" name="valor" id="doacao-valor">
-      <input type="hidden" name="mensagem" id="doacao-mensagem">
 
       <fieldset class="doacoes__valores">
         <legend class="campo__rotulo">Valor</legend>
@@ -43,14 +42,14 @@
 
       <div th:replace="~{fragments/inputs :: input(id='valor-outro', tipo='text', rotulo='Outro', placeholder='R$', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>
 
-      <div th:replace="~{fragments/textarea :: textarea(id='mensagem-doacao', rotulo='Mensagem', placeholder='Dedico essa doação a...', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>
+      <p id="doacao-erro-valor" class="doacoes__erro" role="alert" hidden></p>
 
       <div class="doacoes__acoes">
         <button type="submit" class="botao botao--primario botao--pequeno doacoes__doar">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
             <path d="M12 21s-7-4.5-9.5-9C.7 8.5 2 5 5.5 5c2 0 3.3 1 4.5 2.5C11.2 6 12.5 5 14.5 5 18 5 19.3 8.5 21.5 12c-2.5 4.5-9.5 9-9.5 9z"/>
           </svg>
-          Doar
+          <span class="doacoes__doar-texto">Doar</span>
         </button>
       </div>
     </form>
@@ -59,7 +58,9 @@
 </main>
 
 <div th:replace="~{fragments/layouts :: footer}"></div>
+<div th:replace="~{fragments/modal-agradecimento-doacao :: modal}"></div>
 
+<script th:src="@{/js/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
 <script type="module" th:src="@{/js/pages/doacoes.js}"></script>
 </body>
 </html>

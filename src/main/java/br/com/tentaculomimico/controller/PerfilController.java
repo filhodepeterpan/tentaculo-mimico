@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -177,9 +178,27 @@ public class PerfilController {
     }
 
     @PostMapping("/perfil-excluir")
-    public String excluirConta() {
-        perfilService.excluirContaDoUsuarioLogado();
-        return "redirect:/login";
+    public String excluirConta(RedirectAttributes redirectAttributes) {
+        Usuario logado = sessaoService.usuarioLogado();
+        if (logado == null) {
+            return "redirect:/login";
+        }
+
+        // Critério do TASK-62: administrador não pode excluir a própria conta.
+        if ("ADMINISTRADOR".equalsIgnoreCase(logado.getTipoUsuario().name())) {
+            return "redirect:/acesso-negado";
+        }
+
+        try {
+            perfilService.excluirContaDoUsuarioLogado(); // apaga a conta e encerra a sessão
+            return "redirect:/login";
+        } catch (RuntimeException e) {
+            // Não atendeu as condições: volta pro perfil e a página abre um modal com o motivo
+            // (flash attribute "erroExclusaoConta", lido por fragments/modal-exclusao-bloqueada).
+            redirectAttributes.addFlashAttribute("erroExclusaoConta", e.getMessage());
+            String tipo = "PROFESSOR".equalsIgnoreCase(logado.getTipoUsuario().name()) ? "professor" : "aluno";
+            return "redirect:/perfil/" + tipo + "/" + logado.getId();
+        }
     }
 
     // Campos do formulário de edição: no GET vêm do usuário salvo; no POST com

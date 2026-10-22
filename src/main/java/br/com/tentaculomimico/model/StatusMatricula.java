@@ -17,8 +17,12 @@ public enum StatusMatricula {
         return this == PENDENTE || ocupaVaga();
     }
 
-    /** Valor que vai pro template (minúsculo, igual ao tipoUsuario). */
+    /**
+     * Valor que vai pro template e pro banco (campo "status" do schema de matriculas):
+     * minúsculo, exceto AGUARDANDO_PAGAMENTO, que o schema e os templates chamam
+     * de "aceita_aguardando_pagamento".
+     */
     public String chave() {
-        return name().toLowerCase();
+        return this == AGUARDANDO_PAGAMENTO ? "aceita_aguardando_pagamento" : name().toLowerCase();
     }
 }

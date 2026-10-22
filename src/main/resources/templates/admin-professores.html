@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/pages/admin-professores.css}">
+    <title>Tentáculo Mímico</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layouts :: header}"></div>
+
+<main class="admin-professores-container">
+    <h1 class="admin-professores__titulo">Gestão de Professores</h1>
+
+    <div class="admin-professores__busca">
+        <div th:replace="~{fragments/inputs :: input(id='admin-professores-busca', tipo='search', rotulo='Buscar professores', placeholder='Ex: Nome, email, curso...', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>
+    </div>
+
+    <p id="admin-professores-vazio" class="admin-professores__vazio" role="status" hidden>Nenhum professor encontrado.</p>
+
+    <ul class="admin-professores__lista">
+        <li class="admin-professores__item"
+            th:each="professor : ${listaDeProfessores}"
+            th:data-busca="${professor.nome + ' ' + professor.email + ' ' + #strings.listJoin(professor.cursos.![nome + ' ' + professorNome + ' ' + status], ' ')}">
+            <div th:replace="~{fragments/card-professores :: cardProfessor(professor=${professor})}"></div>
+        </li>
+    </ul>
+
+</main>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+<script type="module" th:src="@{/js/pages/admin-professores.js}"></script>
+</body>
+</html>

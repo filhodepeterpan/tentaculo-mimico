@@ -1,0 +1,83 @@
+@import url(../root.css);
+@import url(../global.css);
+
+.perfil-aluno {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+/* ---- Dados pessoais ---- */
+
+.perfil-info__titulo {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-title-lg-tamanho);
+  font-weight: var(--tipo-title-lg-peso-enfatizado);
+  color: var(--color-on-surface);
+  margin: 0 0 1rem;
+}
+
+.perfil-info__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1.25rem;
+}
+
+.perfil-info__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.perfil-info__rotulo {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-sm-tamanho);
+  color: var(--color-on-surface-variant);
+}
+
+.perfil-info__valor {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-title-sm-tamanho);
+  font-weight: var(--tipo-title-sm-peso-enfatizado);
+  color: var(--color-on-surface);
+}
+
+/* ---- Meus cursos ---- */
+
+.perfil-aluno__cursos {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.perfil-aluno__cursos-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.perfil-aluno__cursos-cabecalho .perfil-info__titulo {
+  margin: 0;
+}
+
+.perfil-aluno__filtro {
+  min-width: 14rem;
+}
+
+.perfil-aluno__vazio {
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-lg-tamanho);
+  color: var(--color-on-surface-variant);
+  padding: 1.5rem 0;
+}
+
+.cursos__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1.5rem;
+}

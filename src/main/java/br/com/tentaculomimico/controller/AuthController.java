@@ -8,6 +8,11 @@ import br.com.tentaculomimico.service.SessaoService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+
+import java.io.IOException;
+import java.net.URI;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,6 +48,7 @@ public class AuthController {
 
             return "redirect:/cursos";
         } catch (Exception e) {
+            e.printStackTrace();
             model.addAttribute("erroGeral", "E-mail ou senha inválidos.");
             return "login";
         }
@@ -64,15 +70,24 @@ public class AuthController {
         return ResponseEntity.ok("Senha atualizada com sucesso!");
     }
 
-    @PostMapping("/login/google")
-    public ResponseEntity<String> loginGoogle(
-        @RequestBody br.com.tentaculomimico.dto.GoogleLoginRequestDTO dadosGoogle
-    ) {
-        String token = authService.autenticarComGoogle(
-            dadosGoogle.email(),
-            dadosGoogle.nome()
-        );
+    @GetMapping("/sair")
+    public ResponseEntity<String> logout(
+        HttpServletResponse response,
+        Model model
+    ) throws IOException {
+        sessaoService.encerrarSessao();
 
-        return ResponseEntity.ok(token);
+        // VERIFICAR SE É NECESSÀRIO CRIAR O COOKIE EM PRIMEIRO LUGAR
+        Cookie cookie = new Cookie("jwt", "");
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+
+
+        return ResponseEntity
+            .status(HttpStatus.FOUND)
+            .location(URI.create("/login"))
+            .build();
     }
 }

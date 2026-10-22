@@ -1,0 +1,32 @@
+<!-- modalExclusaoBloqueada(mensagem)
+     Explica por que a conta não pôde ser excluída. Vem do flash attribute "erroExclusaoConta"
+     (PerfilController.excluirConta). Ao contrário do fragments/modal, NÃO tem o atributo "hidden":
+     já nasce aberto, porque a página é recarregada depois do erro. Fechar usa o mesmo
+     [data-modal-fechar] dos outros modais (componentes/modal.js). Estilo: modal.css. -->
+<div th:fragment="modalExclusaoBloqueada(mensagem)"
+     id="modal-exclusao-bloqueada"
+     class="modal"
+     role="alertdialog"
+     aria-modal="true"
+     aria-labelledby="modal-exclusao-bloqueada-titulo">
+
+  <div class="modal__overlay" data-modal-fechar="modal-exclusao-bloqueada"></div>
+
+  <div class="modal__caixa">
+    <div class="modal__cabecalho">
+      <h2 id="modal-exclusao-bloqueada-titulo" class="modal__titulo">Não foi possível excluir a conta</h2>
+      <button type="button" class="modal__fechar" data-modal-fechar="modal-exclusao-bloqueada" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <line x1="4" y1="4" x2="20" y2="20"/>
+          <line x1="20" y1="4" x2="4" y2="20"/>
+        </svg>
+      </button>
+    </div>
+
+    <p class="modal__mensagem" th:text="${mensagem}">Motivo</p>
+
+    <div class="modal__acoes">
+      <button type="button" class="botao botao--primario botao--pequeno" data-modal-fechar="modal-exclusao-bloqueada">Entendi</button>
+    </div>
+  </div>
+</div>

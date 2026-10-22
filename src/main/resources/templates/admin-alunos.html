@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/pages/admin-alunos.css}">
+    <title>Tentáculo Mímico</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layouts :: header}"></div>
+
+<main class="admin-alunos-container">
+    <h1 class="admin-alunos__titulo">Gestão de Alunos</h1>
+
+    <div class="admin-alunos__busca">
+        <div th:replace="~{fragments/inputs :: input(id='admin-alunos-busca', tipo='search', rotulo='Buscar alunos', placeholder='Ex: Nome, email, curso...', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>
+    </div>
+
+    <p id="admin-alunos-vazio" class="admin-alunos__vazio" role="status" hidden>Nenhum aluno encontrado.</p>
+
+    <ul class="admin-alunos__lista">
+        <li class="admin-alunos__item"
+            th:each="aluno : ${listaDeAlunos}"
+            th:data-busca="${aluno.nome + ' ' + aluno.email + ' ' + #strings.listJoin(aluno.cursos.![nome + ' ' + professorNome + ' ' + status], ' ')}">
+            <div th:replace="~{fragments/card-aluno :: cardAluno(aluno=${aluno})}"></div>
+        </li>
+    </ul>
+
+</main>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+<script type="module" th:src="@{/js/pages/admin-alunos.js}"></script>
+</body>
+</html>

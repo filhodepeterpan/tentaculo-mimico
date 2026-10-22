@@ -21,22 +21,81 @@ public class SecurityConfig {
     //  Por último, desliga um bloqueio padrão do Spring porque vamos usar
     //  os nossos próprios Tokens.
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // O handler entra como parâmetro do @Bean (e não no construtor da classe)
+    // para evitar dependência circular: handler -> AuthService -> PasswordEncoder (definido aqui).
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/", "/login", "/cadastro", "/sobre", "/contato", "/cursos", "/cursos/**", "/curso-detalhes", "/curso-detalhes/**", "/cadastro-curso", "/doacoes", "/perfil-aluno/**", "/perfil/**", "/perfil/professor/**", "/perfil/aluno/**", "/perfil-professor/**", "/perfil-editar", "/perfil-excluir", "/matriculas/**").permitAll()
-                        .requestMatchers("/css/**", "/js/**", "/img/**", "/webjars/**", "/favicon.ico").permitAll()
-                        .requestMatchers("/error").permitAll()
-                        .anyRequest().authenticated()
+    public SecurityFilterChain filterChain(
+            HttpSecurity http,
+            OAuth2LoginSucessoHandler oauth2SucessoHandler
+    ) throws Exception {
+
+        http.csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth ->
+                        auth
+                                .requestMatchers("/api/auth/**")
+                                .permitAll()
+                                .requestMatchers(
+                                        "/",
+                                        "/login",
+                                        "/cadastro",
+                                        "/esqueci-senha",
+                                        "/redefinir-senha",
+                                        "/sobre",
+                                        "/contato",
+                                        "/cursos",
+                                        "/cursos/**",
+                                        "/curso-detalhes",
+                                        "/curso-detalhes/**",
+                                        "/cadastro-curso",
+                                        "/doacoes",
+                                        "/perfil-aluno/**",
+                                        "/perfil/**",
+                                        "/perfil/professor/**",
+                                        "/perfil/aluno/**",
+                                        "/perfil-professor/**",
+                                        "/perfil-editar",
+                                        "/perfil-excluir",
+                                        "/matriculas/**",
+                                        "/pagamentos/**",
+                                        "/sair",
+                                        "/api/admin/**",
+                                        "/admin",
+                                        "/admin-alunos",
+                                        "/admin-professores",
+                                        "/admin-cursos",
+                                        "/acesso-negado"
+                                )
+                                .permitAll()
+                                .requestMatchers(
+                                        "/css/**",
+                                        "/js/**",
+                                        "/img/**",
+                                        "/webjars/**",
+                                        "/favicon.ico"
+                                )
+                                .permitAll()
+                                .requestMatchers("/error")
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated()
+                )
+                // Login com Google pelo fluxo de redirecionamento:
+                //   GET /oauth2/authorization/google  -> manda para o Google
+                //   GET /login/oauth2/code/google     -> volta do Google (redirect URI)
+                // loginPage("/login") é importante: sem ele o Spring gera uma página
+                // de login própria em /login e esconde a página Thymeleaf do projeto.
+                .oauth2Login(oauth -> oauth
+                        .loginPage("/login")
+                        .successHandler(oauth2SucessoHandler)
+                        .failureHandler((request, response, exception) -> {
+                            exception.printStackTrace();
+                            response.sendRedirect("/login?erro=google");
+                        })
                 );
 
         return http.build();

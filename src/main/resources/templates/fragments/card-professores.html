@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="stylesheet" th:href="@{/css/pages/admin-professores.css}">
+</head>
+<body>
+<main class="card-professores-container">
+    <article th:fragment="cardProfessor(professor)" class="admin-professores__card">
+
+        <header class="admin-professores__cabecalho">
+            <img th:if="${professor.fotoPerfil != null and !professor.fotoPerfil.isEmpty()}"
+                 th:src="${professor.fotoPerfil}"
+                 th:alt="'Foto de ' + ${professor.nome}"
+                 class="admin-professores__avatar">
+
+            <span th:unless="${professor.fotoPerfil != null and !professor.fotoPerfil.isEmpty()}"
+                  class="admin-professores__avatar"
+                  aria-hidden="true"
+                  th:text="${#strings.substring(professor.nome, 0, 1)}">
+    </span>
+
+            <div class="admin-professores__dados">
+                <h3 class="admin-professores__nome">
+                    <a th:href="@{/perfil/professor/{id}(id=${professor.id})}" th:text="${professor.nome}">Nome</a>
+                </h3>
+                <p class="admin-professores__email" th:text="${professor.email}">email</p>
+            </div>
+        </header>
+
+        <div class="admin-professores__cursos">
+            <p th:if="${#lists.isEmpty(professor.cursos)}">Sem cursos</p>
+
+            <table class="admin-professores__tabela" th:unless="${#lists.isEmpty(professor.cursos)}">
+                <thead>
+                <tr>
+                    <th scope="col">Curso</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Professor</th>
+                    <th scope="col">Horários</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="curso : ${professor.cursos}">
+                    <td th:text="${curso.nome}"></td>
+                    <td th:text="${curso.status}"></td>
+                    <td><a th:href="@{/perfil/professor/{id}(id=${professor.id})}" th:text="${professor.nome}"></a></td>
+                    <td>
+                        <span th:if="${#lists.isEmpty(curso.horarios)}">Não Informado</span>
+                        <th:block th:unless="${#lists.isEmpty(curso.horarios)}">
+                         <span th:each="h : ${curso.horarios}"
+                         th:text="${h.diaSemana} + ' ' + ${#temporals.format(h.inicio, 'HH:mm')} + '-' + ${#temporals.format(h.fim, 'HH:mm')} + ' '"></span>
+                        </th:block>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </article>
+</main>
+</body>
+</html>

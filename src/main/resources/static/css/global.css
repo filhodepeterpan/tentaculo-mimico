@@ -11,9 +11,11 @@
 @import url(componentes/select.css);
 @import url(componentes/textarea.css);
 @import url(componentes/card.css);
-@import url(componentes/landing-card.css);
 @import url(componentes/badge.css);
 @import url(componentes/imagem.css);
+@import url(componentes/aluno-item.css);
+@import url(componentes/modal-responder-matricula.css);
+@import url(componentes/modal-cancelar-matricula.css);
 @import url(utilitarios/fontes.css);
 
 /* CSS GLOBAL */
@@ -32,9 +34,15 @@ body {
     margin: 0;
     padding: 0;
     font-family: var(--fonte-padrao);
+    background-color: var(--color-surface-dim);
 }
 
 img {
     display: block;
     width: 100%;
+}
+
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+    outline: 3px solid var(--primary-color, #4A90E2);
+    outline-offset: 2px;
 }

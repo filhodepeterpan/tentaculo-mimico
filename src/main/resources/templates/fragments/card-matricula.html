@@ -11,13 +11,12 @@
   </a>
 
   <div class="curso-card__rodape">
-    <div th:if="${statusMatricula == 'pendente'}" th:replace="~{fragments/badge :: badge(texto='Aguardando aprovação', variante='atencao')}"></div>
-    <div th:if="${statusMatricula == 'recusada'}" th:replace="~{fragments/badge :: badge(texto='Matrícula recusada', variante='erro')}"></div>
-    <div th:if="${statusMatricula == 'cancelada'}" th:replace="~{fragments/badge :: badge(texto='Cancelada', variante='neutro')}"></div>
 
     <a th:if="${statusMatricula == 'aceita_aguardando_pagamento'}" th:href="@{/pagamentos/{id}(id=${matriculaId})}" class="botao botao--primario botao--pequeno">Pagar</a>
 
-    <button th:if="${statusMatricula == 'ativa'}" type="button" class="botao botao--perigo botao--pequeno" th:attr="data-modal-abrir=${'modal-desistir-' + matriculaId}">Desistir da matrícula</button>
+    <a th:if="${statusMatricula == 'pendente'}" th:href="@{/cursos/{id}(id=${id})}" class="botao botao--atencao botao--pequeno">Ver status</a>
+
+    <a th:if="${statusMatricula == 'ativa'}" th:href="@{/cursos/{id}(id=${id})}" class="botao botao--sucesso botao--pequeno">Ver curso</a>
   </div>
 
 </div>

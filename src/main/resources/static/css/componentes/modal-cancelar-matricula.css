@@ -1,0 +1,98 @@
+/* Modal "Cancelar matrícula" (professor). Complementa modal.css: a estrutura
+   (.modal, .modal__caixa, .modal__titulo...) vem de lá; aqui só o que é específico. */
+
+.modal-cancelar__caixa {
+  max-width: 34rem;
+}
+
+/* O <form> é o único filho da caixa; o espaçamento interno fica nele. */
+.modal-cancelar__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modal-cancelar__mensagem strong {
+  color: var(--color-on-surface);
+  font-weight: var(--tipo-body-lg-peso-enfatizado, 600);
+}
+
+/* Lista de cursos (rádios) + opção "Todos os cursos". */
+.modal-cancelar__opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.modal-cancelar__legenda {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.modal-cancelar__opcao {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 0.0625rem solid var(--color-outline);
+  border-radius: 1rem;
+  cursor: pointer;
+
+  font-family: var(--fonte-padrao);
+  font-size: var(--tipo-body-md-tamanho);
+  color: var(--color-on-surface);
+}
+
+.modal-cancelar__opcao:hover {
+  background-color: var(--color-primary-container);
+}
+
+/* Destaca a opção marcada (sem depender de JS). */
+.modal-cancelar__opcao:has(.modal-cancelar__radio:checked) {
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+}
+
+.modal-cancelar__opcao:has(.modal-cancelar__radio:focus-visible) {
+  outline: 0.1875rem solid var(--color-outline);
+  outline-offset: 0.125rem;
+}
+
+.modal-cancelar__radio {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin: 0;
+  accent-color: var(--color-error);
+  cursor: pointer;
+}
+
+.modal-cancelar__opcao-texto {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* "Todos os cursos" fica separada das opções individuais. */
+.modal-cancelar__opcao--todos {
+  margin-top: 0.25rem;
+  font-weight: var(--tipo-body-md-peso-enfatizado, 600);
+}
+
+@media (max-width: 500px) {
+  .modal-cancelar__form .modal__acoes {
+    justify-content: stretch;
+  }
+
+  .modal-cancelar__form .modal__acoes .botao {
+    flex: 1;
+  }
+}

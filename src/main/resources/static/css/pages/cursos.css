@@ -2,9 +2,9 @@
 @import url(../global.css);
 
 .cursos {
-  padding: 2rem 1.5rem 3rem;
-  max-width: 72rem;
-  margin: 0 auto;
+    padding: 2rem 1.5rem 3rem;
+    max-width: 72rem;
+    margin: 0 auto;
 }
 
 .cursos__titulo {
@@ -17,20 +17,20 @@
 }
 
 .cursos__busca {
-  max-width: 28rem;
-  margin-bottom: 2rem;
+    max-width: 28rem;
+    margin-bottom: 2rem;
 }
 
 .cursos__vazio {
-  font-family: var(--fonte-padrao);
-  font-size: var(--tipo-body-lg-tamanho);
-  color: var(--color-on-surface-variant);
-  text-align: center;
-  padding: 2rem 0;
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-body-lg-tamanho);
+    color: var(--color-on-surface-variant);
+    text-align: center;
+    padding: 2rem 0;
 }
 
 .cursos__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-  gap: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: 1.5rem;
 }

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/pages/perfil-professor.css}">
     <title>Tentáculo Mímico</title>
 </head>
@@ -110,6 +112,10 @@
 
 </main>
 
+<th:block th:each="item : ${alunosMatriculados}">
+    <div th:replace="~{fragments/modal-cancelar-matricula :: modalCancelar(alunoId=${item.alunoId}, nomeAluno=${item.alunoNome}, matriculas=${item.matriculas}, voltar='')}"></div>
+</th:block>
+
 <th:block th:each="item : ${alunosPendentes}">
     <div th:replace="~{fragments/modal-responder-matricula :: modalResponder(matriculaId=${item.matriculaId}, nomeAluno=${item.alunoNome}, fotoAluno=${item.alunoFotoPerfil}, emailAluno=${item.alunoEmail}, nomeCurso=${item.cursoNome})}"></div>
     <div th:replace="~{fragments/modal :: modal(id='modal-aceitar-' + ${item.matriculaId}, titulo='Aceitar matrícula?', mensagem='O aluno será notificado e poderá prosseguir para o pagamento.', textoCancelar='Cancelar', textoConfirmar='Aceitar', varianteConfirmar='primario')}"></div>
@@ -118,6 +124,10 @@
 
 <th:block th:if="${ehPerfilProprio}">
     <div th:replace="~{fragments/modal :: modal(id='modal-excluir-conta', titulo='Excluir sua conta?', mensagem='Essa ação não pode ser desfeita. Seus dados serão removidos conforme as políticas da plataforma.', textoCancelar='Cancelar', textoConfirmar='Excluir', varianteConfirmar='perigo')}"></div>
+</th:block>
+
+<th:block th:if="${erroExclusaoConta != null}">
+    <div th:replace="~{fragments/modal-exclusao-bloqueada :: modalExclusaoBloqueada(mensagem=${erroExclusaoConta})}"></div>
 </th:block>
 
 <form id="form-acao-perfil" method="post" hidden></form>

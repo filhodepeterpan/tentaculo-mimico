@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/pages/admin-cursos.css}">
+    <title>Tentáculo Mímico</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/layouts :: header}"></div>
+
+<main class="admin-cursos-container">
+    <h1 class="admin-cursos__titulo">Gestão de Cursos</h1>
+
+    <div class="admin-cursos__busca">
+        <div th:replace="~{fragments/inputs :: input(id='admin-cursos-busca', tipo='search', rotulo='Buscar cursos', placeholder='Ex: Nome, professor, status...', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>
+    </div>
+
+    <p id="admin-cursos-vazio" class="admin-cursos__vazio" role="status" hidden>Nenhum curso encontrado.</p>
+
+    <ul class="admin-cursos__lista">
+        <li class="admin-cursos__item"
+            th:each="item : ${listaDeCursos}"
+            th:data-busca="${item.curso.nome + ' ' + item.curso.professorNome + ' ' + item.curso.status}">
+            <div th:replace="~{fragments/card-cursos :: cardCurso(item=${item})}"></div>
+        </li>
+    </ul>
+
+</main>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+
+<script type="module" th:src="@{/js/pages/admin-cursos.js}"></script>
+</body>
+</html>

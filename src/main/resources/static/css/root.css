@@ -37,6 +37,8 @@
     --color-primary-fixed-dim: #dab9ff;
     --color-on-primary-fixed: #2a0053;
     --color-on-primary-fixed-variant: #640cb4;
+    --color-link: #4c5fd5;
+
 
     /* Secundária */
     --color-secondary: #f9c824;
@@ -112,6 +114,7 @@
     --color-primary-fixed-dim: #dab9ff;
     --color-on-primary-fixed: #2a0053;
     --color-on-primary-fixed-variant: #640cb4;
+    --color-link: #b8c3ff;
 
     /* Secundária */
     --color-secondary: #ffe149;
@@ -170,6 +173,7 @@
     --color-primary-fixed-dim: #4a0089;
     --color-on-primary-fixed: #ffffff;
     --color-on-primary-fixed-variant: #ffffff;
+    --color-link: #1b237a;
 
     /* Secundária */
     --color-secondary: #fbdc74;
@@ -228,6 +232,7 @@
     --color-primary-fixed-dim: #4a0089;
     --color-on-primary-fixed: #ffffff;
     --color-on-primary-fixed-variant: #ffffff;
+    --color-link: #f1efff;
 
     /* Secundária */
     --color-secondary: #fff9d9;

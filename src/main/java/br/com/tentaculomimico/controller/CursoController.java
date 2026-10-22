@@ -3,6 +3,7 @@ package br.com.tentaculomimico.controller;
 import br.com.tentaculomimico.model.Curso;
 import br.com.tentaculomimico.model.Horario;
 import br.com.tentaculomimico.model.Usuario;
+import br.com.tentaculomimico.model.view.AlunoPendenteView;
 import br.com.tentaculomimico.repository.CursoRepository;
 import br.com.tentaculomimico.repository.UsuarioRepository;
 import br.com.tentaculomimico.service.CursoService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
@@ -57,6 +59,17 @@ public class CursoController {
     @GetMapping("/cursos")
     public String listarCursos(Model model) {
         model.addAttribute("cursos", cursoRepository.findAll());
+
+        // O botão de cada card depende de quem está olhando:
+        //  - aluno: o status da matrícula dele em cada curso (matriculasPorCurso: cursoId -> view);
+        //  - professor: se o curso é dele (compara curso.professorId com usuarioLogadoId no template).
+        Usuario logado = sessaoService.usuarioLogado();
+        String tipoUsuarioLogado = logado != null ? logado.getTipoUsuario().name().toLowerCase() : null;
+        model.addAttribute("tipoUsuarioLogado", tipoUsuarioLogado);
+        model.addAttribute("usuarioLogadoId", logado != null ? logado.getId() : null);
+        if ("aluno".equals(tipoUsuarioLogado)) {
+            model.addAttribute("matriculasPorCurso", matriculaService.mapaMatriculasDoAluno(logado.getId()));
+        }
         return "cursos";
     }
 
@@ -120,6 +133,15 @@ public class CursoController {
             var statusView = matriculaService.buscarStatusDoAluno(usuarioLogado.getId(), id);
             model.addAttribute("statusMatricula", statusView != null ? statusView.getStatus() : null);
             model.addAttribute("matriculaId", statusView != null ? statusView.getId() : null);
+        }
+
+        // Seção "Alunos do curso": só o professor dono (o template também confere ehProprietario).
+        // Os dois métodos do service lançam exceção se quem pede não for o professor do curso.
+        if (ehProprietario) {
+            model.addAttribute("alunosMatriculados", matriculaService.listarAlunosMatriculadosDoCurso(id));
+            List<AlunoPendenteView> alunosPendentes = matriculaService.listarAlunosPendentesDoCurso(id);
+            model.addAttribute("alunosPendentes", alunosPendentes);
+            model.addAttribute("totalPendentes", alunosPendentes.size());
         }
 
         return "curso-detalhes";
@@ -199,14 +221,15 @@ public class CursoController {
     }
 
     @PostMapping("/cursos/{id}/excluir")
-    public String excluirCurso(@PathVariable String id, Model model) {
+    public String excluirCurso(@PathVariable String id, RedirectAttributes redirectAttributes) {
         try {
-            cursoService.excluirCurso(id); // deve respeitar RN025 (não excluir com aluno matriculado)
+            cursoService.excluirCurso(id); // respeita RN025 (não exclui com aluno matriculado)
             return "redirect:/perfil/professor/" + sessaoService.usuarioLogado().getId();
         } catch (RuntimeException e) {
-            model.addAttribute("curso", cursoRepository.findById(id).orElse(null));
-            model.addAttribute("erroGeral", e.getMessage());
-            return "curso-detalhes";
+            // Volta pra página do curso (que monta o model completo: professor, ehProprietario,
+            // alunos...) e mostra o motivo num alerta, em vez de renderizar o template com model parcial.
+            redirectAttributes.addFlashAttribute("erroExclusao", e.getMessage());
+            return "redirect:/cursos/" + id;
         }
     }
 

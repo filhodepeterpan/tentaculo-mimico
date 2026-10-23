@@ -1,6 +1,7 @@
 package br.com.tentaculomimico.controller;
 
 import br.com.tentaculomimico.model.Curso;
+import br.com.tentaculomimico.model.DiaSemana;
 import br.com.tentaculomimico.model.Horario;
 import br.com.tentaculomimico.model.Usuario;
 import br.com.tentaculomimico.model.view.AlunoPendenteView;
@@ -22,7 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -52,8 +56,41 @@ public class CursoController {
         this.usuarioRepository = usuarioRepository;
     }
 
+    // Cadastro de curso. O professor escolhe antes o dia e o horário no calendário
+    // (/calendario), que volta pra cá com ?dia=TERCA&dia=QUINTA&data=2026-10-27&inicio=11:00&fim=12:00
+    // (um "dia" para cada dia escolhido, todos no mesmo horário; "data" é a do primeiro dia); o
+    // formulário já abre com isso marcado (e dá pra mudar). Professor que chega sem
+    // horário escolhido (ex.: clicou em "Adicionar curso") vai primeiro ao calendário.
     @GetMapping("/cursos/novo")
-    public String novoCurso() {
+    public String novoCurso(@RequestParam(value = "dia", required = false) List<String> dia,
+                            @RequestParam(value = "inicio", required = false) String inicio,
+                            @RequestParam(value = "fim", required = false) String fim,
+                            @RequestParam(value = "data", required = false) String data,
+                            Model model) {
+        if (dia == null || dia.isEmpty() || inicio == null || fim == null) {
+            return ehProfessor() ? "redirect:/calendario" : "cadastro-curso";
+        }
+
+        try {
+            List<String> diasEscolhidos = dia.stream()
+                    .map(d -> DiaSemana.valueOf(d).name())
+                    .distinct()
+                    .toList();
+            LocalTime horaInicio = LocalTime.parse(inicio);
+            LocalTime horaFim = LocalTime.parse(fim);
+            if (horaFim.isAfter(horaInicio)) {
+                DateTimeFormatter hhmm = DateTimeFormatter.ofPattern("HH:mm");
+                model.addAttribute("diasSemanaSelecionados", diasEscolhidos);
+                model.addAttribute("horaInicioPreenchida", horaInicio.format(hhmm));
+                model.addAttribute("horaFimPreenchida", horaFim.format(hhmm));
+                if (data != null) {
+                    // Data do dia clicado no calendário (yyyy-MM-dd) vira a data de início.
+                    model.addAttribute("dataInicioPreenchida", LocalDate.parse(data).toString());
+                }
+            }
+        } catch (IllegalArgumentException | DateTimeParseException e) {
+            // Parâmetros inválidos na URL: abre o formulário em branco.
+        }
         return "cadastro-curso";
     }
 
@@ -85,7 +122,7 @@ public class CursoController {
             @RequestParam("hora-inicio") String horaInicio,
             @RequestParam("hora-fim") String horaFim,
             @RequestParam("data-inicio") String dataInicio,
-            @RequestParam(value = "data-fim", required = false) String dataFim,
+            @RequestParam("data-fim") String dataFim,
             @RequestParam(value = "imagem-capa", required = false) MultipartFile imagemCapa,
             Model model
     ) {
@@ -193,7 +230,7 @@ public class CursoController {
             @RequestParam("hora-inicio") String horaInicio,
             @RequestParam("hora-fim") String horaFim,
             @RequestParam("data-inicio") String dataInicio,
-            @RequestParam(value = "data-fim", required = false) String dataFim,
+            @RequestParam("data-fim") String dataFim,
             @RequestParam(value = "imagem-capa", required = false) MultipartFile imagemCapa,
             Model model
     ) {
@@ -263,6 +300,13 @@ public class CursoController {
         return logado != null
                 && "ADMINISTRADOR".equalsIgnoreCase(logado.getTipoUsuario().name());
     }
+
+    private boolean ehProfessor() {
+        Usuario logado = sessaoService.usuarioLogado();
+        return logado != null
+                && "PROFESSOR".equalsIgnoreCase(logado.getTipoUsuario().name());
+    }
+
     // Preenche os campos do formulário a partir de um curso salvo. Os nomes
     // (*Preenchida/*Preenchido, diasSemanaSelecionados) são os que
     // cadastro-curso.html lê. Tudo vai como String, no formato dos inputs HTML

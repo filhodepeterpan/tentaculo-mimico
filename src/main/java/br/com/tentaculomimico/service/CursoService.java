@@ -14,14 +14,26 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CursoService {
+
+    private static final ZoneId FUSO = ZoneId.of("America/Sao_Paulo");
+
+    // Janela em que os cursos podem acontecer: nenhuma aula começa antes das 07:00
+    // nem termina depois das 22:00.
+    private static final LocalTime JANELA_INICIO = LocalTime.of(7, 0);
+    private static final LocalTime JANELA_FIM = LocalTime.of(22, 0);
 
     private final CursoRepository cursoRepository;
     private final MatriculaRepository matriculaRepository;
@@ -142,6 +154,68 @@ public class CursoService {
     // Cadastro
     // =========================================================================
 
+    // A primeira aula (data de início no horário de início) não pode estar no passado.
+    // Como a data de início já foi conferida contra os dias da semana, ela é mesmo um dia de aula.
+    private void validarPrimeiraAulaNoFuturo(Curso curso) {
+        if (curso.getDataInicio() == null || curso.getHorarios() == null || curso.getHorarios().isEmpty()) {
+            return;
+        }
+        LocalDateTime primeiraAula = curso.getDataInicio().atTime(curso.getHorarios().get(0).getInicio());
+        if (primeiraAula.isBefore(LocalDateTime.now(FUSO))) {
+            throw new RuntimeException("A primeira aula ("
+                    + primeiraAula.format(DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm"))
+                    + ") já passou. Escolha um dia e um horário a partir de agora.");
+        }
+    }
+
+    // O curso já começou? (a primeira aula, no horário salvo, já passou)
+    private boolean jaComecou(Curso curso) {
+        if (curso.getDataInicio() == null || curso.getHorarios() == null || curso.getHorarios().isEmpty()) {
+            return false;
+        }
+        return curso.getDataInicio().atTime(curso.getHorarios().get(0).getInicio())
+                .isBefore(LocalDateTime.now(FUSO));
+    }
+
+    // Dois cursos têm a mesma agenda quando começam no mesmo dia e têm os mesmos dias e horários.
+    // Na edição de um curso que ainda não começou, só quem muda a agenda passa pela regra do passado.
+    private boolean mesmaAgenda(Curso a, Curso b) {
+        return Objects.equals(a.getDataInicio(), b.getDataInicio())
+                && chavesDeHorario(a).equals(chavesDeHorario(b));
+    }
+
+    private Set<String> chavesDeHorario(Curso curso) {
+        if (curso.getHorarios() == null) {
+            return Set.of();
+        }
+        return curso.getHorarios().stream()
+                .map(h -> h.getDiaSemana() + "|" + h.getInicio() + "|" + h.getFim())
+                .collect(Collectors.toSet());
+    }
+
+    // A data cai num dos dias da semana escolhidos? Ex.: curso só às terças e quintas
+    // não pode começar (nem terminar) num sábado.
+    private void validarDataNosDias(String qual, LocalDate data, List<String> diasSemana) {
+        String diaDaData = switch (data.getDayOfWeek()) {
+            case MONDAY -> "SEGUNDA";
+            case TUESDAY -> "TERCA";
+            case WEDNESDAY -> "QUARTA";
+            case THURSDAY -> "QUINTA";
+            case FRIDAY -> "SEXTA";
+            case SATURDAY -> "SABADO";
+            case SUNDAY -> "DOMINGO";
+        };
+        if (!diasSemana.contains(diaDaData)) {
+            String dias = diasSemana.stream()
+                    .map(d -> nomeDiaPlural(DiaSemana.valueOf(d)))
+                    .collect(Collectors.joining(", "));
+            throw new RuntimeException("A data de " + qual + " ("
+                    + data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    + ", " + nomeDiaPlural(DiaSemana.valueOf(diaDaData)).replaceFirst("s$", "")
+                    + ") precisa cair em um dos dias do curso: " + dias + ".");
+        }
+    }
+
     // Lê e valida os campos do formulário (cadastro e edição usam o mesmo).
     // Não mexe em dono, status nem datas de cadastro: isso é de quem chama.
     private Curso lerFormulario(String nome, String descricao, String cargaHoraria,
@@ -184,6 +258,9 @@ public class CursoService {
             if (!fim.isAfter(inicio)) {
                 throw new RuntimeException("O horário de término deve ser depois do início.");
             }
+            if (inicio.isBefore(JANELA_INICIO) || fim.isAfter(JANELA_FIM)) {
+                throw new RuntimeException("O horário do curso deve ficar entre 07:00 e 22:00.");
+            }
 
             List<Horario> horarios = new ArrayList<>();
             for (String dia : diasSemana) {
@@ -193,13 +270,17 @@ public class CursoService {
 
             LocalDate dtInicio = LocalDate.parse(dataInicio);
             curso.setDataInicio(dtInicio);
-            if (dataFim != null && !dataFim.isBlank()) {
-                LocalDate dtFim = LocalDate.parse(dataFim);
-                if (dtFim.isBefore(dtInicio)) {
-                    throw new RuntimeException("A data de término não pode ser antes da data de início.");
-                }
-                curso.setDataFim(dtFim);
+            if (dataFim == null || dataFim.isBlank()) {
+                throw new RuntimeException("Informe a data de término do curso.");
             }
+            LocalDate dtFim = LocalDate.parse(dataFim);
+            if (dtFim.isBefore(dtInicio)) {
+                throw new RuntimeException("A data de término não pode ser antes da data de início.");
+            }
+            // As duas datas precisam cair num dos dias da semana marcados no formulário.
+            validarDataNosDias("início", dtInicio, diasSemana);
+            validarDataNosDias("término", dtFim, diasSemana);
+            curso.setDataFim(dtFim);
         } catch (DateTimeParseException | IllegalArgumentException e) {
             // IllegalArgumentException já cobre NumberFormatException e DiaSemana.valueOf inválido
             throw new RuntimeException("Dados inválidos no formulário. Confira números, datas, horários e dias da semana.");
@@ -237,6 +318,7 @@ public class CursoService {
         Curso curso = criarCurso(nome, descricao, cargaHoraria, preco, vagasTotais,
                 diasSemana, horaInicio, horaFim, dataInicio, dataFim, urlImagem);
 
+        validarPrimeiraAulaNoFuturo(curso);
         validarSemConflito(curso);
 
         return cursoRepository.save(curso);
@@ -279,6 +361,19 @@ public class CursoService {
         if (editado.getVagasTotais() < vagasOcupadas) {
             throw new RuntimeException("Este curso já tem " + vagasOcupadas
                     + " vaga(s) ocupada(s); o total de vagas não pode ser menor que isso.");
+        }
+
+        if (jaComecou(curso)) {
+            // Curso em andamento: dias e horário podem mudar, mas as datas de início e de
+            // término ficam como estão.
+            if (!Objects.equals(curso.getDataInicio(), editado.getDataInicio())
+                    || !Objects.equals(curso.getDataFim(), editado.getDataFim())) {
+                throw new RuntimeException("Este curso já começou: as datas de início e de término não podem ser alteradas.");
+            }
+        } else if (!mesmaAgenda(curso, editado)) {
+            // Curso que ainda não começou: se mudar a data, os dias ou o horário, a primeira
+            // aula continua precisando estar no futuro.
+            validarPrimeiraAulaNoFuturo(editado);
         }
 
         curso.setNome(editado.getNome());

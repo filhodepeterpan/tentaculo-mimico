@@ -124,36 +124,8 @@
         <div id="painel-cartao" class="pagamento__painel" hidden>
           <h2 id="cartao-titulo" class="pagamento__subtitulo">Cartão de crédito</h2>
 
-          <div class="campo">
-            <label for="cartao-numero" class="campo__rotulo">Número do cartão</label>
-            <input id="cartao-numero" type="text" class="campo__input" inputmode="numeric" autocomplete="cc-number"
-                   maxlength="19" placeholder="0000 0000 0000 0000">
-            <p id="cartao-numero-erro" class="campo__mensagem-erro" hidden></p>
-          </div>
-
-          <div class="campo">
-            <label for="cartao-nome" class="campo__rotulo">Nome impresso no cartão</label>
-            <input id="cartao-nome" type="text" class="campo__input" autocomplete="cc-name"
-                   maxlength="60" placeholder="Como aparece no cartão">
-            <p id="cartao-nome-erro" class="campo__mensagem-erro" hidden></p>
-          </div>
-
-          <div class="pagamento__linha-campos">
-            <div class="campo">
-              <label for="cartao-validade" class="campo__rotulo">Validade</label>
-              <input id="cartao-validade" type="text" class="campo__input" inputmode="numeric" autocomplete="cc-exp"
-                     maxlength="5" placeholder="MM/AA">
-              <p id="cartao-validade-erro" class="campo__mensagem-erro" hidden></p>
-            </div>
-
-            <div class="campo">
-              <label for="cartao-cvv" class="campo__rotulo">Código de segurança</label>
-              <input id="cartao-cvv" type="password" class="campo__input" inputmode="numeric" autocomplete="cc-csc"
-                     maxlength="4" placeholder="CVV">
-              <p id="cartao-cvv-erro" class="campo__mensagem-erro" hidden></p>
-            </div>
-          </div>
-
+          <p>Ao continuar, você será direcionado ao ambiente seguro do PagBank para informar os dados do cartão.</p>
+          <p>Nenhum número de cartão ou CVV será armazenado neste site.</p>
           <button type="button" id="cartao-confirmar" class="botao botao--primario botao--grande"
                   th:text="'Pagar ' + ${valorTexto}">Pagar</button>
         </div>
@@ -161,6 +133,10 @@
       </section>
     </div>
 
+    <form id="form-checkout-cartao" method="post" th:action="@{/pagamentos/{id}/checkout-cartao(id=${matriculaId})}" hidden>
+      <input type="hidden" name="metodo" id="checkout-metodo" value="credito">
+      <input type="hidden" name="valor" th:value="${curso.preco}">
+    </form>
     <form id="form-pagamento" method="post" th:action="@{${acaoConfirmar}}" hidden>
       <input type="hidden" name="metodo" id="campo-metodo" value="pix">
     </form>

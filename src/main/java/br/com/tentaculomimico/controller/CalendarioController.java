@@ -4,6 +4,7 @@ import br.com.tentaculomimico.model.view.SemanaCalendarioView;
 import br.com.tentaculomimico.service.CalendarioService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 // Alimenta o componente de calendário (fragments/calendario), que aparece na
@@ -18,8 +19,11 @@ public class CalendarioController {
         this.calendarioService = calendarioService;
     }
 
+    // deslocamento: 0 = semana atual (padrão), 1 = próxima semana. Valores fora disso
+    // são ajustados pelo service.
     @GetMapping("/semana")
-    public SemanaCalendarioView semana() {
-        return calendarioService.semanaAtual();
+    public SemanaCalendarioView semana(
+            @RequestParam(value = "deslocamento", defaultValue = "0") int deslocamento) {
+        return calendarioService.semana(deslocamento);
     }
 }

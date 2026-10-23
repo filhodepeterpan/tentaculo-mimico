@@ -17,7 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Monta a semana atual (domingo a sábado) com as aulas de cada curso.
+ * Monta a semana atual ou a próxima (domingo a sábado) com as aulas de cada curso.
  * Um curso só aparece num dia se a data daquele dia estiver dentro do período
  * dele (data de início até data de término; sem término = sem fim).
  */
@@ -25,6 +25,7 @@ import java.util.List;
 public class CalendarioService {
 
     private static final ZoneId FUSO = ZoneId.of("America/Sao_Paulo");
+    private static final int MAX_SEMANAS_A_FRENTE = 1; // semana atual e a próxima
     private static final DateTimeFormatter HHMM = DateTimeFormatter.ofPattern("HH:mm");
     private static final String[] NOMES_DIAS = {
             "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"
@@ -37,8 +38,19 @@ public class CalendarioService {
     }
 
     public SemanaCalendarioView semanaAtual() {
+        return semana(0);
+    }
+
+    /**
+     * Monta uma semana (domingo a sábado). 0 = semana atual, 1 = próxima semana; valores
+     * fora desse intervalo são ajustados (não dá para ver semanas passadas nem mais de uma
+     * semana à frente).
+     */
+    public SemanaCalendarioView semana(int semanasAFrente) {
+        int deslocamento = Math.max(0, Math.min(semanasAFrente, MAX_SEMANAS_A_FRENTE));
         LocalDate hoje = LocalDate.now(FUSO);
-        LocalDate domingo = hoje.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate domingo = hoje.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
+                .plusWeeks(deslocamento);
 
         List<SemanaCalendarioView.Dia> dias = new ArrayList<>();
         for (int i = 0; i < 7; i++) {

@@ -58,7 +58,7 @@
 
       <div th:replace="~{fragments/inputs :: input(id='data-inicio', tipo='date', rotulo='Data de início do curso', placeholder='', valor=${dataInicioPreenchida ?: ''}, obrigatorio=true, mensagemErro=${erroDataInicio ?: ''}, desabilitado=false)}"></div>
 
-      <div th:replace="~{fragments/inputs :: input(id='data-fim', tipo='date', rotulo='Data de término (opcional)', placeholder='', valor=${dataFimPreenchida ?: ''}, obrigatorio=false, mensagemErro=${erroDataFim ?: ''}, desabilitado=false)}"></div>
+      <div th:replace="~{fragments/inputs :: input(id='data-fim', tipo='date', rotulo='Data de término', placeholder='', valor=${dataFimPreenchida ?: ''}, obrigatorio=true, mensagemErro=${erroDataFim ?: ''}, desabilitado=false)}"></div>
 
       <div th:replace="~{fragments/buttons :: botao(texto=${editando ? 'Salvar alterações' : 'Cadastrar curso'}, variante='primario', tamanho='grande', tipoBotao='submit')}"></div>
 

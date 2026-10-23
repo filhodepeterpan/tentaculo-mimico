@@ -38,3 +38,7 @@ build/
 ### Windows ###
 *.ini
 
+config/application-local.properties
+.m2-local/
+*.log
+

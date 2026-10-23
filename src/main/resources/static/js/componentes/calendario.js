@@ -5,6 +5,7 @@
 
 const HORAS_MINIMAS_VISIVEIS = 6;
 const FAIXA_PADRAO = { inicio: 8, fim: 18 }; // semana sem aulas
+const FAIXA_PROFESSOR = { inicio: 7, fim: 22 }; // professor vê ao menos isso, para poder escolher horários livres
 
 function emMinutos(hhmm) {
   const [h, m] = hhmm.split(':').map(Number);
@@ -29,19 +30,28 @@ function criar(tag, classe, texto) {
 
 // Faixa de horas exibida: da hora cheia da primeira aula até a hora cheia seguinte
 // ao fim da última, com um mínimo de linhas para a grade não ficar achatada.
-function calcularFaixa(eventos) {
-  if (eventos.length === 0) return { ...FAIXA_PADRAO };
+// Para o professor (ampliar) a faixa nunca é menor que FAIXA_PROFESSOR.
+function calcularFaixa(eventos, ampliar) {
+  let inicio = FAIXA_PADRAO.inicio;
+  let fim = FAIXA_PADRAO.fim;
 
-  const primeiroInicio = Math.min(...eventos.map((e) => emMinutos(e.inicio)));
-  const ultimoFim = Math.max(...eventos.map((e) => emMinutos(e.fim)));
+  if (eventos.length > 0) {
+    const primeiroInicio = Math.min(...eventos.map((e) => emMinutos(e.inicio)));
+    const ultimoFim = Math.max(...eventos.map((e) => emMinutos(e.fim)));
 
-  let inicio = Math.floor(primeiroInicio / 60);
-  let fim = Math.ceil(ultimoFim / 60);
+    inicio = Math.floor(primeiroInicio / 60);
+    fim = Math.ceil(ultimoFim / 60);
 
-  while (fim - inicio < HORAS_MINIMAS_VISIVEIS) {
-    if (fim < 24) fim += 1;
-    else if (inicio > 0) inicio -= 1;
-    else break;
+    while (fim - inicio < HORAS_MINIMAS_VISIVEIS) {
+      if (fim < 24) fim += 1;
+      else if (inicio > 0) inicio -= 1;
+      else break;
+    }
+  }
+
+  if (ampliar) {
+    inicio = Math.min(inicio, FAIXA_PROFESSOR.inicio);
+    fim = Math.max(fim, FAIXA_PROFESSOR.fim);
   }
   return { inicio, fim };
 }
@@ -109,13 +119,14 @@ function criarEvento(e, faixa, dia, urlCurso, imgPadrao) {
   return link;
 }
 
-function desenhar(raiz, semana) {
+function desenhar(raiz, semana, deslocamento) {
   const grade = raiz.querySelector('[data-calendario-grade]');
   const rolagem = raiz.querySelector('[data-calendario-rolagem]');
   const mensagem = raiz.querySelector('[data-calendario-mensagem]');
   const periodo = raiz.querySelector('[data-calendario-periodo]');
   const urlCurso = raiz.dataset.urlCurso;
   const imgPadrao = raiz.dataset.imgPadrao;
+  const ehProfessor = raiz.dataset.professor === 'true';
 
   const { dias } = semana;
   periodo.textContent = `${formatarDataCurta(dias[0].data)} a ${formatarDataCurta(dias[6].data)}`;
@@ -125,7 +136,7 @@ function desenhar(raiz, semana) {
     iniMin: emMinutos(e.inicio),
     fimMin: emMinutos(e.fim),
   }));
-  const faixa = calcularFaixa(eventos);
+  const faixa = calcularFaixa(eventos, ehProfessor);
   const totalHoras = faixa.fim - faixa.inicio;
 
   grade.replaceChildren();
@@ -155,6 +166,7 @@ function desenhar(raiz, semana) {
   }
   grade.appendChild(horas);
 
+  const colunas = [];
   dias.forEach((dia) => {
     const coluna = criar('div', 'calendario__coluna' + (dia.hoje ? ' calendario__coluna--hoje' : ''));
     coluna.setAttribute('role', 'group');
@@ -165,33 +177,107 @@ function desenhar(raiz, semana) {
     doDia.forEach((e) => coluna.appendChild(criarEvento(e, faixa, dia, urlCurso, imgPadrao)));
 
     grade.appendChild(coluna);
+    colunas.push(coluna);
   });
 
   rolagem.hidden = false;
   if (eventos.length === 0) {
-    mensagem.textContent = 'Nenhum curso acontece nesta semana.';
+    mensagem.textContent =
+      deslocamento === 0 ? 'Nenhum curso acontece nesta semana.' : 'Nenhum curso acontece na próxima semana.';
     mensagem.classList.remove('calendario__mensagem--erro');
     mensagem.hidden = false;
   } else {
     mensagem.hidden = true;
   }
+
+  return { faixa, dias, colunas, eventos };
 }
 
-async function iniciar(raiz) {
-  if (raiz.dataset.calendarioIniciado) return;
-  raiz.dataset.calendarioIniciado = 'true';
-
-  const mensagem = raiz.querySelector('[data-calendario-mensagem]');
+// Só professores escolhem horário no calendário: o código disso fica num módulo à parte,
+// carregado apenas para eles. Se falhar, o calendário continua funcionando só para consulta.
+async function liberarSelecao(raiz, contexto) {
   try {
-    const resposta = await fetch(raiz.dataset.url, { headers: { Accept: 'application/json' } });
+    const { ativarSelecao } = await import('./calendario-selecao.js');
+    ativarSelecao(raiz, { ...contexto, urlNovoCurso: raiz.dataset.urlNovoCurso });
+  } catch (erro) {
+    console.error('Calendário: não foi possível ativar a escolha de horário.', erro);
+  }
+}
+
+// Última requisição de cada calendário: se o usuário trocar de semana enquanto uma resposta
+// ainda está a caminho, a resposta antiga é ignorada.
+const requisicoes = new WeakMap();
+
+// "Semana atual" (esquerda) só aparece na próxima semana; "Próxima semana" (direita) fica
+// desabilitado quando a próxima semana já está na tela.
+function atualizarNavegacao(raiz, deslocamento) {
+  const atual = raiz.querySelector('[data-calendario-semana-atual]');
+  const proxima = raiz.querySelector('[data-calendario-proxima-semana]');
+  if (atual) atual.hidden = deslocamento === 0;
+  if (proxima) proxima.disabled = deslocamento !== 0;
+}
+
+// deslocamento: 0 = semana atual, 1 = próxima semana.
+async function carregar(raiz, deslocamento, moverFoco = false) {
+  const mensagem = raiz.querySelector('[data-calendario-mensagem]');
+  const aviso = raiz.querySelector('[data-calendario-aviso]');
+  const periodo = raiz.querySelector('[data-calendario-periodo]');
+  const numero = (requisicoes.get(raiz) ?? 0) + 1;
+  requisicoes.set(raiz, numero);
+
+  try {
+    const url = new URL(raiz.dataset.url, location.href);
+    url.searchParams.set('deslocamento', String(deslocamento));
+    const resposta = await fetch(url, { headers: { Accept: 'application/json' } });
     if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
-    desenhar(raiz, await resposta.json());
+    const semana = await resposta.json();
+    if (requisicoes.get(raiz) !== numero) return;
+
+    const contexto = desenhar(raiz, semana, deslocamento);
+    atualizarNavegacao(raiz, deslocamento);
+    if (moverFoco) {
+      // O botão clicado some ou fica desabilitado: o foco vai para o botão que o substitui.
+      const seletor = deslocamento === 0 ? '[data-calendario-proxima-semana]' : '[data-calendario-semana-atual]';
+      raiz.querySelector(seletor)?.focus();
+    }
+    if (aviso) {
+      aviso.textContent = `Mostrando ${deslocamento === 0 ? 'a semana atual' : 'a próxima semana'}: ${periodo.textContent}.`;
+    }
+    if (raiz.dataset.professor === 'true') liberarSelecao(raiz, contexto);
   } catch (erro) {
     console.error('Calendário: não foi possível carregar a semana.', erro);
     mensagem.textContent = 'Não foi possível carregar a agenda da semana. Tente novamente mais tarde.';
     mensagem.classList.add('calendario__mensagem--erro');
     mensagem.hidden = false;
   }
+}
+
+// Ajuda do professor: mostra só o texto do dispositivo escolhido (mouse, teclado ou celular).
+function iniciarAjuda(raiz) {
+  const seletor = raiz.querySelector('[data-calendario-dispositivo]');
+  if (!seletor) return;
+  const paineis = raiz.querySelectorAll('[data-calendario-instrucao]');
+  seletor.addEventListener('change', () => {
+    paineis.forEach((painel) => {
+      painel.hidden = painel.dataset.calendarioInstrucao !== seletor.value;
+    });
+  });
+}
+
+function iniciar(raiz) {
+  if (raiz.dataset.calendarioIniciado) return;
+  raiz.dataset.calendarioIniciado = 'true';
+
+  iniciarAjuda(raiz);
+
+  raiz
+    .querySelector('[data-calendario-proxima-semana]')
+    ?.addEventListener('click', () => carregar(raiz, 1, true));
+  raiz
+    .querySelector('[data-calendario-semana-atual]')
+    ?.addEventListener('click', () => carregar(raiz, 0, true));
+
+  carregar(raiz, 0);
 }
 
 function iniciarTodos() {

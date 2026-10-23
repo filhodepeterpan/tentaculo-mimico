@@ -49,6 +49,56 @@
     color: var(--color-error);
 }
 
+/* Troca de semana: "Semana atual" à esquerda, "Próxima semana" sempre à direita. */
+.calendario__navegacao {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.calendario__nav-botao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    padding: 0 1.25rem;
+    border: 1px solid var(--color-outline);
+    border-radius: 1.25rem;
+    background-color: var(--color-surface-container-lowest);
+    color: var(--color-primary);
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-label-lg-tamanho);
+    line-height: var(--tipo-label-lg-altura-linha);
+    letter-spacing: var(--tipo-label-lg-espacamento);
+    font-weight: var(--tipo-label-lg-peso-enfatizado);
+    cursor: pointer;
+}
+
+.calendario__nav-botao:hover:not(:disabled) {
+    background-color: var(--color-primary-container);
+}
+
+.calendario__nav-botao:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.calendario__nav-botao:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* O display acima venceria o atributo hidden. */
+.calendario__nav-botao[hidden] {
+    display: none;
+}
+
+.calendario__nav-botao--proxima {
+    margin-left: auto;
+}
+
 /* Em telas estreitas a grade rola na horizontal em vez de espremer as colunas. */
 .calendario__rolagem {
     overflow-x: auto;
@@ -237,6 +287,211 @@
     letter-spacing: var(--tipo-title-md-espacamento);
     font-weight: var(--tipo-title-md-peso-enfatizado);
     text-shadow: 0 1px 2px color-mix(in srgb, var(--color-scrim) 60%, transparent);
+}
+
+/* ---- Escolha de horário (só professores; js/componentes/calendario-selecao.js) ---- */
+
+.calendario__dica {
+    margin-bottom: 1rem;
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-corpo-padrao-tamanho);
+    line-height: var(--tipo-corpo-padrao-altura-linha);
+    color: var(--color-on-surface-variant);
+}
+
+.calendario__dica-texto {
+    margin: 0 0 1.25rem;
+}
+
+/* Ajuda por dispositivo: o professor escolhe Mouse, Teclado ou Celular e vê só aquele texto. */
+.calendario__ajuda-titulo {
+    margin: 0 0 0.75rem;
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-titulo-card-tamanho);
+    line-height: var(--tipo-titulo-card-altura-linha);
+    letter-spacing: var(--tipo-titulo-card-espacamento);
+    font-weight: var(--tipo-titulo-card-peso);
+    color: var(--color-primary);
+}
+
+.calendario__ajuda-rotulo {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-weight: var(--tipo-label-lg-peso-enfatizado);
+    color: var(--color-on-surface);
+}
+
+.calendario__ajuda-seletor {
+    min-height: 2.5rem;
+    min-width: 14rem;
+    max-width: 100%;
+    padding: 0 0.75rem;
+    border: 1px solid var(--color-outline);
+    border-radius: 0.5rem;
+    background-color: var(--color-surface-container-lowest);
+    color: var(--color-on-surface);
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-corpo-padrao-tamanho);
+    cursor: pointer;
+}
+
+.calendario__ajuda-seletor:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.calendario__ajuda-painel {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-left: 4px solid var(--color-primary);
+    border-radius: 0.25rem;
+    background-color: var(--color-surface-container-low);
+    color: var(--color-on-surface);
+}
+
+/* O display acima venceria o atributo hidden. */
+.calendario__ajuda-painel[hidden] {
+    display: none;
+}
+
+/* Texto só para leitores de tela (avisa o horário escolhido ao usar o teclado). */
+.calendario__aviso-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+.calendario--selecionavel .calendario__coluna {
+    cursor: cell;
+    /* Tocar e segurar no celular escolhe outro dia: sem menu nem seleção de texto no caminho. */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Faixas em que não dá para escolher horário (já passou ou fica fora das 07:00 às 22:00).
+   Ficam por baixo dos cursos e não recebem cliques. Topo e altura vêm do JavaScript, em horas. */
+.calendario__indisponivel {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    top: calc(var(--ind-topo) * var(--cal-hora-altura));
+    height: calc(var(--ind-altura) * var(--cal-hora-altura));
+    background-color: color-mix(in srgb, var(--color-on-surface) 6%, transparent);
+    background-image: repeating-linear-gradient(
+        135deg,
+        transparent 0,
+        transparent 0.375rem,
+        color-mix(in srgb, var(--color-on-surface) 10%, transparent) 0.375rem,
+        color-mix(in srgb, var(--color-on-surface) 10%, transparent) 0.75rem
+    );
+    pointer-events: none;
+}
+
+/* Bloco do horário escolhido: ocupa o intervalo como uma aula, mas em amarelo para não
+   se confundir com os cursos. Topo e altura vêm do JavaScript, em horas. */
+.calendario__selecao {
+    position: absolute;
+    z-index: 1;
+    top: calc(var(--sel-topo) * var(--cal-hora-altura));
+    height: calc(var(--sel-altura) * var(--cal-hora-altura));
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.25rem;
+    padding: 0 0.375rem;
+    border: 2px solid var(--color-secondary);
+    border-radius: 0.5rem;
+    background-color: var(--color-secondary-container);
+    color: var(--color-on-secondary-container);
+    box-shadow: 0 0.25rem 0.75rem color-mix(in srgb, var(--color-shadow) 25%, transparent);
+    cursor: grab;
+    touch-action: none; /* no celular, arrastar o bloco não rola a página */
+    user-select: none;
+}
+
+.calendario__selecao--arrastando {
+    cursor: grabbing;
+}
+
+.calendario__selecao-texto {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-label-lg-tamanho);
+    line-height: var(--tipo-label-lg-altura-linha);
+    letter-spacing: var(--tipo-label-lg-espacamento);
+    font-weight: var(--tipo-label-lg-peso-enfatizado);
+}
+
+/* Bordas de cima e de baixo: puxar para esticar. */
+.calendario__selecao-alca {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 0.625rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: ns-resize;
+}
+
+.calendario__selecao-alca--topo {
+    top: 0;
+}
+
+.calendario__selecao-alca--base {
+    bottom: 0;
+}
+
+.calendario__selecao-alca::after {
+    content: "";
+    width: 1.75rem;
+    height: 0.25rem;
+    border-radius: 0.125rem;
+    background-color: var(--color-on-secondary-container);
+    opacity: 0.55;
+}
+
+.calendario__selecao-acoes {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-shrink: 0;
+    gap: 0.25rem;
+}
+
+.calendario__selecao-botao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.calendario__selecao-botao--ok {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+}
+
+.calendario__selecao-botao--cancelar {
+    background-color: var(--color-surface-container-lowest);
+    color: var(--color-on-surface);
+    border-color: var(--color-outline);
 }
 
 @media (max-width: 767px) {

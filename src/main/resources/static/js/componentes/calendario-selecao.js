@@ -9,8 +9,8 @@
 // Só dá para escolher horários entre 07:00 e 22:00 e que ainda não passaram: as faixas
 // listradas da grade são as que não aceitam bloco. O servidor confere tudo de novo ao salvar.
 //
-// Mais de um dia: Shift + clique em outro dia (ou Shift + Enter no bloco) cria outro bloco
-// ao lado. Como todos os dias de um curso têm o mesmo horário, os blocos andam juntos: mover
+// Mais de um dia: Shift + clique em outro dia (no celular, tocar e segurar nele) ou
+// Shift + Enter no bloco cria outro bloco ao lado. Como todos os dias de um curso têm o mesmo horário, os blocos andam juntos: mover
 // ou esticar um deles muda o horário de todos (só a troca de dia é de um bloco por vez).
 // Enter (ou ✓) confirma todos os dias; Esc (ou ✗) tira um dia por vez e, no último, cancela.
 //
@@ -32,6 +32,8 @@ const JANELA_INICIO = 7 * 60; // 07:00: nenhum curso começa antes
 const JANELA_FIM = 22 * 60; // 22:00: nenhum curso termina depois
 const FUSO = 'America/Sao_Paulo'; // o mesmo fuso do servidor, para o "agora" bater com a validação
 const DIAS_ENUM = ['DOMINGO', 'SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO'];
+const TEMPO_SEGURAR = 500; // ms: quanto tempo o toque precisa durar para valer como "segurar"
+const TOLERANCIA_TOQUE = 10; // px: se o dedo andar mais que isso, é rolagem ou arrasto, não "segurar"
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 function hhmm(minutos) {
@@ -275,6 +277,7 @@ export function ativarSelecao(raiz, { faixa, dias, colunas, eventos, urlNovoCurs
   let horario = null; // { ini, fim } (minutos desde 00:00), o mesmo para todos os dias
   let blocos = []; // um por dia escolhido, na ordem em que foram criados
   let arrasto = null; // { bloco, modo: 'mover' | 'topo' | 'base', deslocamento, duracao }
+  let ignorarProximoClique = false; // depois de "tocar e segurar", o toque solto não cria outro bloco
 
   function diasEscolhidos() {
     return blocos.map((b) => b.dia);
@@ -438,9 +441,46 @@ export function ativarSelecao(raiz, { faixa, dias, colunas, eventos, urlNovoCurs
       if (ev.shiftKey) ev.preventDefault();
     });
 
+    // Celular: tocar e segurar em outro dia faz o papel do Shift + clique (soma o dia, no
+    // mesmo horário). Mexer o dedo cancela, para não atrapalhar a rolagem da página.
+    let temporizador = null;
+    let inicioToque = null;
+    const cancelarSegurar = () => {
+      clearTimeout(temporizador);
+      temporizador = null;
+      inicioToque = null;
+    };
+
+    coluna.addEventListener('pointerdown', (ev) => {
+      ignorarProximoClique = false;
+      if (ev.pointerType === 'mouse' || ev.target !== coluna || !horario) return;
+      inicioToque = { x: ev.clientX, y: ev.clientY };
+      temporizador = setTimeout(() => {
+        temporizador = null;
+        ignorarProximoClique = true;
+        if (adicionarDia(dia, 'toque')) navigator.vibrate?.(30);
+      }, TEMPO_SEGURAR);
+    });
+    coluna.addEventListener('pointermove', (ev) => {
+      if (inicioToque && Math.hypot(ev.clientX - inicioToque.x, ev.clientY - inicioToque.y) > TOLERANCIA_TOQUE) {
+        cancelarSegurar();
+      }
+    });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach((nome) =>
+      coluna.addEventListener(nome, cancelarSegurar)
+    );
+    // Segurar o dedo costuma abrir o menu do navegador; aqui ele atrapalharia.
+    coluna.addEventListener('contextmenu', (ev) => {
+      if (ignorarProximoClique) ev.preventDefault();
+    });
+
     coluna.addEventListener('click', (ev) => {
       // Só o espaço vazio da coluna; cliques em cursos e no próprio bloco seguem seu caminho.
       if (ev.target !== coluna) return;
+      if (ignorarProximoClique) {
+        ignorarProximoClique = false;
+        return;
+      }
 
       // Shift + clique com um horário já escolhido: soma este dia, no mesmo horário.
       if (ev.shiftKey && horario) {

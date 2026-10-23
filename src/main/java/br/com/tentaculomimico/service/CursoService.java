@@ -168,8 +168,17 @@ public class CursoService {
         }
     }
 
+    // O curso já começou? (a primeira aula, no horário salvo, já passou)
+    private boolean jaComecou(Curso curso) {
+        if (curso.getDataInicio() == null || curso.getHorarios() == null || curso.getHorarios().isEmpty()) {
+            return false;
+        }
+        return curso.getDataInicio().atTime(curso.getHorarios().get(0).getInicio())
+                .isBefore(LocalDateTime.now(FUSO));
+    }
+
     // Dois cursos têm a mesma agenda quando começam no mesmo dia e têm os mesmos dias e horários.
-    // Na edição, só quem muda a agenda precisa passar pela regra do passado.
+    // Na edição de um curso que ainda não começou, só quem muda a agenda passa pela regra do passado.
     private boolean mesmaAgenda(Curso a, Curso b) {
         return Objects.equals(a.getDataInicio(), b.getDataInicio())
                 && chavesDeHorario(a).equals(chavesDeHorario(b));
@@ -354,9 +363,16 @@ public class CursoService {
                     + " vaga(s) ocupada(s); o total de vagas não pode ser menor que isso.");
         }
 
-        // Só quem muda a data de início, os dias ou o horário precisa respeitar a regra do
-        // passado; assim dá para editar preço, descrição etc. de um curso que já começou.
-        if (!mesmaAgenda(curso, editado)) {
+        if (jaComecou(curso)) {
+            // Curso em andamento: dias e horário podem mudar, mas as datas de início e de
+            // término ficam como estão.
+            if (!Objects.equals(curso.getDataInicio(), editado.getDataInicio())
+                    || !Objects.equals(curso.getDataFim(), editado.getDataFim())) {
+                throw new RuntimeException("Este curso já começou: as datas de início e de término não podem ser alteradas.");
+            }
+        } else if (!mesmaAgenda(curso, editado)) {
+            // Curso que ainda não começou: se mudar a data, os dias ou o horário, a primeira
+            // aula continua precisando estar no futuro.
             validarPrimeiraAulaNoFuturo(editado);
         }
 

@@ -252,9 +252,23 @@ async function carregar(raiz, deslocamento, moverFoco = false) {
   }
 }
 
+// Ajuda do professor: mostra só o texto do dispositivo escolhido (mouse, teclado ou celular).
+function iniciarAjuda(raiz) {
+  const seletor = raiz.querySelector('[data-calendario-dispositivo]');
+  if (!seletor) return;
+  const paineis = raiz.querySelectorAll('[data-calendario-instrucao]');
+  seletor.addEventListener('change', () => {
+    paineis.forEach((painel) => {
+      painel.hidden = painel.dataset.calendarioInstrucao !== seletor.value;
+    });
+  });
+}
+
 function iniciar(raiz) {
   if (raiz.dataset.calendarioIniciado) return;
   raiz.dataset.calendarioIniciado = 'true';
+
+  iniciarAjuda(raiz);
 
   raiz
     .querySelector('[data-calendario-proxima-semana]')

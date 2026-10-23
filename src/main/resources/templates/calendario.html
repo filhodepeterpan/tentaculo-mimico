@@ -28,17 +28,35 @@
     </header>
 
     <!-- Só aparece para professores (o JavaScript mostra): como escolher o horário de um curso novo. -->
-    <p id="calendario-dica" class="calendario__dica" data-calendario-dica hidden>
-      <b>Professor</b>, utilize o calendário para cadastrar um curso
-      <br><br>
-      🖰 Utilizando o <b>MOUSE</b>, <b>CLIQUE</b> em um horário livre, <b>ARRASTE</b> para mover, <b>PUXE</b> as bordas para esticar e confirme em <b>✓</b>. Para escolher mais de um dia, segure <b>SHIFT</b> e <b>CLIQUE</b> em outro dia: o horário é o mesmo em todos. Use <b>✗</b> para tirar um dia.
-      <br><br>
-      📱 Utilizando o <b>CELULAR</b>, <b>TOQUE</b> em um horário livre, <b>ARRASTE</b> para mover, <b>PUXE</b> as bordas para esticar e confirme em <b>✓</b>. Para escolher mais de um dia, <b>TOQUE E SEGURE</b> em outro dia: o horário é o mesmo em todos. Use <b>✗</b> para tirar um dia.
-      <br><br>
-      🖮 Utilizando o <b>TECLADO</b>, pressione <b>TAB</b> até o dia, <b>ENTER</b> para escolher, <b>SETAS</b> para mover, <b>SHIFT + SETAS</b> para esticar e <b>+</b> e <b>-</b> para aumentar ou diminuir 30 minutos. Para escolher mais de um dia, use <b>SHIFT + ENTER</b> para adicionar o dia ao lado, com o mesmo horário. <b>ENTER</b> para confirmar todos os dias e <b>ESC</b> para cancelar um dia por vez.
-      <br><br>
-      🕒 Os cursos só podem acontecer <b>entre 07:00 e 22:00</b> e <b>não podem começar em um dia e horário que já passaram</b>. As áreas listradas não aceitam horário. Para cadastrar na semana que vem, use <b>PRÓXIMA SEMANA</b>.
-    </p>
+    <div id="calendario-dica" class="calendario__dica" data-calendario-dica hidden>
+      <p class="calendario__dica-texto">
+        <b>Professor</b>, utilize o calendário para cadastrar um curso
+        <br><br>
+        🕒 Os cursos só podem acontecer <b>entre 07:00 e 22:00</b> e <b>não podem começar em um dia e horário que já passaram</b>. As áreas listradas não aceitam horário. Para cadastrar na semana que vem, use <b>PRÓXIMA SEMANA</b>.
+      </p>
+
+      <div class="calendario__ajuda" data-calendario-ajuda>
+        <h3 class="calendario__ajuda-titulo">Como uso o calendário para cadastrar um curso?</h3>
+
+        <label class="calendario__ajuda-rotulo" for="calendario-dispositivo">Selecione um dispositivo</label>
+        <select id="calendario-dispositivo" class="calendario__ajuda-seletor" data-calendario-dispositivo>
+          <option value="" selected>Selecione...</option>
+          <option value="mouse">Mouse</option>
+          <option value="teclado">Teclado</option>
+          <option value="celular">Celular</option>
+        </select>
+
+        <div class="calendario__ajuda-painel" data-calendario-instrucao="mouse" aria-live="polite" hidden>
+          🖰 Utilizando o <b>MOUSE</b>, <b>CLIQUE</b> em um horário livre, <b>ARRASTE</b> para mover, <b>PUXE</b> as bordas para esticar e confirme em <b>✓</b>. Para escolher mais de um dia, segure <b>SHIFT</b> e <b>CLIQUE</b> em outro dia: o horário é o mesmo em todos. Use <b>✗</b> para tirar um dia.
+        </div>
+        <div class="calendario__ajuda-painel" data-calendario-instrucao="teclado" aria-live="polite" hidden>
+          🖮 Utilizando o <b>TECLADO</b>, pressione <b>TAB</b> até o dia, <b>ENTER</b> para escolher, <b>SETAS</b> para mover, <b>SHIFT + SETAS</b> para esticar e <b>+</b> e <b>-</b> para aumentar ou diminuir 30 minutos. Para escolher mais de um dia, use <b>SHIFT + ENTER</b> para adicionar o dia ao lado, com o mesmo horário. <b>ENTER</b> para confirmar todos os dias e <b>ESC</b> para cancelar um dia por vez.
+        </div>
+        <div class="calendario__ajuda-painel" data-calendario-instrucao="celular" aria-live="polite" hidden>
+          📱 Utilizando o <b>CELULAR</b>, <b>TOQUE</b> em um horário livre, <b>ARRASTE</b> para mover, <b>PUXE</b> as bordas para esticar e confirme em <b>✓</b>. Para escolher mais de um dia, <b>TOQUE E SEGURE</b> em outro dia: o horário é o mesmo em todos. Use <b>✗</b> para tirar um dia.
+        </div>
+      </div>
+    </div>
     <p class="calendario__aviso-leitor" data-calendario-aviso aria-live="polite"></p>
 
     <!-- Troca de semana: "Semana atual" (esquerda) só aparece na próxima semana; "Próxima semana"

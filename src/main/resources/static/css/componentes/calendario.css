@@ -299,6 +299,61 @@
     color: var(--color-on-surface-variant);
 }
 
+.calendario__dica-texto {
+    margin: 0 0 1.25rem;
+}
+
+/* Ajuda por dispositivo: o professor escolhe Mouse, Teclado ou Celular e vê só aquele texto. */
+.calendario__ajuda-titulo {
+    margin: 0 0 0.75rem;
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-titulo-card-tamanho);
+    line-height: var(--tipo-titulo-card-altura-linha);
+    letter-spacing: var(--tipo-titulo-card-espacamento);
+    font-weight: var(--tipo-titulo-card-peso);
+    color: var(--color-primary);
+}
+
+.calendario__ajuda-rotulo {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-weight: var(--tipo-label-lg-peso-enfatizado);
+    color: var(--color-on-surface);
+}
+
+.calendario__ajuda-seletor {
+    min-height: 2.5rem;
+    min-width: 14rem;
+    max-width: 100%;
+    padding: 0 0.75rem;
+    border: 1px solid var(--color-outline);
+    border-radius: 0.5rem;
+    background-color: var(--color-surface-container-lowest);
+    color: var(--color-on-surface);
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-corpo-padrao-tamanho);
+    cursor: pointer;
+}
+
+.calendario__ajuda-seletor:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.calendario__ajuda-painel {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-left: 4px solid var(--color-primary);
+    border-radius: 0.25rem;
+    background-color: var(--color-surface-container-low);
+    color: var(--color-on-surface);
+}
+
+/* O display acima venceria o atributo hidden. */
+.calendario__ajuda-painel[hidden] {
+    display: none;
+}
+
 /* Texto só para leitores de tela (avisa o horário escolhido ao usar o teclado). */
 .calendario__aviso-leitor {
     position: absolute;

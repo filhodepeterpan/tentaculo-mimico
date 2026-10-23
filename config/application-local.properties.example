@@ -1,0 +1,11 @@
+spring.mongodb.uri=
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=
+spring.mail.password=
+CLOUDINARY_URL=
+spring.security.oauth2.client.registration.google.client-id=
+spring.security.oauth2.client.registration.google.client-secret=
+pagbank.token=
+pagbank.environment=
+pagbank.public-base-url=

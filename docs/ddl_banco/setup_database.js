@@ -170,6 +170,11 @@ db.createCollection("pagamentos", {
 });
 
 db.pagamentos.createIndex({ matricula_id: 1 });
+db.pagamentos.createIndex({ matricula_id: 1 }, {
+  unique: true,
+  partialFilterExpression: { status_atual: "pendente" },
+  name: "uniq_pagamento_pendente_matricula"
+});
 db.pagamentos.createIndex({ status_atual: 1, data_vencimento: 1 });
 db.pagamentos.createIndex({ "tentativas.transacao_externa_id": 1 });
 

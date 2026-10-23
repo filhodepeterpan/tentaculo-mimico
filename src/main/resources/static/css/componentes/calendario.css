@@ -314,6 +314,10 @@
 
 .calendario--selecionavel .calendario__coluna {
     cursor: cell;
+    /* Tocar e segurar no celular escolhe outro dia: sem menu nem seleção de texto no caminho. */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 /* Faixas em que não dá para escolher horário (já passou ou fica fora das 07:00 às 22:00).

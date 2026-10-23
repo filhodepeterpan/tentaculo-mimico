@@ -119,7 +119,7 @@ function criarEvento(e, faixa, dia, urlCurso, imgPadrao) {
   return link;
 }
 
-function desenhar(raiz, semana) {
+function desenhar(raiz, semana, deslocamento) {
   const grade = raiz.querySelector('[data-calendario-grade]');
   const rolagem = raiz.querySelector('[data-calendario-rolagem]');
   const mensagem = raiz.querySelector('[data-calendario-mensagem]');
@@ -182,7 +182,8 @@ function desenhar(raiz, semana) {
 
   rolagem.hidden = false;
   if (eventos.length === 0) {
-    mensagem.textContent = 'Nenhum curso acontece nesta semana.';
+    mensagem.textContent =
+      deslocamento === 0 ? 'Nenhum curso acontece nesta semana.' : 'Nenhum curso acontece na próxima semana.';
     mensagem.classList.remove('calendario__mensagem--erro');
     mensagem.hidden = false;
   } else {
@@ -203,15 +204,45 @@ async function liberarSelecao(raiz, contexto) {
   }
 }
 
-async function iniciar(raiz) {
-  if (raiz.dataset.calendarioIniciado) return;
-  raiz.dataset.calendarioIniciado = 'true';
+// Última requisição de cada calendário: se o usuário trocar de semana enquanto uma resposta
+// ainda está a caminho, a resposta antiga é ignorada.
+const requisicoes = new WeakMap();
 
+// "Semana atual" (esquerda) só aparece na próxima semana; "Próxima semana" (direita) fica
+// desabilitado quando a próxima semana já está na tela.
+function atualizarNavegacao(raiz, deslocamento) {
+  const atual = raiz.querySelector('[data-calendario-semana-atual]');
+  const proxima = raiz.querySelector('[data-calendario-proxima-semana]');
+  if (atual) atual.hidden = deslocamento === 0;
+  if (proxima) proxima.disabled = deslocamento !== 0;
+}
+
+// deslocamento: 0 = semana atual, 1 = próxima semana.
+async function carregar(raiz, deslocamento, moverFoco = false) {
   const mensagem = raiz.querySelector('[data-calendario-mensagem]');
+  const aviso = raiz.querySelector('[data-calendario-aviso]');
+  const periodo = raiz.querySelector('[data-calendario-periodo]');
+  const numero = (requisicoes.get(raiz) ?? 0) + 1;
+  requisicoes.set(raiz, numero);
+
   try {
-    const resposta = await fetch(raiz.dataset.url, { headers: { Accept: 'application/json' } });
+    const url = new URL(raiz.dataset.url, location.href);
+    url.searchParams.set('deslocamento', String(deslocamento));
+    const resposta = await fetch(url, { headers: { Accept: 'application/json' } });
     if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
-    const contexto = desenhar(raiz, await resposta.json());
+    const semana = await resposta.json();
+    if (requisicoes.get(raiz) !== numero) return;
+
+    const contexto = desenhar(raiz, semana, deslocamento);
+    atualizarNavegacao(raiz, deslocamento);
+    if (moverFoco) {
+      // O botão clicado some ou fica desabilitado: o foco vai para o botão que o substitui.
+      const seletor = deslocamento === 0 ? '[data-calendario-proxima-semana]' : '[data-calendario-semana-atual]';
+      raiz.querySelector(seletor)?.focus();
+    }
+    if (aviso) {
+      aviso.textContent = `Mostrando ${deslocamento === 0 ? 'a semana atual' : 'a próxima semana'}: ${periodo.textContent}.`;
+    }
     if (raiz.dataset.professor === 'true') liberarSelecao(raiz, contexto);
   } catch (erro) {
     console.error('Calendário: não foi possível carregar a semana.', erro);
@@ -219,6 +250,20 @@ async function iniciar(raiz) {
     mensagem.classList.add('calendario__mensagem--erro');
     mensagem.hidden = false;
   }
+}
+
+function iniciar(raiz) {
+  if (raiz.dataset.calendarioIniciado) return;
+  raiz.dataset.calendarioIniciado = 'true';
+
+  raiz
+    .querySelector('[data-calendario-proxima-semana]')
+    ?.addEventListener('click', () => carregar(raiz, 1, true));
+  raiz
+    .querySelector('[data-calendario-semana-atual]')
+    ?.addEventListener('click', () => carregar(raiz, 0, true));
+
+  carregar(raiz, 0);
 }
 
 function iniciarTodos() {

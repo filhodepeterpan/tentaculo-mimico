@@ -57,26 +57,30 @@ public class CursoController {
     }
 
     // Cadastro de curso. O professor escolhe antes o dia e o horário no calendário
-    // (/calendario), que volta pra cá com ?dia=TERCA&inicio=11:00&fim=12:00; o
+    // (/calendario), que volta pra cá com ?dia=TERCA&dia=QUINTA&data=2026-10-27&inicio=11:00&fim=12:00
+    // (um "dia" para cada dia escolhido, todos no mesmo horário; "data" é a do primeiro dia); o
     // formulário já abre com isso marcado (e dá pra mudar). Professor que chega sem
     // horário escolhido (ex.: clicou em "Adicionar curso") vai primeiro ao calendário.
     @GetMapping("/cursos/novo")
-    public String novoCurso(@RequestParam(value = "dia", required = false) String dia,
+    public String novoCurso(@RequestParam(value = "dia", required = false) List<String> dia,
                             @RequestParam(value = "inicio", required = false) String inicio,
                             @RequestParam(value = "fim", required = false) String fim,
                             @RequestParam(value = "data", required = false) String data,
                             Model model) {
-        if (dia == null || inicio == null || fim == null) {
+        if (dia == null || dia.isEmpty() || inicio == null || fim == null) {
             return ehProfessor() ? "redirect:/calendario" : "cadastro-curso";
         }
 
         try {
-            DiaSemana diaSemana = DiaSemana.valueOf(dia);
+            List<String> diasEscolhidos = dia.stream()
+                    .map(d -> DiaSemana.valueOf(d).name())
+                    .distinct()
+                    .toList();
             LocalTime horaInicio = LocalTime.parse(inicio);
             LocalTime horaFim = LocalTime.parse(fim);
             if (horaFim.isAfter(horaInicio)) {
                 DateTimeFormatter hhmm = DateTimeFormatter.ofPattern("HH:mm");
-                model.addAttribute("diasSemanaSelecionados", List.of(diaSemana.name()));
+                model.addAttribute("diasSemanaSelecionados", diasEscolhidos);
                 model.addAttribute("horaInicioPreenchida", horaInicio.format(hhmm));
                 model.addAttribute("horaFimPreenchida", horaFim.format(hhmm));
                 if (data != null) {

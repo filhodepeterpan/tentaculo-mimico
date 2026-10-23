@@ -14,15 +14,26 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class CursoService {
+
+    private static final ZoneId FUSO = ZoneId.of("America/Sao_Paulo");
+
+    // Janela em que os cursos podem acontecer: nenhuma aula começa antes das 07:00
+    // nem termina depois das 22:00.
+    private static final LocalTime JANELA_INICIO = LocalTime.of(7, 0);
+    private static final LocalTime JANELA_FIM = LocalTime.of(22, 0);
 
     private final CursoRepository cursoRepository;
     private final MatriculaRepository matriculaRepository;
@@ -143,6 +154,36 @@ public class CursoService {
     // Cadastro
     // =========================================================================
 
+    // A primeira aula (data de início no horário de início) não pode estar no passado.
+    // Como a data de início já foi conferida contra os dias da semana, ela é mesmo um dia de aula.
+    private void validarPrimeiraAulaNoFuturo(Curso curso) {
+        if (curso.getDataInicio() == null || curso.getHorarios() == null || curso.getHorarios().isEmpty()) {
+            return;
+        }
+        LocalDateTime primeiraAula = curso.getDataInicio().atTime(curso.getHorarios().get(0).getInicio());
+        if (primeiraAula.isBefore(LocalDateTime.now(FUSO))) {
+            throw new RuntimeException("A primeira aula ("
+                    + primeiraAula.format(DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm"))
+                    + ") já passou. Escolha um dia e um horário a partir de agora.");
+        }
+    }
+
+    // Dois cursos têm a mesma agenda quando começam no mesmo dia e têm os mesmos dias e horários.
+    // Na edição, só quem muda a agenda precisa passar pela regra do passado.
+    private boolean mesmaAgenda(Curso a, Curso b) {
+        return Objects.equals(a.getDataInicio(), b.getDataInicio())
+                && chavesDeHorario(a).equals(chavesDeHorario(b));
+    }
+
+    private Set<String> chavesDeHorario(Curso curso) {
+        if (curso.getHorarios() == null) {
+            return Set.of();
+        }
+        return curso.getHorarios().stream()
+                .map(h -> h.getDiaSemana() + "|" + h.getInicio() + "|" + h.getFim())
+                .collect(Collectors.toSet());
+    }
+
     // A data cai num dos dias da semana escolhidos? Ex.: curso só às terças e quintas
     // não pode começar (nem terminar) num sábado.
     private void validarDataNosDias(String qual, LocalDate data, List<String> diasSemana) {
@@ -208,6 +249,9 @@ public class CursoService {
             if (!fim.isAfter(inicio)) {
                 throw new RuntimeException("O horário de término deve ser depois do início.");
             }
+            if (inicio.isBefore(JANELA_INICIO) || fim.isAfter(JANELA_FIM)) {
+                throw new RuntimeException("O horário do curso deve ficar entre 07:00 e 22:00.");
+            }
 
             List<Horario> horarios = new ArrayList<>();
             for (String dia : diasSemana) {
@@ -265,6 +309,7 @@ public class CursoService {
         Curso curso = criarCurso(nome, descricao, cargaHoraria, preco, vagasTotais,
                 diasSemana, horaInicio, horaFim, dataInicio, dataFim, urlImagem);
 
+        validarPrimeiraAulaNoFuturo(curso);
         validarSemConflito(curso);
 
         return cursoRepository.save(curso);
@@ -307,6 +352,12 @@ public class CursoService {
         if (editado.getVagasTotais() < vagasOcupadas) {
             throw new RuntimeException("Este curso já tem " + vagasOcupadas
                     + " vaga(s) ocupada(s); o total de vagas não pode ser menor que isso.");
+        }
+
+        // Só quem muda a data de início, os dias ou o horário precisa respeitar a regra do
+        // passado; assim dá para editar preço, descrição etc. de um curso que já começou.
+        if (!mesmaAgenda(curso, editado)) {
+            validarPrimeiraAulaNoFuturo(editado);
         }
 
         curso.setNome(editado.getNome());

@@ -49,6 +49,56 @@
     color: var(--color-error);
 }
 
+/* Troca de semana: "Semana atual" à esquerda, "Próxima semana" sempre à direita. */
+.calendario__navegacao {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.calendario__nav-botao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    padding: 0 1.25rem;
+    border: 1px solid var(--color-outline);
+    border-radius: 1.25rem;
+    background-color: var(--color-surface-container-lowest);
+    color: var(--color-primary);
+    font-family: var(--fonte-padrao);
+    font-size: var(--tipo-label-lg-tamanho);
+    line-height: var(--tipo-label-lg-altura-linha);
+    letter-spacing: var(--tipo-label-lg-espacamento);
+    font-weight: var(--tipo-label-lg-peso-enfatizado);
+    cursor: pointer;
+}
+
+.calendario__nav-botao:hover:not(:disabled) {
+    background-color: var(--color-primary-container);
+}
+
+.calendario__nav-botao:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.calendario__nav-botao:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* O display acima venceria o atributo hidden. */
+.calendario__nav-botao[hidden] {
+    display: none;
+}
+
+.calendario__nav-botao--proxima {
+    margin-left: auto;
+}
+
 /* Em telas estreitas a grade rola na horizontal em vez de espremer as colunas. */
 .calendario__rolagem {
     overflow-x: auto;
@@ -264,6 +314,25 @@
 
 .calendario--selecionavel .calendario__coluna {
     cursor: cell;
+}
+
+/* Faixas em que não dá para escolher horário (já passou ou fica fora das 07:00 às 22:00).
+   Ficam por baixo dos cursos e não recebem cliques. Topo e altura vêm do JavaScript, em horas. */
+.calendario__indisponivel {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    top: calc(var(--ind-topo) * var(--cal-hora-altura));
+    height: calc(var(--ind-altura) * var(--cal-hora-altura));
+    background-color: color-mix(in srgb, var(--color-on-surface) 6%, transparent);
+    background-image: repeating-linear-gradient(
+        135deg,
+        transparent 0,
+        transparent 0.375rem,
+        color-mix(in srgb, var(--color-on-surface) 10%, transparent) 0.375rem,
+        color-mix(in srgb, var(--color-on-surface) 10%, transparent) 0.75rem
+    );
+    pointer-events: none;
 }
 
 /* Bloco do horário escolhido: ocupa o intervalo como uma aula, mas em amarelo para não

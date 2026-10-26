@@ -18,7 +18,6 @@ public class Usuario {
 
     @Id
     private String id;
-
     private String nome;
     private String cpf;
 
@@ -47,6 +46,12 @@ public class Usuario {
 
     @Field("data_expiracao_token")
     private LocalDateTime dataExpiracaoToken;
+
+    @Field("token_verificacao_email")
+    private String tokenVerificacaoEmail;
+
+    @Field("data_expiracao_verificacao")
+    private LocalDateTime dataExpiracaoVerificacao;
 
     public Usuario() {
         this.autenticacao = new Autenticacao();

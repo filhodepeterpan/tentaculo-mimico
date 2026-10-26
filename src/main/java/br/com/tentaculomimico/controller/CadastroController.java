@@ -2,11 +2,12 @@ package br.com.tentaculomimico.controller;
 
 import br.com.tentaculomimico.dto.CadastroRequestDTO;
 import br.com.tentaculomimico.model.Usuario;
-import br.com.tentaculomimico.security.JwtTokenProvider;
+
 import br.com.tentaculomimico.service.CadastroService;
 import br.com.tentaculomimico.service.CadastroService.CadastroInvalidoException;
-import br.com.tentaculomimico.service.SessaoService;
-import jakarta.servlet.http.Cookie;
+
+import br.com.tentaculomimico.service.VerificacaoEmailService;
+
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -25,8 +26,7 @@ import java.util.Map;
 public class CadastroController {
 
     private final CadastroService cadastroService;
-    private final SessaoService sessaoService;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final VerificacaoEmailService verificacaoEmailService;
 
     @PostMapping("/cadastro")
     public String cadastrar(
@@ -47,15 +47,10 @@ public class CadastroController {
         try {
             Usuario usuario = cadastroService.cadastrar(dto);
 
-            // Mesmo comportamento do login: sessão + cookie JWT e vai para /cursos.
-            sessaoService.iniciarSessao(usuario);
-            String token = jwtTokenProvider.gerarToken(usuario.getEmail(), usuario.getTipoUsuario().toString());
-            Cookie cookie = new Cookie("jwt", token);
-            cookie.setHttpOnly(true);
-            cookie.setPath("/");
-            response.addCookie(cookie);
+            // A conta só entra depois de confirmar o e-mail: não inicia sessão nem gera cookie.
+            verificacaoEmailService.emitirEEnviar(usuario);
 
-            return "redirect:/cursos";
+            return "redirect:/login?verifique=email";
         } catch (CadastroInvalidoException e) {
             for (Map.Entry<String, String> erro : e.getErros().entrySet()) {
                 String chave = erro.getKey();

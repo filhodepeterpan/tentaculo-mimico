@@ -12,9 +12,24 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
-    // application.properties: app.base-url=https://seu-dominio.com  (padrão: ambiente local)
     @Value("${app.base-url:http://localhost:8080}")
     private String baseUrl;
+
+    public void enviarEmailVerificacao(String destinatario, String token) {
+        SimpleMailMessage mensagem = new SimpleMailMessage();
+
+        mensagem.setTo(destinatario);
+        mensagem.setSubject("Confirme seu e-mail - Tentáculo Mímico");
+
+        String link = baseUrl + "/confirmar-email?token=" + token;
+
+        mensagem.setText("Olá!\n\n" +
+                "Obrigado por se cadastrar. Para ativar sua conta, confirme seu e-mail pelo link abaixo:\n\n" +
+                link + "\n\n" +
+                "O link vale por 24 horas. Se você não criou esta conta, pode ignorar este e-mail.");
+
+        mailSender.send(mensagem);
+    }
 
     public void enviarEmailRecuperacao(String destinatario, String token) {
         SimpleMailMessage mensagem = new SimpleMailMessage();

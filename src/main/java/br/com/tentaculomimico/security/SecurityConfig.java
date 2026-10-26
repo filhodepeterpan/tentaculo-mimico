@@ -46,6 +46,7 @@ public class SecurityConfig {
                                         "/",
                                         "/login",
                                         "/cadastro",
+                                        "/confirmar-email",
                                         "/esqueci-senha",
                                         "/recuperar-senha",
                                         "/redefinir-senha",

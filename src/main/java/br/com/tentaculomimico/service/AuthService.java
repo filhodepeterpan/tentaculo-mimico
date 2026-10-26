@@ -31,6 +31,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final EmailService emailService;
+    private final VerificacaoEmailService verificacaoEmailService;
 
     /**
      * Erro de autenticação cuja mensagem é segura para mostrar ao usuário.
@@ -90,8 +91,17 @@ public class AuthService {
 
         // reseta contadores de falhas
         usuario.setTentativasLoginFalhas(0);
+
         usuario.setBloqueadoAte(null);
         usuarioRepository.save(usuario);
+
+        // Senha correta, mas o e-mail ainda não foi confirmado,não entra.
+        if (verificacaoEmailService.estaPendente(usuario)) {
+            boolean reenviou = verificacaoEmailService.reenviarSeNecessario(usuario);
+            throw new AutenticacaoException(reenviou
+                    ? "Seu e-mail ainda não foi confirmado. Enviamos um novo link de confirmação para o seu e-mail."
+                    : "Seu e-mail ainda não foi confirmado. Verifique sua caixa de entrada e o spam, ou tente entrar de novo em alguns minutos para receber outro link.");
+        }
 
         return usuario;
     }

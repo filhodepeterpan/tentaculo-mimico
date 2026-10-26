@@ -1,243 +1,231 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" th:href="@{/css/pages/home.css}" />
-        <title>Tentáculo Mímico</title>
-    </head>
-    <body>
-        <div th:replace="~{fragments/layouts :: header}"></div>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" th:href="@{/css/pages/home.css}" />
+    <title>Tentáculo Mímico</title>
+</head>
+<body>
+<div th:replace="~{fragments/layouts :: header}"></div>
 
-        <main class="landing">
-            <section class="hero">
-                <div class="hero__left">
-                    <h1 class="hero-content__heading editorial-display">
-                        O palco começa onde você está.
-                    </h1>
-                    <p class="hero-content__description body-large">
-                        Descubra o teatro como espaço de expressão, criação e
-                        encontro. O Tentáculo Mímico desenvolve atividades
-                        culturais e forma artistas na Baixada Santista,
-                        aproximando a arte de diferentes pessoas, espaços e
-                        realidades.
+<main class="landing">
+    <section class="hero">
+        <div class="hero__left">
+            <h1 class="hero__heading editorial-display">
+                O palco começa onde você está.
+            </h1>
+            <p class="hero__description body-large">
+                O Tentáculo Mímico desenvolve atividades culturais e
+                forma artistas na Baixada Santista, aproximando a arte
+                de diferentes pessoas, espaços e realidades.
+            </p>
+            <div th:replace="~{fragments/buttons :: botao_link(texto='Ver cursos disponíveis', variante='secundario', tamanho='grande', caminho='/cursos')}">
+            </div>
+        </div>
+
+        <div class="hero__right">
+            <img th:src="@{/img/hero.gif}" alt="Tentáculo mímico logo" />
+        </div>
+    </section>
+
+    <section class="about">
+        <h2 class="about__heading display-small display-small--enfatizado">
+            Cultura que nasce e circula na comunidade
+        </h2>
+        <div class="about__content">
+            <div class="about__figure">
+                <img th:src="@{/img/landing_1.png}"
+                     alt="Figura ilustrativa mão teatral"
+                     class="about__ilustration"
+                />
+            </div>
+
+            <div class="about__cards">
+                <article class="about__card">
+                    <h3 class="about__card__title headline-small headline-small--enfatizado">
+                        Um núcleo de teatro e cultura
+                    </h3>
+                    <p class="about__card__content body-large">
+                        Um centro cultural com teatro, violão, canto e yoga, a preços populares, porque a arte é direito e deve chegar a todo mundo.
                     </p>
-                    <div
-                        th:replace="~{fragments/buttons :: botao_link(texto='Ver cursos disponíveis', variante='secundario', tamanho='grande', caminho='/cursos')}"
-                    ></div>
+                    <p class="about__card__content body-large">
+                        O espaço também é voz, registra em entrevistas e eventos o que artistas e educadores da periferia têm a dizer. Aqui o teatro se aprende vivendo, ele transforma o espaço, o público e a realidade ao redor.
+                    </p>
+                </article>
+
+                <article class="about__card">
+                    <h3 class="about__card__title headline-small headline-small--enfatizado">
+                        Arte que se adapta
+                    </h3>
+                    <p class="about__card__content body-large">
+                        Como o polvo-mímico, que muda de forma conforme o lugar onde está, o nosso teatro se transforma com o espaço, o público e a realidade ao redor.
+                    </p>
+                    <p class="about__card__content body-large">
+                        A arte não espera o palco ideal, ocupa a rua, a praça, o bairro e todo canto onde a comunidade se encontra.
+                    </p>
+                </article>
+
+                <article class="about__card">
+                    <h3 class="about__card__title headline-small headline-small--enfatizado">
+                        Encontre sua expressão
+                    </h3>
+                    <p class="about__card__content body-large">
+                        Entre exercícios e cenas, nascem presença, criatividade e confiança para contar suas histórias e ocupar o seu lugar.
+                    </p>
+                    <p class="about__card__content body-large">
+                        Não é preciso ter experiência. A periferia já é cheia de histórias, e a sua pode começar de onde você está.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="calendario">
+        <div class="calendario__link">
+            <img
+                    th:src="@{/img/calendario_polvo.svg}"
+                    aria-hidden="true"
+                    class="calendario__img"
+                    alt="Ilustração de polvo com calendário"
+            />
+            <div class="calendario__content">
+                <span class="calendario__title">
+                    Conheça nossa programação!
+                </span>
+                <a th:replace="~{fragments/buttons :: botao_link(texto='Calendário', variante='secundario', tamanho='grande', caminho='/calendario')}">
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="motivos">
+        <h2 class="motivos__heading display-small display-small--enfatizado">
+            Mais do que aprender teatro
+        </h2>
+        <div class="motivos__content">
+            <article class="card-colorido card-colorido--neutral">
+                <div class="card-colorido__content">
+                    <span class="card-colorido__title headline-small headline-small--enfatizado">
+                        Aprenda fazendo
+                    </span>
+                    <p class="card-colorido__description body-large">
+                        Menos teoria abstrata, mais experimentação,
+                        exercícios e criação em cena.
+                    </p>
                 </div>
-                <div class="hero__right">
-                    <img th:src="@{img/hero.gif}" alt="Tentáculo mímico logo" />
+                <img
+                        th:src="@{/img/landing-cards/icon2.svg}"
+                        aria-hidden="true"
+                        class="card-colorido__icon"
+                />
+            </article>
+
+            <article class="card-colorido card-colorido--primary">
+                <div class="card-colorido__content">
+                    <span class="card-colorido__title headline-small headline-small--enfatizado">
+                        Desenvolva sua expressão
+                    </span>
+                    <p class="card-colorido__description body-large">
+                        Trabalhe voz, corpo, presença e comunicação para
+                        se expressar com mais liberdade.
+                    </p>
                 </div>
-            </section>
-            <section class="about">
-                <h1
-                    class="about__heading display-small display-small--enfatizado"
-                >
-                    Cultura que nasce e circula na comunidade
-                </h1>
-                <div class="about__content">
-                    <div class="about__figure">
-                        <img
-                            th:src="@{img/landing_1.png}"
-                            alt="Figura ilustrativa mão teatral"
-                            class="about__ilustration"
-                        />
-                    </div>
-                    <div class="about__cards">
-                        <article class="about__card">
-                            <span
-                                class="about__card__title headline-small headline-small--enfatizado"
-                            >
-                                Um núcleo de teatro e cultura
-                            </span>
+                <img
+                        th:src="@{/img/landing-cards/icon7.svg}"
+                        aria-hidden="true"
+                        class="card-colorido__icon"
+                />
+            </article>
 
-                            <p class="about__card__content body-large">
-                                A instituição é um centro cultural com
-                                atividades como teatro, violão, canto e yoga a
-                                preços populares. O espaço também se descreve
-                                como mídia, produzindo entrevistas com artistas
-                                e educadores da periferia, além de cobrir
-                                eventos na periferia de Praia Grande.
-                            </p>
-                        </article>
-
-                        <article class="about__card">
-                            <span
-                                class="about__card__title headline-small headline-small--enfatizado"
-                            >
-                                Arte que se adapta
-                            </span>
-
-                            <p class="about__card__content body-large">
-                                Inspirado no polvo-mímico, o núcleo acredita em
-                                um teatro capaz de se transformar conforme o
-                                espaço, o público e a realidade ao seu redor.
-                                Entre espetáculos, oficinas e ações culturais, o
-                                Tentáculo Mímico cria oportunidades para
-                                experimentar, aprender e compartilhar arte.
-                            </p>
-                        </article>
-
-                        <div style="grid-column: span 2">
-                            <article class="about__card">
-                                <span
-                                    class="headline-small headline-small--enfatizado"
-                                >
-                                    Da primeira cena à sua própria expressão
-                                </span>
-
-                                <p class="body-large">
-                                    Nas atividades do Tentáculo Mímico, você
-                                    experimenta o teatro na prática. Exercícios
-                                    de expressão corporal, voz, improvisação e
-                                    criação ajudam a desenvolver presença,
-                                    criatividade e confiança para construir e
-                                    apresentar suas próprias cenas e histórias.
-                                </p>
-                            </article>
-                        </div>
-                    </div>
+            <article class="card-colorido card-colorido--primary">
+                <div class="card-colorido__content">
+                    <span class="card-colorido__title headline-small headline-small--enfatizado">
+                        Crie junto com outras pessoas
+                    </span>
+                    <p class="card-colorido__description body-large">
+                        O teatro é coletivo. Você aprende através da
+                        colaboração, da escuta e da troca.
+                    </p>
                 </div>
-            </section>
-            <section class="motivos">
-                <h1
-                    class="motivos__heading display-small display-small--enfatizado"
-                >
-                    Mais do que aprender teatro
-                </h1>
-                <div class="motivos__content">
-                    <article class="card-colorido card-colorido--neutral">
-                        <div class="card-colorido__content">
-                            <span
-                                class="card-colorido__title headline-medium headline-medium--enfatizado"
-                                >Aprenda fazendo</span
-                            >
-                            <p class="card-colorido__description body-large">
-                                Menos teoria abstrata, mais experimentação,
-                                exercícios e criação em cena.
-                            </p>
-                        </div>
-                        <img
-                            th:src="@{img/landing-cards/icon2.svg}"
-                            aria-hidden="true"
-                            class="card-colorido__icon"
-                        />
-                    </article>
+                <img
+                        th:src="@{/img/landing-cards/icon5.svg}"
+                        aria-hidden="true"
+                        class="card-colorido__icon"
+                />
+            </article>
 
-                    <article class="card-colorido card-colorido--primary">
-                        <div class="card-colorido__content">
-                            <span
-                                class="card-colorido__title headline-medium headline-medium--enfatizado"
-                                >Desenvolva sua expressão</span
-                            >
-                            <p class="card-colorido__description body-large">
-                                Trabalhe voz, corpo, presença e comunicação para
-                                se expressar com mais liberdade.
-                            </p>
-                        </div>
-                        <img
-                            th:src="@{img/landing-cards/icon7.svg}"
-                            aria-hidden="true"
-                            class="card-colorido__icon"
-                        />
-                    </article>
-
-                    <article class="card-colorido card-colorido--primary">
-                        <div class="card-colorido__content">
-                            <span
-                                class="card-colorido__title headline-medium headline-medium--enfatizado"
-                                >Crie junto com outras pessoas</span
-                            >
-                            <p class="card-colorido__description body-large">
-                                O teatro é coletivo. Você aprende através da
-                                colaboração, da escuta e da troca.
-                            </p>
-                        </div>
-                        <img
-                            th:src="@{img/landing-cards/icon5.svg}"
-                            aria-hidden="true"
-                            class="card-colorido__icon"
-                        />
-                    </article>
-
-                    <article class="card-colorido card-colorido--neutral">
-                        <div class="card-colorido__content">
-                            <span
-                                class="card-colorido__title headline-medium headline-medium--enfatizado"
-                                >Estimule sua criatividade</span
-                            >
-                            <p class="card-colorido__description body-large">
-                                Improvisação e criação teatral ajudam você a
-                                experimentar ideias e enxergar novas
-                                possibilidades.
-                            </p>
-                        </div>
-                        <img
-                            th:src="@{img/landing-cards/icon6.svg}"
-                            aria-hidden="true"
-                            class="card-colorido__icon"
-                        />
-                    </article>
-
-                    <article class="card-colorido card-colorido--neutral">
-                        <div class="card-colorido__content">
-                            <span
-                                class="card-colorido__title headline-medium headline-medium--enfatizado"
-                                >Comece de onde você está</span
-                            >
-                            <p class="card-colorido__description body-large">
-                                Não é preciso ser ator ou atriz para começar. A
-                                experiência pode ser construída a partir do seu
-                                próprio repertório.
-                            </p>
-                        </div>
-                        <img
-                            th:src="@{img/landing-cards/icon4.svg}"
-                            aria-hidden="true"
-                            class="card-colorido__icon"
-                        />
-                    </article>
-
-                    <article class="card-colorido card-colorido--primary">
-                        <div class="card-colorido__content">
-                            <span
-                                class="card-colorido__title headline-medium headline-medium--enfatizado"
-                                >Faça parte da cultura local</span
-                            >
-                            <p class="card-colorido__description body-large">
-                                Aprenda e crie dentro de um movimento cultural
-                                que atua na comunidade e na Baixada Santista.
-                            </p>
-                        </div>
-                        <img
-                            th:src="@{img/landing-cards/icon3.svg}"
-                            aria-hidden="true"
-                            class="card-colorido__icon"
-                        />
-                    </article>
+            <article class="card-colorido card-colorido--neutral">
+                <div class="card-colorido__content">
+                    <span class="card-colorido__title headline-small headline-small--enfatizado">
+                        Estimule sua criatividade
+                    </span>
+                    <p class="card-colorido__description body-large">
+                        Improvisação e criação teatral ajudam você a
+                        experimentar ideias e enxergar novas
+                        possibilidades.
+                    </p>
                 </div>
-            </section>
-            <section class="cto">
-                <span class="cto__text-muted headline-small"
-                    >A nossa história pode começar com</span
-                >
-                <h3
-                    class="cto__text-focus display-medium display-medium--enfatizado"
-                >
-                    Você
-                </h3>
-                <div class="cto__actions">
-                    <div
-                        th:replace="~{fragments/buttons :: botao_link(texto='Quero criar minha conta!', variante='primario', tamanho='grande', caminho='/cadastro')}"
-                    />
-                    <div
-                        th:replace="~{fragments/buttons :: botao_link(texto='Já tenho uma conta', variante='neutro', tamanho='grande', caminho='/login')}"
-                    />
-                </div>
-            </section>
-        </main>
+                <img
+                        th:src="@{/img/landing-cards/icon6.svg}"
+                        aria-hidden="true"
+                        class="card-colorido__icon"
+                />
+            </article>
 
-        <div th:replace="~{fragments/layouts :: footer}"></div>
-    </body>
+            <article class="card-colorido card-colorido--neutral">
+                <div class="card-colorido__content">
+                    <span class="card-colorido__title headline-small headline-small--enfatizado">
+                        Comece de onde você está
+                    </span>
+                    <p class="card-colorido__description body-large">
+                        Não é preciso ser ator ou atriz para começar. A
+                        experiência pode ser construída a partir do seu
+                        próprio repertório.
+                    </p>
+                </div>
+                <img
+                        th:src="@{/img/landing-cards/icon4.svg}"
+                        aria-hidden="true"
+                        class="card-colorido__icon"
+                />
+            </article>
+
+            <article class="card-colorido card-colorido--primary">
+                <div class="card-colorido__content">
+                    <span class="card-colorido__title headline-small headline-small--enfatizado">
+                        Faça parte da cultura local
+                    </span>
+                    <p class="card-colorido__description body-large">
+                        Aprenda e crie dentro de um movimento cultural
+                        que atua na comunidade e na Baixada Santista.
+                    </p>
+                </div>
+                <img
+                        th:src="@{/img/landing-cards/icon3.svg}"
+                        aria-hidden="true"
+                        class="card-colorido__icon"
+                />
+            </article>
+        </div>
+    </section>
+
+    <section class="cto">
+        <span class="cto__text-muted headline-small">
+            A nossa história pode começar com
+        </span>
+        <h3 class="cto__text-focus display-medium display-medium--enfatizado">
+            Você
+        </h3>
+        <div class="cto__actions">
+            <div th:replace="~{fragments/buttons :: botao_link(texto='Quero criar minha conta!', variante='primario', tamanho='grande', caminho='/cadastro')}">
+            </div>
+            <div th:replace="~{fragments/buttons :: botao_link(texto='Já tenho uma conta', variante='neutro', tamanho='grande', caminho='/login')}">
+            </div>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/layouts :: footer}"></div>
+</body>
 </html>

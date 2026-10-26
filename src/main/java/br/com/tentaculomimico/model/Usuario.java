@@ -5,6 +5,7 @@ import br.com.tentaculomimico.model.enums.TipoUsuario;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -17,13 +18,13 @@ public class Usuario {
 
     @Id
     private String id;
-
     private String nome;
     private String cpf;
 
     @Field("data_nascimento")
     private java.time.LocalDate dataNascimento;
 
+    @Indexed(unique = true)
     private String email;
 
     @Field("tipo_usuario")
@@ -45,6 +46,12 @@ public class Usuario {
 
     @Field("data_expiracao_token")
     private LocalDateTime dataExpiracaoToken;
+
+    @Field("token_verificacao_email")
+    private String tokenVerificacaoEmail;
+
+    @Field("data_expiracao_verificacao")
+    private LocalDateTime dataExpiracaoVerificacao;
 
     public Usuario() {
         this.autenticacao = new Autenticacao();

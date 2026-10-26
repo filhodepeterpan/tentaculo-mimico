@@ -22,5 +22,7 @@ public interface UsuarioRepository extends MongoRepository<Usuario, String> {
     long countByTipoUsuario(TipoUsuario tipoUsuario);
     List<Usuario> findByTipoUsuario(TipoUsuario tipoUsuario);
 
+    Optional<Usuario> findByTokenVerificacaoEmail(String token);
+
 
 }

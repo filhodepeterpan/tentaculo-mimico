@@ -1,30 +1,28 @@
 package br.com.tentaculomimico.controller;
 
-import br.com.tentaculomimico.dto.LoginRequestDTO;
 import br.com.tentaculomimico.model.Usuario;
-import br.com.tentaculomimico.repository.UsuarioRepository;
 import br.com.tentaculomimico.service.AuthService;
+import br.com.tentaculomimico.service.AuthService.AutenticacaoException;
 import br.com.tentaculomimico.service.SessaoService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-
-import java.io.IOException;
-import java.net.URI;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
-    private final SessaoService sessaoService; // <-- Adicionado
-    private final UsuarioRepository usuarioRepository; // <-- Adicionado
+    private final SessaoService sessaoService;
 
     @PostMapping("/login")
     public String login(
@@ -34,22 +32,22 @@ public class AuthController {
             Model model
     ) {
         try {
-            String token = authService.autenticar(email, senha);
-            Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
-            if (usuario != null) {
-                sessaoService.iniciarSessao(usuario);
-            }
+            Usuario usuario = authService.validarCredenciais(email, senha);
+            sessaoService.iniciarSessao(usuario);
 
-            // Se usar Cookies para guardar o token JWT na aplicação Server-Side:
-            Cookie cookie = new Cookie("jwt", token);
+            Cookie cookie = new Cookie("jwt", authService.gerarToken(usuario));
             cookie.setHttpOnly(true);
             cookie.setPath("/");
             response.addCookie(cookie);
 
             return "redirect:/cursos";
+        } catch (AutenticacaoException e) {
+            // Mensagem segura: credenciais inválidas, conta bloqueada (com o tempo restante), etc.
+            model.addAttribute("erroGeral", e.getMessage());
+            return "login";
         } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("erroGeral", "E-mail ou senha inválidos.");
+            log.error("Erro inesperado no login", e);
+            model.addAttribute("erroGeral", "Não foi possível entrar agora. Tente novamente.");
             return "login";
         }
     }
@@ -57,37 +55,38 @@ public class AuthController {
     @PostMapping("/esqueci-senha")
     public ResponseEntity<String> esqueciSenha(@RequestParam String email) {
         authService.solicitarRecuperacaoSenha(email);
-        return ResponseEntity.ok("um link de recuperação será enviado.");
+        return ResponseEntity.ok("Se o e-mail estiver cadastrado, enviaremos um link de recuperação.");
     }
 
     @PostMapping("/redefinir-senha")
     public ResponseEntity<String> redefinirSenha(
-        @RequestParam String token,
-        @RequestParam String novaSenha,
-        @RequestParam String confirmacaoSenha
+            @RequestParam String token,
+            @RequestParam String novaSenha,
+            @RequestParam String confirmacaoSenha
     ) {
-        authService.redefinirSenha(token, novaSenha, confirmacaoSenha);
-        return ResponseEntity.ok("Senha atualizada com sucesso!");
+        try {
+            authService.redefinirSenha(token, novaSenha, confirmacaoSenha);
+            return ResponseEntity.ok("Senha atualizada com sucesso!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @GetMapping("/sair")
-    public ResponseEntity<String> logout(
-        HttpServletResponse response,
-        Model model
-    ) throws IOException {
+    public ResponseEntity<String> logout(HttpServletResponse response) {
         sessaoService.encerrarSessao();
 
-        // VERIFICAR SE É NECESSÀRIO CRIAR O COOKIE EM PRIMEIRO LUGAR
+        // O navegador só apaga um cookie se o servidor mandar outro com o MESMO nome e path
+        // e maxAge 0. Não existe "comando de apagar" por isso criamos o cookie aqui.
         Cookie cookie = new Cookie("jwt", "");
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setMaxAge(0);
         response.addCookie(cookie);
 
-
         return ResponseEntity
-            .status(HttpStatus.FOUND)
-            .location(URI.create("/login"))
-            .build();
+                .status(HttpStatus.FOUND)
+                .location(URI.create("/login"))
+                .build();
     }
 }

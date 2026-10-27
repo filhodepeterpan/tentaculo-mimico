@@ -6,9 +6,9 @@ import br.com.tentaculomimico.model.enums.Provedor;
 import br.com.tentaculomimico.model.enums.TipoUsuario;
 import br.com.tentaculomimico.repository.UsuarioRepository;
 import br.com.tentaculomimico.security.JwtTokenProvider;
+import br.com.tentaculomimico.service.EmailService.EmailEnvioException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -129,7 +129,7 @@ public class AuthService {
 
         try {
             emailService.enviarEmailRecuperacao(usuario.getEmail(), tokenRecuperacao);
-        } catch (MailException e) {
+        } catch (EmailEnvioException e) {
             log.error("Falha ao enviar e-mail de recuperação para o usuário {}", usuario.getId(), e);
         }
     }

@@ -149,9 +149,18 @@ public class PaginasController {
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(@RequestParam(required = false) String verifique, Model model) {
         if (sessaoService.usuarioLogado() != null) {
             return "redirect:cursos";
+        }
+
+        // Vem do redirect do POST /cadastro. Sem sessão/flash, então funciona igual no Render.
+        if ("email".equals(verifique)) {
+            model.addAttribute("mostrarModalEmailEnviado", true);
+        } else if ("falha".equals(verifique)) {
+            model.addAttribute("erroGeral",
+                    "Sua conta foi criada, mas não conseguimos enviar o e-mail de confirmação agora. "
+                    + "Entre com seu e-mail e senha em alguns minutos para receber um novo link.");
         }
 
         return "login";

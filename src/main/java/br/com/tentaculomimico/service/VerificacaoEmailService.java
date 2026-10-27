@@ -3,9 +3,9 @@ package br.com.tentaculomimico.service;
 import br.com.tentaculomimico.model.Usuario;
 import br.com.tentaculomimico.repository.UsuarioRepository;
 import br.com.tentaculomimico.service.AuthService.AutenticacaoException;
+import br.com.tentaculomimico.service.EmailService.EmailEnvioException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -41,7 +41,7 @@ public class VerificacaoEmailService {
         try {
             emailService.enviarEmailVerificacao(usuario.getEmail(), token);
             return true;
-        } catch (MailException e) {
+        } catch (EmailEnvioException e) {
             log.error("Falha ao enviar e-mail de confirmação para o usuário {}", usuario.getId(), e);
             return false;
         }

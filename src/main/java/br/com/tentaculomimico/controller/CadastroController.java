@@ -48,9 +48,10 @@ public class CadastroController {
             Usuario usuario = cadastroService.cadastrar(dto);
 
             // A conta só entra depois de confirmar o e-mail: não inicia sessão nem gera cookie.
-            verificacaoEmailService.emitirEEnviar(usuario);
+            boolean enviado = verificacaoEmailService.emitirEEnviar(usuario);
 
-            return "redirect:/login?verifique=email";
+            // A conta já foi criada. Se o envio falhou, a tela de login avisa e orienta a pedir outro link.
+            return enviado ? "redirect:/login?verifique=email" : "redirect:/login?verifique=falha";
         } catch (CadastroInvalidoException e) {
             for (Map.Entry<String, String> erro : e.getErros().entrySet()) {
                 String chave = erro.getKey();

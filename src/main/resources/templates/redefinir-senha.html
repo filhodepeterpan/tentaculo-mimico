@@ -1,0 +1,76 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" th:href="@{/css/pages/redefinir-senha.css}" />
+        <title>Redefinir senha - Tentáculo Mímico</title>
+    </head>
+    <body>
+        <div th:replace="~{fragments/layouts :: header}"></div>
+
+        <main class="redefinir">
+            <div class="redefinir__caixa">
+                <h1 class="redefinir__titulo">Redefinir senha</h1>
+
+                <!-- Link sem token: não há o que redefinir -->
+                <th:block th:if="${token == null or token.isBlank()}">
+                    <div
+                        th:replace="~{fragments/alert :: alerta(titulo='Link inválido', mensagem='O link de recuperação está incompleto ou expirou. Solicite um novo.', variante='erro')}"
+                    ></div>
+
+                    <p class="redefinir__voltar">
+                        <a th:href="@{/recuperar-senha}">Solicitar novo link</a>
+                    </p>
+                </th:block>
+
+                <th:block th:unless="${token == null or token.isBlank()}">
+                    <p class="redefinir__descricao">
+                        Escolha uma nova senha para a sua conta.
+                    </p>
+
+                    <div id="redefinir-sucesso" hidden>
+                        <div
+                            th:replace="~{fragments/alert :: alerta(titulo='Senha atualizada', mensagem='Tudo certo! Redirecionando para o login...', variante='sucesso')}"
+                        ></div>
+                    </div>
+
+                    <div id="redefinir-erro" hidden>
+                        <div
+                            th:replace="~{fragments/alert :: alerta(titulo='Não foi possível redefinir', mensagem='Tente novamente.', variante='erro')}"
+                        ></div>
+                    </div>
+
+                    <form
+                        id="form-redefinir"
+                        class="redefinir__formulario"
+                        method="post"
+                        th:action="@{/redefinir-senha}"
+                    >
+                        <input type="hidden" name="token" th:value="${token}" />
+
+                        <div
+                            th:replace="~{fragments/senha :: campoSenha(id='novaSenha', rotulo='Nova senha', placeholder='Digite a nova senha', obrigatorio=true, mensagemErro='', desabilitado=false)}"
+                        ></div>
+
+                        <div
+                            th:replace="~{fragments/senha :: campoSenha(id='confirmacaoSenha', rotulo='Confirmar nova senha', placeholder='Repita a nova senha', obrigatorio=true, mensagemErro='', desabilitado=false)}"
+                        ></div>
+
+                        <div
+                            th:replace="~{fragments/buttons :: botao(texto='Salvar nova senha', variante='primario', tamanho='grande', tipoBotao='submit')}"
+                        ></div>
+                    </form>
+
+                    <p class="redefinir__voltar">
+                        <a th:href="@{/login}">Voltar para o login</a>
+                    </p>
+                </th:block>
+            </div>
+        </main>
+
+        <div th:replace="~{fragments/layouts :: footer}"></div>
+
+        <script type="module" th:src="@{/js/pages/redefinir-senha.js}"></script>
+    </body>
+</html>

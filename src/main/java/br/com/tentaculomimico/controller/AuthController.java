@@ -63,6 +63,17 @@ public class AuthController {
         return ResponseEntity.ok("Se o e-mail estiver cadastrado, enviaremos um link de recuperação.");
     }
 
+    @GetMapping("/redefinir-senha")
+    public String paginaRedefinirSenha(
+            @RequestParam(required = false) String token,
+            Model model
+    ) {
+        // O token vem no link do e-mail (/redefinir-senha?token=...).
+        // A validação real acontece no POST; aqui só repassamos pra página.
+        model.addAttribute("token", token);
+        return "redefinir-senha";
+    }
+
     @PostMapping("/redefinir-senha")
     public ResponseEntity<String> redefinirSenha(
             @RequestParam String token,

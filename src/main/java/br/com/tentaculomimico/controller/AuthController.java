@@ -52,6 +52,11 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/recuperar-senha")
+    public String paginaRecuperarSenha() {
+        return "recuperar-senha";
+    }
+
     @PostMapping("/esqueci-senha")
     public ResponseEntity<String> esqueciSenha(@RequestParam String email) {
         authService.solicitarRecuperacaoSenha(email);

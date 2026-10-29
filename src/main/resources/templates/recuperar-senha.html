@@ -1,0 +1,59 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" th:href="@{/css/pages/recuperar-senha.css}" />
+        <title>Recuperar senha - Tentáculo Mímico</title>
+    </head>
+    <body>
+        <div th:replace="~{fragments/layouts :: header}"></div>
+
+        <main class="recuperar">
+            <div class="recuperar__caixa">
+                <h1 class="recuperar__titulo">Recuperar senha</h1>
+                <p class="recuperar__descricao">
+                    Informe o e-mail da sua conta. Se ele estiver cadastrado,
+                    enviaremos um link para você criar uma nova senha.
+                </p>
+
+                <!-- Feedback (preenchido via JS após o envio) -->
+                <div id="recuperar-sucesso" hidden>
+                    <div
+                        th:replace="~{fragments/alert :: alerta(titulo='Verifique seu e-mail', mensagem='Se o e-mail estiver cadastrado, enviaremos um link de recuperação.', variante='sucesso')}"
+                    ></div>
+                </div>
+
+                <div id="recuperar-erro" hidden>
+                    <div
+                        th:replace="~{fragments/alert :: alerta(titulo='Não foi possível enviar', mensagem='Tente novamente em alguns instantes.', variante='erro')}"
+                    ></div>
+                </div>
+
+                <form
+                    id="form-recuperar"
+                    class="recuperar__formulario"
+                    method="post"
+                    th:action="@{/esqueci-senha}"
+                >
+                    <div
+                        th:replace="~{fragments/inputs :: input(id='email', tipo='email', rotulo='E-mail', placeholder='seu@email.com', valor=${emailPreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroEmail ?: ''}, desabilitado=false)}"
+                    ></div>
+
+                    <div
+                        th:replace="~{fragments/buttons :: botao(texto='Enviar link de recuperação', variante='primario', tamanho='grande', tipoBotao='submit')}"
+                    ></div>
+                </form>
+
+                <p class="recuperar__voltar">
+                    Lembrou a senha?
+                    <a th:href="@{/login}">Voltar para o login</a>
+                </p>
+            </div>
+        </main>
+
+        <div th:replace="~{fragments/layouts :: footer}"></div>
+
+        <script type="module" th:src="@{/js/pages/recuperar-senha.js}"></script>
+    </body>
+</html>

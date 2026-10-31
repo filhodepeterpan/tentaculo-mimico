@@ -19,6 +19,7 @@
     </th:block>
 
     <form class="cadastro__formulario" method="post" th:action="@{/cadastro}">
+      <p class="aviso__obrigatorio">Todos os campos com * são obrigatórios.</p>
 
       <div th:replace="~{fragments/inputs :: input(id='nome', tipo='text', rotulo='Nome completo', placeholder='Seu nome completo', valor=${nomePreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroNome ?: ''}, desabilitado=false)}"></div>
 

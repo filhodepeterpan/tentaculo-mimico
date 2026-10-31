@@ -21,7 +21,7 @@
 
         <form class="perfil-editar__formulario" method="post" th:action="@{/perfil/editar}" enctype="multipart/form-data"
               th:with="editandoOutro=${usuarioLogado != null and usuarioLogado.id != usuario.id}">
-
+            <p class="aviso__obrigatorio">Todos os campos com * são obrigatórios.</p>
             <input type="hidden" name="id" th:value="${usuario.id}">
             <input type="hidden" name="voltar" th:value="${param.voltar != null ? param.voltar[0] : ''}">
 

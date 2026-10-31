@@ -23,6 +23,7 @@
     <form class="curso-form__formulario" method="post"
           th:action="${editando} ? @{/cursos/{id}/editar(id=${curso.id})} : @{/cursos}"
           enctype="multipart/form-data">
+      <p class="aviso__obrigatorio">Todos os campos com * são obrigatórios.</p>
 
       <div th:replace="~{fragments/inputs :: input(id='nome', tipo='text', rotulo='Nome do curso', placeholder='Ex: Inglês Avançado', valor=${nomePreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroNome ?: ''}, desabilitado=false)}"></div>
 
@@ -37,7 +38,7 @@
       <div th:replace="~{fragments/inputs :: input(id='vagas-totais', tipo='number', rotulo='Número de vagas', placeholder='20', valor=${vagasTotaisPreenchidas ?: ''}, obrigatorio=true, mensagemErro=${erroVagasTotais ?: ''}, desabilitado=false)}"></div>
 
       <fieldset class="curso-form__dias-semana">
-        <legend class="campo__rotulo">Dias da semana</legend>
+        <legend class="campo__rotulo" id="campo__rotulo-obrigatorio">Dias da semana</legend>
         <div class="curso-form__dias-semana-opcoes">
           <div th:replace="~{fragments/checkbox :: checkbox(id='dia-segunda', name='diasSemana', valor='SEGUNDA', rotulo='Segunda', marcado=${diasSemanaSelecionados != null and #lists.contains(diasSemanaSelecionados, 'SEGUNDA')}, desabilitado=false)}"></div>
           <div th:replace="~{fragments/checkbox :: checkbox(id='dia-terca', name='diasSemana', valor='TERCA', rotulo='Terça', marcado=${diasSemanaSelecionados != null and #lists.contains(diasSemanaSelecionados, 'TERCA')}, desabilitado=false)}"></div>

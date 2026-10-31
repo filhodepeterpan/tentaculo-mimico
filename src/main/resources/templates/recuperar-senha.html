@@ -36,6 +36,7 @@
                     method="post"
                     th:action="@{/esqueci-senha}"
                 >
+
                     <div
                         th:replace="~{fragments/inputs :: input(id='email', tipo='email', rotulo='E-mail', placeholder='seu@email.com', valor=${emailPreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroEmail ?: ''}, desabilitado=false)}"
                     ></div>

@@ -30,28 +30,25 @@
     max-width: 28rem;
 }
 
+
+
 /* Amarelo da marca (tokens secundários do root.css: mudam com tema e contraste). */
-.cursos__botao-calendario {
+
+.calendario__botao {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    min-height: 3rem;
-    padding: 0 1.25rem;
-    border-radius: 0.75rem;
-    background-color: var(--color-secondary);
-    color: var(--color-on-secondary);
-    font-family: var(--fonte-padrao);
-    font-size: var(--tipo-label-lg-tamanho);
-    line-height: var(--tipo-label-lg-altura-linha);
-    letter-spacing: var(--tipo-label-lg-espacamento);
-    font-weight: var(--tipo-label-lg-peso-enfatizado);
+    padding: 0.5rem 1.25rem;
+    color: var(--color-on-primary);
+    font-weight: bold;
     text-decoration: none;
-    white-space: nowrap;
+    transition: all 0.15s ease;
+    font-size: 0.875rem;
 }
 
-.cursos__botao-calendario:hover {
-    background-color: var(--color-secondary-fixed-dim);
+.calendario__botao:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 0 var(--color-shadow);
 }
 
 .cursos__vazio {

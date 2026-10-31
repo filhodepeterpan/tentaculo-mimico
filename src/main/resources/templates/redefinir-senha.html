@@ -47,6 +47,7 @@
                         method="post"
                         th:action="@{/redefinir-senha}"
                     >
+                        <p class="aviso__obrigatorio">Todos os campos com * são obrigatórios.</p>
                         <input type="hidden" name="token" th:value="${token}" />
 
                         <div

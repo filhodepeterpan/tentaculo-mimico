@@ -47,3 +47,27 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
     outline: 3px solid var(--primary-color, #4A90E2);
     outline-offset: 2px;
 }
+
+/* Asterisco nos campos obrigatórios ================================== */
+
+/* se o campo tem um input ou textarea com "required",
+   a label dele ganha um * vermelho. */
+.campo:has(input:required, textarea:required) > .campo__rotulo::after {
+    content: " *";
+    color: var(--color-error);
+}
+/* Regra exclusiva para a legendas que
+   não tem "required", sem isso
+   parece que ele é opcional */
+#campo__rotulo-obrigatorio::after {
+    content: " *";
+    color: var(--color-error);
+}
+
+/* "Todos os campos com * são obrigatórios." */
+.aviso__obrigatorio {
+    color: var(--color-error);
+    font-size: var(--tipo-label-md-tamanho);
+    font-weight: var(--tipo-label-md-peso-enfatizado);
+    margin: var(--tipo-body-md-espacamento);
+}

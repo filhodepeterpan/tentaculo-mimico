@@ -30,6 +30,7 @@ body {
     align-items: center;
     gap: 0.5rem;
     margin-top: 1rem;
+    max-width: 72rem;
 }
 
 .hero__left {
@@ -49,6 +50,10 @@ body {
 .hero__right img {
     max-width: 100%;
     height: auto;
+}
+
+.about{
+    max-width: 72rem;
 }
 
 .about__content {
@@ -111,8 +116,6 @@ body {
     letter-spacing: var(--tipo-body-md-espacamento);
 }
 
-
-
 .calendario {
     display: flex;
     justify-content: center;
@@ -174,6 +177,9 @@ body {
     box-shadow: 0 2px 0 0 var(--color-shadow);
 }
 
+.motivos{
+    max-width: 72rem;
+}
 .motivos__heading {
     margin-bottom: 1.5rem;
 }
@@ -199,6 +205,8 @@ body {
     flex-direction: column;
     align-items: start;
     gap: 1rem;
+    flex: 1;
+    min-width: 0;
 }
 
 .card-colorido__title {
@@ -211,6 +219,7 @@ body {
 .card-colorido__icon {
     width: 5rem;
     height: 5rem;
+    flex-shrink: 0;
 }
 
 .cto {
@@ -233,8 +242,26 @@ body {
     gap: 0.5rem;
     margin-top: 1rem;
 }
+@media screen and (width >= 75rem) {
 
 
+    .motivos__content .card-colorido {
+        background-color: var(--color-surface-container);
+    }
+    .motivos__content .card-colorido .card-colorido__title {
+        background: var(--color-secondary);
+        color: var(--color-on-secondary);
+    }
+
+    /* Os cards amarelos são 2 4 e 6 */
+    .motivos__content .card-colorido:nth-child(even) {
+        background-color: var(--color-secondary);
+    }
+    .motivos__content .card-colorido:nth-child(even) .card-colorido__title {
+        background: var(--color-secondary-container);
+        color: var(--color-on-secondary-container);
+    }
+}
 @media screen and (width < 75rem) {
     .about__content {
         grid-template-columns: 1.4fr 1.2fr 1fr;
@@ -257,10 +284,6 @@ body {
 }
 
 @media screen and (width >= 48rem) {
-    .landing > .motivos {
-        width: min(70%, 1000px);
-    }
-
     .motivos__content {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -275,7 +298,12 @@ body {
     }
 }
 
-/* Em telas menores que 75rem (1200px), a imagem vai para cima e os cards ficam em 2 colunas */
+@media screen and (width >= 75rem) {
+    .motivos__content {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
 @media screen and (width < 75rem) {
     .about__content {
         flex-direction: column;
@@ -291,7 +319,6 @@ body {
     }
 }
 
-/* Em telas menores que 48rem (768px), os cards viram 1 coluna */
 @media screen and (width < 48rem) {
     .about__content {
         display: flex;

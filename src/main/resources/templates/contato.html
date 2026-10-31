@@ -20,6 +20,7 @@
 
     <div class="contato__caixa">
         <form class="contato__formulario" method="post" th:action="@{/contato}">
+            <p class="aviso__obrigatorio">Todos os campos com * são obrigatórios.</p>
 
             <div th:replace="~{fragments/inputs :: input(id='nome', tipo='text', rotulo='Nome', placeholder='João da Silva', valor='', obrigatorio=true, mensagemErro=${erroNome ?: ''}, desabilitado=false)}"></div>
 

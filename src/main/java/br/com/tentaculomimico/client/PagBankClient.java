@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
 public class PagBankClient {
     private static final Logger LOG = LoggerFactory.getLogger(PagBankClient.class);
     private static final JsonMapper JSON = new JsonMapper();
+    private static final Pattern ID_CHECKOUT = Pattern.compile("CHEC_[A-Za-z0-9-]{1,64}");
+    private static final Pattern ID_PEDIDO = Pattern.compile("ORDE_[A-Za-z0-9-]{1,64}");
     private static final Pattern CODIGO_SEGURO = Pattern.compile("[a-z][a-z0-9_]{0,63}");
     private static final Set<String> HOSTS_PRODUCAO = Set.of("pagamento.pagbank.com.br", "pagamento.pagseguro.uol.com.br");
     private static final Set<String> HOSTS_SANDBOX = Set.of("pagamento.sandbox.pagbank.com.br", "sandbox.pagamento.pagseguro.uol.com.br",
@@ -34,7 +36,15 @@ public class PagBankClient {
         this.properties = properties;
     }
 
+    /** Checkout criado: id (CHEC_..., pode ser null se o PagBank não devolver) e link de pagamento. */
+    public record CheckoutAberto(String id, URI pay) {}
+
+    /** Usado pela doação: só interessa o link de pagamento. */
     public URI criar(CheckoutRequest checkout) {
+        return criarCompleto(checkout).pay();
+    }
+
+    public CheckoutAberto criarCompleto(CheckoutRequest checkout) {
         if (properties.token() == null || properties.token().isBlank()) {
             throw new CheckoutIndisponivelException();
         }
@@ -44,8 +54,10 @@ public class PagBankClient {
                     .headers(headers -> headers.setBearerAuth(properties.token()))
                     .body(checkout).retrieve().body(CheckoutCriado.class);
             if (resposta == null || resposta.links() == null) throw new CheckoutIndisponivelException();
-            return resposta.links().stream().filter(link -> "PAY".equals(link.rel()))
+            URI pay = resposta.links().stream().filter(link -> "PAY".equals(link.rel()))
                     .map(link -> validarPay(link.href())).findFirst().orElseThrow(CheckoutIndisponivelException::new);
+            String id = resposta.id() != null && ID_CHECKOUT.matcher(resposta.id()).matches() ? resposta.id() : null;
+            return new CheckoutAberto(id, pay);
         } catch (RestClientResponseException e) {
             // O navegador só recebe um erro genérico. Mesmo no log, nunca exibir corpo nem headers da API.
             LOG.warn("Falha ao criar checkout PagBank ({}): HTTP {}, código {}",
@@ -55,6 +67,41 @@ public class PagBankClient {
             // Nunca registrar corpo de resposta ou headers: podem conter dados sensíveis.
             LOG.warn("Falha de comunicação ou resposta inválida ao criar checkout PagBank");
             throw new CheckoutIndisponivelException();
+        }
+    }
+
+    /** Consulta um checkout (e os pagamentos associados a ele) direto na API do PagBank. */
+    public JsonNode consultarCheckout(String checkoutId) {
+        if (checkoutId == null || !ID_CHECKOUT.matcher(checkoutId).matches()) throw new ConsultaIndisponivelException();
+        return consultar(properties.checkoutUri(checkoutId));
+    }
+
+    /** Consulta um pedido na API do PagBank. É a fonte de verdade: nunca confiamos só no corpo do webhook. */
+    public JsonNode consultarPedido(String pedidoId) {
+        if (pedidoId == null || !ID_PEDIDO.matcher(pedidoId).matches()) throw new ConsultaIndisponivelException();
+        return consultar(properties.pedidoUri(pedidoId));
+    }
+
+    private JsonNode consultar(URI uri) {
+        if (properties.token() == null || properties.token().isBlank()) {
+            throw new ConsultaIndisponivelException();
+        }
+        try {
+            String corpo = http.get().uri(uri).headers(headers -> headers.setBearerAuth(properties.token()))
+                    .retrieve().body(String.class);
+            if (corpo == null || corpo.isBlank() || corpo.length() > 1_000_000) throw new ConsultaIndisponivelException();
+            return JSON.readTree(corpo);
+        } catch (RestClientResponseException e) {
+            LOG.warn("Falha ao consultar PagBank ({}): HTTP {}", properties.environment(), e.getStatusCode().value());
+            throw new ConsultaIndisponivelException();
+        } catch (RestClientException | IllegalArgumentException e) {
+            LOG.warn("Falha de comunicação ao consultar o PagBank");
+            throw new ConsultaIndisponivelException();
+        } catch (ConsultaIndisponivelException e) {
+            throw e;
+        } catch (RuntimeException e) { // JSON inválido
+            LOG.warn("Resposta inválida ao consultar o PagBank");
+            throw new ConsultaIndisponivelException();
         }
     }
 
@@ -84,4 +131,7 @@ public class PagBankClient {
     }
 
     public static class CheckoutIndisponivelException extends RuntimeException { }
+
+    /** Não foi possível consultar o PagBank agora (rede, token, id inválido...). Tentar de novo depois. */
+    public static class ConsultaIndisponivelException extends RuntimeException { }
 }

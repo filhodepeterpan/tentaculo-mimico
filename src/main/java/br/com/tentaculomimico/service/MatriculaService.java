@@ -126,28 +126,30 @@ public class MatriculaService {
     }
 
     /**
-     * Pagamento concluído: AGUARDANDO_PAGAMENTO vira ATIVA e libera o acesso (o aluno passa a
-     * aparecer em "alunos matriculados" do professor). Devolve o cursoId.
+     * Pagamento aprovado pelo PagBank: AGUARDANDO_PAGAMENTO vira ATIVA e libera o acesso (o aluno passa
+     * a aparecer em "alunos matriculados" do professor).
      *
-     * ATENÇÃO, PROVISÓRIO: ainda não existe gateway de pagamento, então este método CONFIA no clique
-     * do aluno. Quando houver gateway, quem chama isto deve ser o webhook de "pagamento aprovado",
-     * e o endpoint do aluno deve deixar de existir (ver PagamentoController).
-     * Idempotente: chamar de novo numa matrícula já ATIVA não faz nada (duplo clique, reenvio).
+     * Quem chama é o PagamentoCursoService, depois de conferir o pagamento direto na API do PagBank
+     * (webhook ou retorno do checkout), por isso não depende de sessão. Idempotente: numa matrícula
+     * já ATIVA não faz nada (webhook reenviado, retorno + webhook ao mesmo tempo).
+     *
+     * @return true se a matrícula está ATIVA ao final; false se o status atual não permite ativar
+     *         (ex.: cancelada) e nada foi alterado.
      */
-    public String confirmarPagamento(String matriculaId) {
-        Matricula matricula = buscarMatriculaDoAlunoLogado(matriculaId);
+    public boolean ativarPorPagamentoAprovado(String matriculaId) {
+        Matricula matricula = buscarMatricula(matriculaId);
 
         if (matricula.getStatusMatricula() == StatusMatricula.ATIVA) {
-            return matricula.getCursoId();
+            return true;
         }
         if (matricula.getStatusMatricula() != StatusMatricula.AGUARDANDO_PAGAMENTO) {
-            throw new RuntimeException("Esta matrícula não está aguardando pagamento.");
+            return false;
         }
 
         matricula.setStatusMatricula(StatusMatricula.ATIVA);
         matricula.setAcessoLiberado(true);
         matriculaRepository.save(matricula);
-        return matricula.getCursoId();
+        return true;
     }
 
     /** Aluno desiste (RN039/RN044): vira CANCELADA, o registro fica no histórico. */

@@ -69,6 +69,7 @@ public class SecurityConfig {
                                         "/perfil-excluir",
                                         "/matriculas/**",
                                         "/pagamentos/**",
+                                        "/webhooks/pagbank",
                                         "/sair",
                                         "/api/admin/**",
                                         "/admin",

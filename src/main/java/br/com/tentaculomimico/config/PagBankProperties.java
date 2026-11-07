@@ -18,6 +18,18 @@ public record PagBankProperties(String token, Environment environment, String pu
                 : "https://api.pagseguro.com/checkouts");
     }
 
+    /** GET de um checkout já criado (id no formato CHEC_...). */
+    public URI checkoutUri(String checkoutId) {
+        return URI.create(checkoutUri() + "/" + checkoutId);
+    }
+
+    /** GET de um pedido (id no formato ORDE_...). */
+    public URI pedidoUri(String pedidoId) {
+        return URI.create((environment == Environment.sandbox
+                ? "https://sandbox.api.pagseguro.com/orders/"
+                : "https://api.pagseguro.com/orders/") + pedidoId);
+    }
+
     public URI retorno() {
         if (publicBaseUrl == null) throw new IllegalStateException("URL pública não configurada");
         try {

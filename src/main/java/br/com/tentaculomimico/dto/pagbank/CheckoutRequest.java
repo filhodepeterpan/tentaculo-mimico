@@ -12,12 +12,16 @@ public record CheckoutRequest(@JsonProperty("reference_id") String referenceId,
                            List<Item> items,
                            @JsonProperty("redirect_url") String redirectUrl,
                            @JsonProperty("return_url") String returnUrl,
-                           @JsonProperty("payment_methods_configs") List<MetodoConfig> paymentMethodsConfigs,
-                           @JsonProperty("payment_methods") @JsonInclude(JsonInclude.Include.NON_NULL) List<Metodo> paymentMethods) {
+                           @JsonProperty("payment_methods_configs") @JsonInclude(JsonInclude.Include.NON_EMPTY) List<MetodoConfig> paymentMethodsConfigs,
+                           @JsonProperty("payment_methods") @JsonInclude(JsonInclude.Include.NON_NULL) List<Metodo> paymentMethods,
+                           @JsonProperty("notification_urls") @JsonInclude(JsonInclude.Include.NON_EMPTY) List<String> notificationUrls,
+                           @JsonProperty("payment_notification_urls") @JsonInclude(JsonInclude.Include.NON_EMPTY) List<String> paymentNotificationUrls) {
+    /** Forma usada pela doação: sem métodos fixos e sem notificações. */
     public CheckoutRequest(String referenceId, OffsetDateTime expirationDate, boolean customerModifiable,
                            List<Item> items, String redirectUrl, String returnUrl,
                            List<MetodoConfig> paymentMethodsConfigs) {
-        this(referenceId, expirationDate, customerModifiable, items, redirectUrl, returnUrl, paymentMethodsConfigs, null);
+        this(referenceId, expirationDate, customerModifiable, items, redirectUrl, returnUrl,
+                paymentMethodsConfigs, null, null, null);
     }
     public record Item(String name, int quantity, @JsonProperty("unit_amount") int unitAmount) {}
     public record Metodo(String type) {}

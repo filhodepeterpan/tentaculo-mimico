@@ -1,5 +1,6 @@
 package br.com.tentaculomimico.controller;
 
+import br.com.tentaculomimico.client.PagBankClient;
 import br.com.tentaculomimico.model.Curso;
 import br.com.tentaculomimico.model.Matricula;
 import br.com.tentaculomimico.model.StatusMatricula;
@@ -10,7 +11,9 @@ import br.com.tentaculomimico.security.OAuth2LoginSucessoHandler;
 import br.com.tentaculomimico.security.SecurityConfig;
 import br.com.tentaculomimico.service.CheckoutCursoService;
 import br.com.tentaculomimico.service.MatriculaService;
+import br.com.tentaculomimico.service.PagamentoCursoService;
 import br.com.tentaculomimico.service.SessaoService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -27,31 +30,28 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(value = PagamentoController.class, properties = "app.pagamento.simulado=false")
+@WebMvcTest(PagamentoController.class)
 @Import(SecurityConfig.class)
 class PagamentoFluxoMvcTest {
+    private static final String URL_PAGBANK = "https://pagamento.sandbox.pagbank.com.br/pagamento?code=teste";
+
     @Autowired MockMvc mvc;
     @MockitoBean MatriculaService matriculas;
     @MockitoBean CursoRepository cursos;
     @MockitoBean SessaoService sessao;
     @MockitoBean CheckoutCursoService checkout;
+    @MockitoBean PagamentoCursoService pagamentoCurso;
     @MockitoBean OAuth2LoginSucessoHandler oauth2Handler;
 
-    @Test
-    void exigeLoginAntesDeCriarCheckout() throws Exception {
-        mvc.perform(post("/pagamentos/123/checkout-cartao").param("metodo", "credito"))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/login"));
-        verifyNoInteractions(checkout);
-    }
+    private final Matricula matricula = new Matricula();
 
-    @Test
-    void renderizaPaginaComPrecoDoCursoEFormularioDeCheckout() throws Exception {
+    @BeforeEach
+    void preparar() {
         Usuario aluno = new Usuario();
         aluno.setTipoUsuario(TipoUsuario.ALUNO);
         aluno.setNome("Aluno de teste");
         aluno.setId("789");
         when(sessao.usuarioLogado()).thenReturn(aluno);
-        Matricula matricula = new Matricula();
         matricula.setId("123");
         matricula.setCursoId("456");
         matricula.setStatusMatricula(StatusMatricula.AGUARDANDO_PAGAMENTO);
@@ -61,38 +61,108 @@ class PagamentoFluxoMvcTest {
         curso.setPreco(new BigDecimal("125.90"));
         when(matriculas.buscarMatriculaDoAlunoLogado("123")).thenReturn(matricula);
         when(cursos.findById("456")).thenReturn(Optional.of(curso));
+    }
+
+    // ---------------- botão "Pagar" ----------------
+
+    @Test
+    void exigeLoginAntesDeCriarCheckout() throws Exception {
+        when(sessao.usuarioLogado()).thenReturn(null);
         mvc.perform(get("/pagamentos/123"))
-                .andExpect(status().isOk()).andExpect(view().name("pagamento"))
-                .andExpect(content().string(containsString("/pagamentos/123/checkout-cartao")))
-                .andExpect(content().string(containsString("125.90")))
-                .andExpect(content().string(containsString("id=\"cartao-confirmar\"")));
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/login"));
+        verifyNoInteractions(checkout);
     }
 
     @Test
-    void redirecionaAoPagBankSemConfirmarPagamento() throws Exception {
-        when(sessao.usuarioLogado()).thenReturn(new Usuario());
-        String url = "https://pagamento.sandbox.pagbank.com.br/pagamento?code=teste";
-        when(checkout.iniciar("123", "debito", "125.90")).thenReturn(URI.create(url));
-        mvc.perform(post("/pagamentos/123/checkout-cartao").param("metodo", "debito").param("valor", "125.90"))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl(url));
-        verify(matriculas, never()).confirmarPagamento(any());
+    void redirecionaParaOPagBankSemAtivarAMatricula() throws Exception {
+        when(checkout.iniciar("123")).thenReturn(URI.create(URL_PAGBANK));
+        mvc.perform(get("/pagamentos/123"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl(URL_PAGBANK));
+        verify(pagamentoCurso).reconciliar("123"); // confere se o checkout anterior já foi pago
+        verify(matriculas, never()).ativarPorPagamentoAprovado(any());
     }
 
     @Test
-    void exibeFalhaSemLiberarAcesso() throws Exception {
-        when(sessao.usuarioLogado()).thenReturn(new Usuario());
-        when(checkout.iniciar("123", "credito", "1")).thenThrow(new IllegalArgumentException("Valor divergente."));
-        mvc.perform(post("/pagamentos/123/checkout-cartao").param("metodo", "credito").param("valor", "1"))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/pagamentos/123"))
-                .andExpect(flash().attribute("erroPagamento", "Valor divergente."));
-        verify(matriculas, never()).confirmarPagamento(any());
+    void exibeFalhaNaPaginaDoCursoSemAtivarAMatricula() throws Exception {
+        when(checkout.iniciar("123")).thenThrow(new IllegalStateException("Preço do curso inválido."));
+        mvc.perform(get("/pagamentos/123"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/cursos/456"))
+                .andExpect(flash().attribute("erroPagamento", "Preço do curso inválido."));
+        verify(matriculas, never()).ativarPorPagamentoAprovado(any());
     }
 
     @Test
-    void perfilSemSimulacaoNaoPermiteConfirmacaoManual() throws Exception {
-        when(sessao.usuarioLogado()).thenReturn(new Usuario());
+    void mensagemGenericaQuandoOPagBankEstaIndisponivel() throws Exception {
+        when(checkout.iniciar("123")).thenThrow(new PagBankClient.CheckoutIndisponivelException());
+        mvc.perform(get("/pagamentos/123"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/cursos/456"))
+                .andExpect(flash().attributeExists("erroPagamento"));
+    }
+
+    @Test
+    void matriculaJaAtivaVaiParaATelaDeRetorno() throws Exception {
+        matricula.setStatusMatricula(StatusMatricula.ATIVA);
+        mvc.perform(get("/pagamentos/123"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/pagamentos/123/retorno"));
+        verifyNoInteractions(checkout);
+    }
+
+    @Test
+    void matriculaQueNaoAguardaPagamentoVoltaParaOCurso() throws Exception {
+        matricula.setStatusMatricula(StatusMatricula.PENDENTE);
+        mvc.perform(get("/pagamentos/123"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/cursos/456"));
+        verifyNoInteractions(checkout);
+    }
+
+    @Test
+    void matriculaDeOutroAlunoVaiParaListaDeCursos() throws Exception {
+        when(matriculas.buscarMatriculaDoAlunoLogado("123")).thenThrow(new RuntimeException("sem permissão"));
+        mvc.perform(get("/pagamentos/123"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/cursos"));
+        verifyNoInteractions(checkout);
+    }
+
+    @Test
+    void naoExisteMaisConfirmacaoManualPeloNavegador() throws Exception {
         mvc.perform(post("/pagamentos/123/confirmar").param("metodo", "credito"))
-                .andExpect(status().is3xxRedirection()).andExpect(flash().attributeExists("erroPagamento"));
-        verify(matriculas, never()).confirmarPagamento(any());
+                .andExpect(status().is4xxClientError());
+        verify(matriculas, never()).ativarPorPagamentoAprovado(any());
+    }
+
+    // ---------------- tela de retorno ----------------
+
+    @Test
+    void retornoMostraConfirmacaoQuandoAMatriculaEstaAtiva() throws Exception {
+        matricula.setStatusMatricula(StatusMatricula.ATIVA);
+        mvc.perform(get("/pagamentos/123/retorno"))
+                .andExpect(status().isOk()).andExpect(view().name("pagamento"))
+                .andExpect(content().string(containsString("Teatro")))
+                .andExpect(content().string(containsString("/cursos/456")));
+    }
+
+    @Test
+    void retornoConfereNoPagBankEMostraEsperaQuandoAindaNaoFoiConfirmado() throws Exception {
+        mvc.perform(get("/pagamentos/123/retorno"))
+                .andExpect(status().isOk()).andExpect(view().name("pagamento"))
+                .andExpect(content().string(containsString("Atualizar status")))
+                .andExpect(content().string(containsString("/pagamentos/123/retorno")));
+        verify(pagamentoCurso).reconciliar("123");
+        verify(matriculas, never()).ativarPorPagamentoAprovado(any());
+    }
+
+    @Test
+    void retornoExigeLogin() throws Exception {
+        when(sessao.usuarioLogado()).thenReturn(null);
+        mvc.perform(get("/pagamentos/123/retorno"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/login"));
+        verifyNoInteractions(pagamentoCurso);
+    }
+
+    @Test
+    void retornoDeMatriculaDeOutroAlunoVaiParaListaDeCursos() throws Exception {
+        when(matriculas.buscarMatriculaDoAlunoLogado("123")).thenThrow(new RuntimeException("sem permissão"));
+        mvc.perform(get("/pagamentos/123/retorno"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/cursos"));
     }
 }

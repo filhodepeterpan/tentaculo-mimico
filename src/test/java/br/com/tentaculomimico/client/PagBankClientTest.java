@@ -111,6 +111,43 @@ class PagBankClientTest {
     }
 
     @Test
+    void guardaIdDoCheckoutCriado() {
+        server.expect(requestTo("https://sandbox.api.pagseguro.com/checkouts"))
+                .andRespond(withSuccess("""
+                        {"id":"CHEC_ABC-1","links":[{"rel":"PAY","href":"https://pagamento.sandbox.pagbank.com.br/pagamento?code=1"}]}
+                        """, MediaType.APPLICATION_JSON));
+        PagBankClient.CheckoutAberto aberto = client.criarCompleto(checkout);
+        assertEquals("CHEC_ABC-1", aberto.id());
+        assertEquals(URI.create("https://pagamento.sandbox.pagbank.com.br/pagamento?code=1"), aberto.pay());
+        server.verify();
+    }
+
+    @Test
+    void consultaPedidoComTokenEDevolveJson() {
+        server.expect(requestTo("https://sandbox.api.pagseguro.com/orders/ORDE_ABC-1"))
+                .andExpect(method(org.springframework.http.HttpMethod.GET))
+                .andExpect(header("Authorization", "Bearer segredo"))
+                .andRespond(withSuccess("{\"id\":\"ORDE_ABC-1\",\"charges\":[{\"status\":\"PAID\"}]}", MediaType.APPLICATION_JSON));
+        assertEquals("PAID", client.consultarPedido("ORDE_ABC-1").path("charges").get(0).path("status").asText());
+        server.verify();
+    }
+
+    @Test
+    void consultaRejeitaIdForaDoFormatoSemChamarApi() {
+        assertThrows(PagBankClient.ConsultaIndisponivelException.class, () -> client.consultarPedido("../x"));
+        assertThrows(PagBankClient.ConsultaIndisponivelException.class, () -> client.consultarCheckout("ORDE_1"));
+        assertThrows(PagBankClient.ConsultaIndisponivelException.class, () -> client.consultarPedido(null));
+        server.verify();
+    }
+
+    @Test
+    void falhaNaConsultaViraConsultaIndisponivel() {
+        server.expect(requestTo("https://sandbox.api.pagseguro.com/checkouts/CHEC_1")).andRespond(withServerError());
+        assertThrows(PagBankClient.ConsultaIndisponivelException.class, () -> client.consultarCheckout("CHEC_1"));
+        server.verify();
+    }
+
+    @Test
     void extraiSomenteCodigoSaneadoDaRespostaDeErro() {
         assertEquals("allowlist_access_required", PagBankClient.codigoErro("""
                 {"error_messages":[{"error":"allowlist_access_required","description":"dados privados"}]}

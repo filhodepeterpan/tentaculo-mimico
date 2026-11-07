@@ -23,6 +23,13 @@ public record CheckoutRequest(@JsonProperty("reference_id") String referenceId,
         this(referenceId, expirationDate, customerModifiable, items, redirectUrl, returnUrl,
                 paymentMethodsConfigs, null, null, null);
     }
+    /** Forma antiga, com métodos de pagamento fixos e sem notificações (mantida para o teste de fumaça). */
+    public CheckoutRequest(String referenceId, OffsetDateTime expirationDate, boolean customerModifiable,
+                           List<Item> items, String redirectUrl, String returnUrl,
+                           List<MetodoConfig> paymentMethodsConfigs, List<Metodo> paymentMethods) {
+        this(referenceId, expirationDate, customerModifiable, items, redirectUrl, returnUrl,
+                paymentMethodsConfigs, paymentMethods, null, null);
+    }
     public record Item(String name, int quantity, @JsonProperty("unit_amount") int unitAmount) {}
     public record Metodo(String type) {}
     public record MetodoConfig(String type, @JsonProperty("config_options") List<Opcao> configOptions) {}

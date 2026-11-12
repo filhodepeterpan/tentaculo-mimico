@@ -18,13 +18,6 @@
             <li>
                 <a class="title-medium" th:href="@{/}">Início</a>
             </li>
-            <li th:if="${usuarioLogado != null}">
-                <a class="title-medium" th:href="${usuarioLogado.tipoUsuario.name() == 'ADMINISTRADOR'}
-                        ? @{/admin}
-                        : (${usuarioLogado.tipoUsuario.name() == 'PROFESSOR'}
-                            ? @{/perfil/professor/{id}(id=${usuarioLogado.id})}
-                            : @{/perfil/aluno/{id}(id=${usuarioLogado.id})})">Meu perfil</a>
-            </li>
             <li>
                 <a class="title-medium" th:href="@{/sobre}">Sobre</a>
             </li>
@@ -50,13 +43,20 @@
             <div th:replace="~{fragments/buttons :: botao_link(texto='Registrar-se', variante='primario', tamanho='grande', caminho='/cadastro')}"></div>
         </th:block>
 
-        <!-- Se ESTIVER logado: administrador vai para o painel, professor e aluno para o perfil -->
-        <th:block th:if="${usuarioLogado != null}">
-            <a th:href="${usuarioLogado.tipoUsuario.name() == 'ADMINISTRADOR'}
-                        ? @{/admin}
-                        : (${usuarioLogado.tipoUsuario.name() == 'PROFESSOR'}
-                            ? @{/perfil/professor/{id}(id=${usuarioLogado.id})}
-                            : @{/perfil/aluno/{id}(id=${usuarioLogado.id})})"
+        <!-- Se for ADMINISTRADOR: exibe apenas o link "Painel Administrativo", sem foto -->
+        <th:block th:if="${usuarioLogado != null and usuarioLogado.tipoUsuario.name() == 'ADMINISTRADOR'}">
+            <a th:href="@{/admin}"
+               class="user-profile-button"
+               style="display: flex; align-items: center; text-decoration: none; color: inherit;">
+                <span class="user-profile-name title-medium">Painel Administrativo</span>
+            </a>
+        </th:block>
+
+        <!-- Se for PROFESSOR ou ALUNO: vai para o perfil, com foto ou inicial -->
+        <th:block th:if="${usuarioLogado != null and usuarioLogado.tipoUsuario.name() != 'ADMINISTRADOR'}">
+            <a th:href="${usuarioLogado.tipoUsuario.name() == 'PROFESSOR'}
+                        ? @{/perfil/professor/{id}(id=${usuarioLogado.id})}
+                        : @{/perfil/aluno/{id}(id=${usuarioLogado.id})}"
                class="user-profile-button"
                style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit;">
 

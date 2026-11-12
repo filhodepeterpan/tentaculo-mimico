@@ -123,6 +123,7 @@
 
       <th:block th:if="${ehProprietario != null and ehProprietario}">
         <a th:href="@{/cursos/{id}/editar(id=${curso.id})}" class="botao botao--neutro botao--pequeno">Editar</a>
+        <br><br>
         <button type="button" class="botao botao--perigo botao--pequeno" data-modal-abrir="modal-deletar-curso">Excluir curso</button>
       </th:block>
 

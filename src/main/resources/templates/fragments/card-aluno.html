@@ -34,7 +34,7 @@
                 <form th:action="@{/admin-alunos/{id}/remover(id=${aluno.id})}"
                       method="post"
                       style="display:inline"
-                      onsubmit="return confirm('Confirma a exclusão? O aluno e o seu histórico de matrículas em aberto serão removidos permanentemente.')">
+                      data-modal-confirmar="modal-excluir-aluno">
                     <button type="submit" class="botao botao--perigo botao--pequeno">Remover Aluno</button>
                 </form>
             </div>

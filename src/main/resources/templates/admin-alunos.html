@@ -33,8 +33,11 @@
 
 </main>
 
+<div th:replace="~{fragments/modal :: modal(id='modal-excluir-aluno', titulo='Remover aluno', mensagem='Confirma a exclusão? O aluno e o seu histórico de matrículas em aberto serão removidos permanentemente.', textoCancelar='Cancelar', textoConfirmar='Remover', varianteConfirmar='perigo')}"></div>
+
 <div th:replace="~{fragments/layouts :: footer}"></div>
 
+<script type="module" th:src="@{/js/components/confirmar-modal.js}"></script>
 <script type="module" th:src="@{/js/pages/admin-alunos.js}"></script>
 </body>
 </html>

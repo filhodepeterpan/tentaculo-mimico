@@ -32,8 +32,11 @@
 
 </main>
 
+<div th:replace="~{fragments/modal :: modal(id='modal-excluir-curso', titulo='Remover curso', mensagem='Confirma a exclusão deste curso? Essa ação não pode ser desfeita.', textoCancelar='Cancelar', textoConfirmar='Remover', varianteConfirmar='perigo')}"></div>
+
 <div th:replace="~{fragments/layouts :: footer}"></div>
 
+<script type="module" th:src="@{/js/components/confirmar-modal.js}"></script>
 <script type="module" th:src="@{/js/pages/admin-cursos.js}"></script>
 </body>
 </html>

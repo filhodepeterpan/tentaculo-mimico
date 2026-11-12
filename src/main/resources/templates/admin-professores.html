@@ -35,8 +35,11 @@
 
 </main>
 
+<div th:replace="~{fragments/modal :: modal(id='modal-excluir-professor', titulo='Remover professor', mensagem='Confirma a exclusão? O professor, seus cursos criados e o histórico de matrículas dessas turmas serão afetados permanentemente.', textoCancelar='Cancelar', textoConfirmar='Remover', varianteConfirmar='perigo')}"></div>
+
 <div th:replace="~{fragments/layouts :: footer}"></div>
 
+<script type="module" th:src="@{/js/components/confirmar-modal.js}"></script>
 <script type="module" th:src="@{/js/pages/admin-professores.js}"></script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 package br.com.tentaculomimico.controller;
 
 import br.com.tentaculomimico.model.Usuario;
+import br.com.tentaculomimico.model.enums.TipoUsuario;
 import br.com.tentaculomimico.service.AuthService;
 import br.com.tentaculomimico.service.AuthService.AutenticacaoException;
 import br.com.tentaculomimico.service.SessaoService;
@@ -40,6 +41,10 @@ public class AuthController {
             cookie.setPath("/");
             response.addCookie(cookie);
 
+            // Administrador vai direto para o painel; professor e aluno vão para os cursos.
+            if (usuario.getTipoUsuario() == TipoUsuario.ADMINISTRADOR) {
+                return "redirect:/admin";
+            }
             return "redirect:/cursos";
         } catch (AutenticacaoException e) {
             // Mensagem segura: credenciais inválidas, conta bloqueada (com o tempo restante), etc.

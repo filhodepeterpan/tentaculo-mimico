@@ -141,6 +141,7 @@
       <th:block th:if="${tipoUsuarioLogado == 'aluno' and statusMatricula == 'aceita_aguardando_pagamento'}">
         <a th:href="@{/pagamentos/{id}(id=${matriculaId})}" class="botao botao--primario botao--pequeno">Pagar</a>
       </th:block>
+      <br><br>
 
       <!-- Desistir: em qualquer matrícula "viva" (aguardando aprovação, aguardando pagamento ou ativa). -->
       <th:block th:if="${tipoUsuarioLogado == 'aluno' and (statusMatricula == 'pendente' or statusMatricula == 'aceita_aguardando_pagamento' or statusMatricula == 'ativa')}">

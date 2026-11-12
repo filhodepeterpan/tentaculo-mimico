@@ -127,15 +127,7 @@
       </th:block>
 
       <th:block th:if="${tipoUsuarioLogado == 'aluno' and (statusMatricula == null or statusMatricula == 'cancelada')}">
-        <button type="button" class="curso-detalhes__matricular" data-modal-abrir="modal-matricula" th:disabled="${curso.vagasDisponiveis == 0}">
-          <span class="curso-detalhes__matricular-icone" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="7" y1="17" x2="17" y2="7"/>
-              <polyline points="7 7 17 7 17 17"/>
-            </svg>
-          </span>
-          Matricule-se
-        </button>
+        <button th:replace="~{fragments/buttons :: botao_modal(texto='Matricule-se', variante='primario', tamanho='pequeno', modalId='modal-matricula', desabilitado=${curso.vagasDisponiveis == 0})}"></button>
       </th:block>
 
       <th:block th:if="${tipoUsuarioLogado == 'aluno' and statusMatricula == 'pendente'}">

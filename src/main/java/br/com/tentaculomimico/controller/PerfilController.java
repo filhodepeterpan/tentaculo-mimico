@@ -7,6 +7,7 @@ import br.com.tentaculomimico.model.view.AlunoMatriculadoView;
 import br.com.tentaculomimico.model.view.AlunoPendenteView;
 import br.com.tentaculomimico.repository.CursoRepository;
 import br.com.tentaculomimico.repository.UsuarioRepository;
+import br.com.tentaculomimico.service.CadastroService;
 import br.com.tentaculomimico.service.MatriculaService;
 import br.com.tentaculomimico.service.PerfilService;
 import br.com.tentaculomimico.service.SessaoService;
@@ -28,15 +29,67 @@ public class PerfilController {
     private final PerfilService perfilService;
     private final MatriculaService matriculaService;
     private final SessaoService sessaoService;
+    private final CadastroService cadastroService;
 
     public PerfilController(UsuarioRepository usuarioRepository, CursoRepository cursoRepository,
                             PerfilService perfilService, MatriculaService matriculaService,
-                            SessaoService sessaoService) {
+                            SessaoService sessaoService, CadastroService cadastroService) {
         this.usuarioRepository = usuarioRepository;
         this.cursoRepository = cursoRepository;
         this.perfilService = perfilService;
         this.matriculaService = matriculaService;
         this.sessaoService = sessaoService;
+        this.cadastroService = cadastroService;
+    }
+
+    // Recebe o modal "Complete seu cadastro" (fragments/modal-cpf.html), que fica no rodapé de
+    // todas as páginas. Salva só o que falta (CPF e/ou data de nascimento) e devolve a pessoa para
+    // a página onde ela estava (Referer). Se algo estiver inválido, volta para lá com o modal aberto.
+    @PostMapping("/perfil/completar-cadastro")
+    public String completarCadastro(
+            @RequestParam(name = "cpf-completar", defaultValue = "") String cpf,
+            @RequestParam(name = "data-nascimento-completar", defaultValue = "") String dataNascimento,
+            @RequestHeader(value = "Referer", required = false) String referer,
+            RedirectAttributes redirect
+    ) {
+        Usuario logado = sessaoService.usuarioLogado();
+        if (logado == null) {
+            return "redirect:/login";
+        }
+
+        String destino = "redirect:" + caminhoLocal(referer);
+        try {
+            cadastroService.completarCadastro(logado, cpf, dataNascimento);
+        } catch (CadastroService.CadastroInvalidoException e) {
+            redirect.addFlashAttribute("precisaCompletarCpf", true);
+            redirect.addFlashAttribute("cpfCompletarPreenchido", cpf);
+            redirect.addFlashAttribute("dataNascimentoCompletarPreenchida", dataNascimento);
+            if (e.getErros().get("cpf") != null) {
+                redirect.addFlashAttribute("erroCpf", e.getErros().get("cpf"));
+            }
+            if (e.getErros().get("dataNascimento") != null) {
+                redirect.addFlashAttribute("erroDataNascimento", e.getErros().get("dataNascimento"));
+            }
+        }
+        return destino;
+    }
+
+    // Só path + query do Referer, nunca o host: assim o redirect fica sempre neste site
+    // (sem redirecionamento aberto). Sem Referer, ou Referer estranho, vai para /cursos.
+    private String caminhoLocal(String referer) {
+        if (referer == null || referer.isBlank()) {
+            return "/cursos";
+        }
+        try {
+            java.net.URI uri = java.net.URI.create(referer);
+            String path = uri.getRawPath();
+            if (path == null || !path.startsWith("/") || path.startsWith("//") || path.contains("\\")) {
+                return "/cursos";
+            }
+            return uri.getRawQuery() != null ? path + "?" + uri.getRawQuery() : path;
+        } catch (IllegalArgumentException e) {
+            return "/cursos";
+        }
     }
 
     @GetMapping("/perfil/aluno/{id}")

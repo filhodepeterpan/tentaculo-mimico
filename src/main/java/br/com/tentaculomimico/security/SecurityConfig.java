@@ -46,6 +46,7 @@ public class SecurityConfig {
                                         "/",
                                         "/login",
                                         "/cadastro",
+                                        "/cadastro/google",
                                         "/confirmar-email",
                                         "/esqueci-senha",
                                         "/recuperar-senha",

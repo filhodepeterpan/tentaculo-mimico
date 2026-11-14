@@ -66,7 +66,11 @@ public class CursoController {
                             @RequestParam(value = "inicio", required = false) String inicio,
                             @RequestParam(value = "fim", required = false) String fim,
                             @RequestParam(value = "data", required = false) String data,
-                            Model model) {
+                            Model model,
+                            RedirectAttributes redirect) {
+        if (exigirCadastroCompleto(redirect)) {
+            return "redirect:/cursos";
+        }
         if (dia == null || dia.isEmpty() || inicio == null || fim == null) {
             return ehProfessor() ? "redirect:/calendario" : "cadastro-curso";
         }
@@ -124,8 +128,12 @@ public class CursoController {
             @RequestParam("data-inicio") String dataInicio,
             @RequestParam("data-fim") String dataFim,
             @RequestParam(value = "imagem-capa", required = false) MultipartFile imagemCapa,
-            Model model
+            Model model,
+            RedirectAttributes redirect
     ) {
+        if (exigirCadastroCompleto(redirect)) {
+            return "redirect:/cursos";
+        }
         try {
             String urlImagem = enviarImagem(imagemCapa, "cursos");
 
@@ -284,9 +292,13 @@ public class CursoController {
     }
 
     @PostMapping("/cursos/{id}/matricula")
-    public String matricularCurso(@PathVariable String id, Model model) {
+    public String matricularCurso(@PathVariable String id, Model model, RedirectAttributes redirect) {
         try {
             matriculaService.solicitarMatricula(id);
+            return "redirect:/cursos/" + id;
+        } catch (SessaoService.CadastroIncompletoException e) {
+            // Volta para a página do curso com o modal de CPF/data de nascimento aberto.
+            redirect.addFlashAttribute("precisaCompletarCpf", true);
             return "redirect:/cursos/" + id;
         } catch (RuntimeException e) {
             Curso curso = cursoRepository.findById(id).orElse(null);
@@ -295,6 +307,17 @@ public class CursoController {
             return "curso-detalhes";
         }
     }
+
+    // true (e liga o flag que abre o modal de completar cadastro na próxima página) quando o
+    // usuário logado é de uma conta Google ainda sem CPF/data de nascimento.
+    private boolean exigirCadastroCompleto(RedirectAttributes redirect) {
+        if (sessaoService.cadastroIncompleto()) {
+            redirect.addFlashAttribute("precisaCompletarCpf", true);
+            return true;
+        }
+        return false;
+    }
+
     private boolean ehAdmin() {
         Usuario logado = sessaoService.usuarioLogado();
         return logado != null

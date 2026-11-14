@@ -78,6 +78,13 @@ public class PagamentoController {
             return paginaDoCurso; // nada a pagar (pendente, recusada, cancelada)
         }
 
+        // Conta Google sem CPF/data de nascimento não abre o checkout: volta para a página do curso
+        // com o modal de completar cadastro aberto.
+        if (sessaoService.cadastroIncompleto()) {
+            redirect.addFlashAttribute("precisaCompletarCpf", true);
+            return paginaDoCurso;
+        }
+
         try {
             URI destino = checkoutCursoService.iniciar(matriculaId);
             RedirectView view = new RedirectView(destino.toString());

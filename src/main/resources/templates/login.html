@@ -19,6 +19,13 @@
                     ></div>
                 </th:block>
 
+                <!-- Erros do login com Google chegam em /login?erro=codigo (OAuth2LoginSucessoHandler). -->
+                <th:block th:if="${param.erro != null}" th:with="codigoErro=${param.erro[0]}">
+                    <div
+                        th:replace="~{fragments/alert :: alerta(titulo='Não foi possível continuar com o Google', mensagem=${codigoErro == 'google-email-existente' ? 'Já existe uma conta com este e-mail, criada com e-mail e senha. Entre usando seu e-mail e senha.' : (codigoErro == 'google-outra-conta' ? 'Esta conta está vinculada a outra conta Google.' : 'Não foi possível entrar com o Google. Tente novamente.')}, variante='erro')}"
+                    ></div>
+                </th:block>
+
                 <form
                     class="login__formulario"
                     method="post"

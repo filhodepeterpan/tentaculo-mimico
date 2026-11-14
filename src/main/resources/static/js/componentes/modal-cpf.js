@@ -1,3 +1,7 @@
+// Máscara e validação de CPF para os formulários marcados com [data-completar-cpf]:
+// o modal "Complete seu cadastro" (fragments/modal-cpf.html) e a página /cadastro/google.
+// O campo de CPF é o <input> cujo name começa com "cpf" ("cpf-completar" no modal, "cpf" na página).
+
 function formatarCpf(valor) {
   const digitos = valor.replace(/\D/g, '').slice(0, 11);
   return digitos
@@ -25,23 +29,56 @@ function cpfValido(cpf) {
   return true;
 }
 
-function inicializarModalCpf() {
-  const campo = document.getElementById('cpf-completar');
-  const form = document.getElementById('form-completar-cpf');
-  if (!campo || !form) return;
+function inicializarFormulariosComCpf() {
+  document.querySelectorAll('form[data-completar-cpf]').forEach((form) => {
+    // O campo de CPF só existe se a conta ainda não tem CPF (no modal pode ser só a data).
+    const campo = form.querySelector('input[name^="cpf"]');
+    if (!campo) return;
 
-  campo.addEventListener('input', (evento) => {
-    evento.target.value = formatarCpf(evento.target.value);
-    campo.setCustomValidity('');
-  });
+    campo.addEventListener('input', (evento) => {
+      evento.target.value = formatarCpf(evento.target.value);
+      campo.setCustomValidity('');
+    });
 
-  form.addEventListener('submit', (evento) => {
-    if (!cpfValido(campo.value)) {
-      evento.preventDefault();
-      campo.setCustomValidity('CPF inválido');
-      campo.reportValidity();
-    }
+    // Reaplica a máscara no valor que o servidor devolveu depois de um erro.
+    if (campo.value) campo.value = formatarCpf(campo.value);
+
+    form.addEventListener('submit', (evento) => {
+      if (!cpfValido(campo.value)) {
+        evento.preventDefault();
+        campo.setCustomValidity('CPF inválido');
+        campo.reportValidity();
+      }
+    });
   });
 }
 
-document.addEventListener('DOMContentLoaded', inicializarModalCpf);
+// "Agora não", clique fora e ESC fecham o modal. Não depende do modal.js estar carregado na página.
+function inicializarFechamentoDoModal() {
+  const modal = document.getElementById('modal-completar-cpf');
+  if (!modal) return;
+
+  modal.querySelectorAll('[data-completar-fechar]').forEach((gatilho) => {
+    gatilho.addEventListener('click', () => {
+      modal.hidden = true;
+    });
+  });
+
+  document.addEventListener('keydown', (evento) => {
+    if (evento.key === 'Escape') modal.hidden = true;
+  });
+}
+
+function inicializar() {
+  inicializarFormulariosComCpf();
+  inicializarFechamentoDoModal();
+}
+
+// O script é um módulo (carrega depois do HTML), então o DOM já pode estar pronto.
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', inicializar);
+} else {
+  inicializar();
+}
+
+export { formatarCpf, cpfValido };

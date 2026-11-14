@@ -44,6 +44,23 @@ public class AuthService {
     }
 
     /**
+     * Falha no login/cadastro com Google que a tela de login sabe explicar. O codigo vai na URL
+     * (/login?erro=codigo) e login.html troca por uma mensagem fixa.
+     */
+    public static class ContaGoogleException extends RuntimeException {
+        private final String codigo;
+
+        public ContaGoogleException(String codigo, String mensagem) {
+            super(mensagem);
+            this.codigo = codigo;
+        }
+
+        public String getCodigo() {
+            return codigo;
+        }
+    }
+
+    /**
      * Valida e-mail e senha, controla o bloqueio por tentativas e devolve o usuário autenticado.
      */
     public Usuario validarCredenciais(String email, String senhaDigitada) {
@@ -174,41 +191,34 @@ public class AuthService {
 
     /**
      * Usado pelo OAuth2LoginSucessoHandler depois que o Google autenticou a pessoa.
-     * Cria a conta (como ALUNO) no primeiro acesso; nos seguintes, só devolve a existente.
+     * Devolve a conta Google já existente, ou vazio se é o primeiro acesso. Nesse caso a conta
+     * NÃO é criada aqui: o handler leva a pessoa para /cadastro/google, onde ela escolhe aluno ou
+     * professor e informa CPF (e data de nascimento, se o Google não mandou). A criação acontece em
+     * CadastroService.cadastrarComGoogle.
      */
-    public Usuario obterOuCriarUsuarioGoogle(String email, String nome, String googleId) {
-        Optional<Usuario> optionalUsuario = usuarioRepository.findByEmail(email);
+    public Optional<Usuario> buscarUsuarioGoogle(String email, String googleId) {
+        Optional<Usuario> optionalUsuario = buscarPorEmail(email);
 
-        if (optionalUsuario.isPresent()) {
-            Usuario usuario = optionalUsuario.get();
-            Autenticacao auth = usuario.getAutenticacao();
-
-            // Conta criada com senha: não vinculamos ao Google automaticamente, porque o
-            // e-mail dela nunca foi confirmado (ver observação na resposta).
-            if (auth == null || auth.getProvedor() != Provedor.GOOGLE) {
-                throw new RuntimeException("Já existe uma conta com este e-mail. Entre com e-mail e senha.");
-            }
-
-            if (auth.getProvedorId() == null) {
-                auth.setProvedorId(googleId);
-                usuarioRepository.save(usuario);
-            } else if (!auth.getProvedorId().equals(googleId)) {
-                throw new RuntimeException("Esta conta está vinculada a outra conta Google.");
-            }
-            return usuario;
+        if (optionalUsuario.isEmpty()) {
+            return Optional.empty();
         }
 
-        Usuario usuario = new Usuario();
-        usuario.setEmail(email);
-        usuario.setNome(nome);
-        usuario.setTipoUsuario(TipoUsuario.ALUNO);
+        Usuario usuario = optionalUsuario.get();
+        Autenticacao auth = usuario.getAutenticacao();
 
-        Autenticacao auth = new Autenticacao();
-        auth.setProvedor(Provedor.GOOGLE);
-        auth.setProvedorId(googleId);
-        usuario.setAutenticacao(auth);
+        // Conta criada com senha: não vinculamos ao Google automaticamente, porque o
+        // e-mail dela nunca foi confirmado (ver observação na resposta).
+        if (auth == null || auth.getProvedor() != Provedor.GOOGLE) {
+            throw new ContaGoogleException("google-email-existente", "Já existe uma conta com este e-mail. Entre com e-mail e senha.");
+        }
 
-        return usuarioRepository.save(usuario);
+        if (auth.getProvedorId() == null) {
+            auth.setProvedorId(googleId);
+            usuarioRepository.save(usuario);
+        } else if (!auth.getProvedorId().equals(googleId)) {
+            throw new ContaGoogleException("google-outra-conta", "Esta conta está vinculada a outra conta Google.");
+        }
+        return Optional.of(usuario);
     }
 
 

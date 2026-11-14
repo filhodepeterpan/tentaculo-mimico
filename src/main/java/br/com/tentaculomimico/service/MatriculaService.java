@@ -46,6 +46,10 @@ public class MatriculaService {
     // =========================================================================
 
     public void solicitarMatricula(String cursoId) {
+        // Conta Google sem CPF/data de nascimento não se matricula: lança CadastroIncompletoException
+        // e o controller reabre o modal para completar o cadastro.
+        Usuario aluno = sessaoService.exigirCadastroCompleto();
+
         Curso curso = cursoRepository.findById(cursoId)
                 .orElseThrow(() -> new RuntimeException("Curso não encontrado"));
 
@@ -58,7 +62,6 @@ public class MatriculaService {
         }
 
         // Aluno = usuário realmente logado (o mesmo id que o perfil-aluno consulta depois).
-        Usuario aluno = sessaoService.exigirUsuarioLogado();
         String alunoId = aluno.getId();
         String alunoNome = aluno.getNome();
 

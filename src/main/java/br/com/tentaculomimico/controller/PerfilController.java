@@ -76,6 +76,27 @@ public class PerfilController {
         return destino;
     }
 
+    // Troca de foto direto no perfil (clique na foto, só o dono). Volta para o próprio perfil;
+    // se algo falhar, o motivo vai no flash "erroFoto" (mostrado pelo fragments/perfil-cabecalho).
+    @PostMapping("/perfil/foto")
+    public String trocarFoto(
+            @RequestParam(value = "foto-perfil", required = false) MultipartFile fotoPerfil,
+            RedirectAttributes redirect
+    ) {
+        Usuario logado = sessaoService.usuarioLogado();
+        if (logado == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            perfilService.atualizarFoto(fotoPerfil);
+        } catch (RuntimeException e) {
+            redirect.addFlashAttribute("erroFoto", e.getMessage());
+        }
+        String tipo = "PROFESSOR".equalsIgnoreCase(logado.getTipoUsuario().name()) ? "professor" : "aluno";
+        return "redirect:/perfil/" + tipo + "/" + logado.getId();
+    }
+
     // Só path + query do Referer, nunca o host: assim o redirect fica sempre neste site
     // (sem redirecionamento aberto). Sem Referer, ou Referer estranho, vai para /cursos.
     private String caminhoLocal(String referer) {

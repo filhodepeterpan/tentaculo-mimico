@@ -17,22 +17,31 @@
 <th:block th:fragment="cabecalho(nome, tipoUsuario, fotoPerfil, ehPerfilProprio)">
     <link rel="stylesheet" th:href="@{/css/componentes/perfil-cabecalho.css}">
 
+    <th:block th:if="${erroFoto != null}">
+        <div th:replace="~{fragments/alert :: alerta(titulo='Não foi possível trocar a foto', mensagem=${erroFoto}, variante='erro')}"></div>
+    </th:block>
+
     <header class="perfil-cabecalho">
         <div class="perfil-cabecalho__identidade">
-            <img th:if="${fotoPerfil != null and !fotoPerfil.isEmpty()}"
-                 th:src="${fotoPerfil}"
-                 th:alt="'Foto de ' + ${nome}"
-                 class="perfil-cabecalho__foto">
+            <!-- A foto é um botão: abre a foto ampliada (modal-foto-perfil). -->
+            <button type="button" class="perfil-cabecalho__foto-botao"
+                    data-modal-abrir="modal-foto-perfil"
+                    th:aria-label="${ehPerfilProprio != null and ehPerfilProprio} ? 'Ver ou trocar sua foto de perfil' : 'Ampliar foto de ' + ${nome}">
+                <img th:if="${fotoPerfil != null and !fotoPerfil.isEmpty()}"
+                     th:src="${fotoPerfil}"
+                     th:alt="'Foto de ' + ${nome}"
+                     class="perfil-cabecalho__foto">
 
-            <span th:unless="${fotoPerfil != null and !fotoPerfil.isEmpty()}"
-                  class="perfil-cabecalho__foto perfil-cabecalho__foto--vazia"
-                  aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor"
-                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="8" r="4"/>
-                    <path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/>
-                </svg>
-            </span>
+                <span th:unless="${fotoPerfil != null and !fotoPerfil.isEmpty()}"
+                      class="perfil-cabecalho__foto perfil-cabecalho__foto--vazia"
+                      aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="8" r="4"/>
+                        <path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/>
+                    </svg>
+                </span>
+            </button>
 
             <div class="perfil-cabecalho__textos">
                 <span class="perfil-cabecalho__rotulo"
@@ -54,6 +63,46 @@
             </th:block>
         </div>
     </header>
+
+    <!-- Foto ampliada (sempre circular). Só o dono do perfil vê "Trocar foto" (POST /perfil/foto);
+         os demais só ampliam. Abrir/fechar: modal.js (data-modal-abrir / data-modal-fechar / ESC). -->
+    <div id="modal-foto-perfil" class="modal foto-ampliada" hidden role="dialog" aria-modal="true"
+         th:aria-label="'Foto de ' + ${nome}">
+        <div class="foto-ampliada__fundo" data-modal-fechar="modal-foto-perfil"></div>
+
+        <div class="foto-ampliada__caixa">
+            <button type="button" class="foto-ampliada__fechar" data-modal-fechar="modal-foto-perfil" aria-label="Fechar">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <line x1="4" y1="4" x2="20" y2="20"/>
+                    <line x1="20" y1="4" x2="4" y2="20"/>
+                </svg>
+            </button>
+
+            <img th:if="${fotoPerfil != null and !fotoPerfil.isEmpty()}"
+                 th:src="${fotoPerfil}"
+                 th:alt="'Foto de ' + ${nome}"
+                 class="foto-ampliada__imagem">
+            <span th:unless="${fotoPerfil != null and !fotoPerfil.isEmpty()}"
+                  class="foto-ampliada__imagem foto-ampliada__imagem--vazia" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/>
+                </svg>
+            </span>
+
+            <p class="foto-ampliada__nome" th:text="${nome}">Nome</p>
+
+            <th:block th:if="${ehPerfilProprio != null and ehPerfilProprio}">
+                <p id="foto-perfil-erro" class="foto-ampliada__erro" role="alert" hidden></p>
+                <form id="form-foto-perfil" method="post" th:action="@{/perfil/foto}" enctype="multipart/form-data" class="foto-ampliada__form">
+                    <input type="file" id="input-foto-perfil" name="foto-perfil" accept="image/*" tabindex="-1" aria-hidden="true">
+                </form>
+                <button type="button" id="botao-trocar-foto" class="botao botao--primario botao--pequeno">Trocar foto</button>
+            </th:block>
+        </div>
+    </div>
+
+    <script type="module" th:src="@{/js/componentes/perfil-foto.js}"></script>
 </th:block>
 
 </body>

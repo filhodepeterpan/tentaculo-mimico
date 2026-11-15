@@ -112,3 +112,131 @@
         width: 100%;
     }
 }
+/* ---- Foto como botão (abre a foto ampliada) ---- */
+.perfil-cabecalho .perfil-cabecalho__foto-botao {
+    flex: 0 0 auto;
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    line-height: 0;
+    cursor: zoom-in;
+}
+
+.perfil-cabecalho__foto-botao:focus-visible {
+    outline: 3px solid var(--color-outline);
+    outline-offset: 3px;
+}
+
+/* ---- Foto ampliada ---- */
+.foto-ampliada {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.foto-ampliada[hidden] {
+    display: none !important;
+}
+
+.foto-ampliada__fundo {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.foto-ampliada__caixa {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    max-width: 100%;
+    padding: 32px 24px 24px;
+    border-radius: 20px;
+    background: var(--color-surface-container-low);
+    color: var(--color-on-surface);
+    font-family: var(--fonte-padrao);
+    box-sizing: border-box;
+}
+
+.foto-ampliada__fechar {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.foto-ampliada__fechar:focus-visible {
+    outline: 3px solid var(--color-outline);
+}
+
+/* Sempre um círculo: lado = menor entre 20rem e a largura da tela. */
+.foto-ampliada .foto-ampliada__imagem {
+    width: min(20rem, calc(100vw - 6rem), calc(100vh - 14rem));
+    height: auto;
+    max-width: none;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-primary);
+    background: var(--color-surface-container-highest);
+}
+
+.foto-ampliada .foto-ampliada__imagem--vazia {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-on-primary-container);
+    background: var(--color-primary-container);
+}
+
+.foto-ampliada__imagem--vazia svg {
+    width: 60%;
+    height: 60%;
+}
+
+.foto-ampliada__nome {
+    margin: 0;
+    font-weight: var(--tipo-label-md-peso-enfatizado);
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.foto-ampliada__erro {
+    margin: 0;
+    color: var(--color-error);
+    text-align: center;
+}
+
+.foto-ampliada__erro[hidden] {
+    display: none;
+}
+
+/* O input de arquivo fica fora da vista; o botão "Trocar foto" o aciona. */
+.foto-ampliada__form {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+}

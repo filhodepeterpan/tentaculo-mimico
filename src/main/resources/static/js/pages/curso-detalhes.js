@@ -25,5 +25,6 @@ if (gestao) {
   inicializarAbas(gestao);
   inicializarBusca('busca-alunos-matriculados', 'painel-matriculados', 'matriculados-vazio');
   inicializarBusca('busca-alunos-pendentes', 'painel-pendentes', 'pendentes-vazio');
+  inicializarBusca('busca-alunos-aguardando', 'painel-aguardando', 'aguardando-vazio');
   inicializarRespostaMatriculas({ voltar: 'curso' });
 }

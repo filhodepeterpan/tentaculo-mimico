@@ -1,4 +1,5 @@
-<!-- item(id, nome, fotoPerfil, modo, cursosTexto, statusTexto, matriculaId) -->
+<!-- item(id, nome, fotoPerfil, modo, cursosTexto, statusTexto, matriculaId)
+     modo: 'matriculado' (botão Cancelar), 'pendente' (botão Responder) ou 'aguardando' (só informativo) -->
 <div th:fragment="item(id, nome, fotoPerfil, modo, cursosTexto, statusTexto, matriculaId)" class="aluno-item" th:attr="data-nome=${nome}">
 
     <a th:href="@{/perfil/aluno/{id}(id=${id})}" class="aluno-item__link">
@@ -13,7 +14,7 @@
         <div class="aluno-item__info">
             <p class="aluno-item__nome" th:text="${nome}">Nome do aluno</p>
             <p th:if="${modo == 'matriculado'}" class="aluno-item__detalhe" th:text="${cursosTexto}">Cursos</p>
-            <p th:if="${modo == 'pendente'}" class="aluno-item__detalhe" th:text="${statusTexto}">Status</p>
+            <p th:if="${modo == 'pendente' or modo == 'aguardando'}" class="aluno-item__detalhe" th:text="${statusTexto}">Status</p>
         </div>
     </a>
 

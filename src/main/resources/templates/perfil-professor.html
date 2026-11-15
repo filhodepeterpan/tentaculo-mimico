@@ -67,6 +67,9 @@
                       class="perfil-professor__notificacao"
                       th:text="${totalPendentes > 9} ? '9+' : ${totalPendentes}">0</span>
             </button>
+            <button type="button" role="tab" id="aba-aguardando" aria-controls="painel-aguardando" aria-selected="false" class="perfil-professor__aba">
+                Aguardando pagamento
+            </button>
         </div>
 
         <div id="painel-cursos" role="tabpanel" aria-labelledby="aba-cursos" class="perfil-professor__painel">
@@ -104,6 +107,19 @@
             <div class="perfil-professor__lista">
                 <th:block th:each="item : ${alunosPendentes}">
                     <div th:replace="~{fragments/aluno-item :: item(id=${item.alunoId}, nome=${item.alunoNome}, fotoPerfil=${item.alunoFotoPerfil}, modo='pendente', cursosTexto='', statusTexto=${item.statusTexto}, matriculaId=${item.matriculaId})}"></div>
+                </th:block>
+            </div>
+        </div>
+
+        <div id="painel-aguardando" role="tabpanel" aria-labelledby="aba-aguardando" class="perfil-professor__painel" hidden>
+            <div th:replace="~{fragments/inputs :: input(id='busca-alunos-aguardando', tipo='search', rotulo='Buscar aluno', placeholder='Nome do aluno...', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>
+
+            <p th:if="${alunosAguardandoPagamento == null or alunosAguardandoPagamento.isEmpty()}" class="perfil-aluno__vazio">Nenhum aluno aguardando pagamento.</p>
+            <p id="aguardando-vazio" class="perfil-aluno__vazio" hidden>Nenhum aluno encontrado.</p>
+
+            <div class="perfil-professor__lista">
+                <th:block th:each="item : ${alunosAguardandoPagamento}">
+                    <div th:replace="~{fragments/aluno-item :: item(id=${item.alunoId}, nome=${item.alunoNome}, fotoPerfil=${item.alunoFotoPerfil}, modo='aguardando', cursosTexto='', statusTexto=${item.statusTexto}, matriculaId=${item.matriculaId})}"></div>
                 </th:block>
             </div>
         </div>

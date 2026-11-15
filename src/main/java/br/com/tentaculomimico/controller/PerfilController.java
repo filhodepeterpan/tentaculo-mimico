@@ -20,6 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 public class PerfilController {
@@ -116,7 +118,18 @@ public class PerfilController {
         model.addAttribute("ehPerfilProprio", ehPerfilProprio);
         model.addAttribute("podeEditar", ehPerfilProprio || ehAdmin);
         model.addAttribute("perfilId", id);
-        model.addAttribute("matriculas", matriculaService.listarCursosDoAluno(id));
+        if (ehPerfilProprio) {
+            // O próprio aluno vê pendente, aguardando pagamento e ativa, cada uma com seu botão.
+            model.addAttribute("matriculas", matriculaService.listarCursosDoAluno(id));
+        } else {
+            // Professor/admin vê só os cursos já pagos (ativa). Os cursos do professor logado
+            // ganham "Gerenciar"; os demais, "Saiba mais" (sem mostrar status).
+            Set<String> cursosDoLogado = cursoRepository.findByProfessorId(usuarioLogado.getId()).stream()
+                    .map(Curso::getId)
+                    .collect(Collectors.toSet());
+            model.addAttribute("matriculas", matriculaService.listarCursosAtivosDoAluno(id));
+            model.addAttribute("cursosDoLogado", cursosDoLogado);
+        }
         model.addAttribute("dataNascimentoFormatada", formatarData(aluno));
 
         return "perfil-aluno";
@@ -152,7 +165,9 @@ public class PerfilController {
 
             model.addAttribute("alunosMatriculados", alunosMatriculados);
             model.addAttribute("alunosPendentes", alunosPendentes);
+            // A bolinha de notificação conta só quem espera resposta do professor.
             model.addAttribute("totalPendentes", alunosPendentes.size());
+            model.addAttribute("alunosAguardandoPagamento", matriculaService.listarAlunosAguardandoPagamento(id));
         }
 
         return "perfil-professor";

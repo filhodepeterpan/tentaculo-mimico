@@ -338,13 +338,24 @@ public class MatriculaService {
     }
 
     /**
-     * "Meus cursos" do perfil do aluno. Matrículas CANCELADAS (desistência do aluno ou
-     * cancelamento pelo professor) ficam só no histórico do banco e não aparecem aqui:
-     * para o aluno, é como se nunca tivesse se matriculado.
+     * "Meus cursos" do perfil do aluno (visão do próprio aluno). Matrículas CANCELADAS (desistência
+     * do aluno ou cancelamento pelo professor) e RECUSADAS ficam só no histórico do banco e não
+     * aparecem aqui: sobram pendente, aguardando pagamento e ativa.
      */
     public List<MatriculaCursoView> listarCursosDoAluno(String alunoId) {
         return matriculaRepository.findByAlunoId(alunoId).stream()
-                .filter(m -> m.getStatusMatricula() != StatusMatricula.CANCELADA)
+                .filter(m -> m.getStatusMatricula() != null && m.getStatusMatricula().emAberto())
+                .map(m -> paraView(m, cursoRepository.findById(m.getCursoId()).orElse(null)))
+                .toList();
+    }
+
+    /**
+     * Cursos do aluno vistos por OUTRA pessoa (professor ou admin): só os que ele já pagou
+     * (matrícula ATIVA). Pendentes e aguardando pagamento não aparecem para terceiros.
+     */
+    public List<MatriculaCursoView> listarCursosAtivosDoAluno(String alunoId) {
+        return matriculaRepository.findByAlunoId(alunoId).stream()
+                .filter(m -> m.getStatusMatricula() == StatusMatricula.ATIVA)
                 .map(m -> paraView(m, cursoRepository.findById(m.getCursoId()).orElse(null)))
                 .toList();
     }
@@ -360,6 +371,18 @@ public class MatriculaService {
      */
     public List<AlunoPendenteView> listarAlunosPendentes(String professorId) {
         return montarAlunosPendentes(cursosDoProfessor(professorId));
+    }
+
+    /** Alunos que o professor aceitou e que ainda não pagaram (AGUARDANDO_PAGAMENTO), em todos os cursos dele. */
+    public List<AlunoPendenteView> listarAlunosAguardandoPagamento(String professorId) {
+        return montarAlunosPorStatus(cursosDoProfessor(professorId), StatusMatricula.AGUARDANDO_PAGAMENTO);
+    }
+
+    /** Igual a listarAlunosAguardandoPagamento, mas só deste curso. Só o professor dono do curso pode chamar. */
+    public List<AlunoPendenteView> listarAlunosAguardandoPagamentoDoCurso(String cursoId) {
+        Curso curso = buscarCurso(cursoId);
+        exigirProfessorDoCurso(curso);
+        return montarAlunosPorStatus(Map.of(curso.getId(), curso), StatusMatricula.AGUARDANDO_PAGAMENTO);
     }
 
     /** Igual a listarAlunosMatriculados, mas só deste curso. Só o professor dono do curso pode chamar. */
@@ -402,23 +425,33 @@ public class MatriculaService {
     }
 
     private List<AlunoPendenteView> montarAlunosPendentes(Map<String, Curso> cursos) {
+        return montarAlunosPorStatus(cursos, StatusMatricula.PENDENTE);
+    }
+
+    // Serve às duas abas: PENDENTE ("Pendente de aprovação") e AGUARDANDO_PAGAMENTO
+    // ("Aguardando pagamento · <curso>", já que no perfil o professor tem vários cursos).
+    private List<AlunoPendenteView> montarAlunosPorStatus(Map<String, Curso> cursos, StatusMatricula status) {
         if (cursos.isEmpty()) {
             return List.of();
         }
         List<AlunoPendenteView> views = new ArrayList<>();
         for (Matricula m : matriculaRepository.findByCursoIdIn(cursos.keySet())) {
-            if (m.getStatusMatricula() != StatusMatricula.PENDENTE) {
+            if (m.getStatusMatricula() != status) {
                 continue;
             }
             Usuario aluno = usuarioRepository.findById(m.getAlunoId()).orElse(null);
+            String nomeCurso = cursos.get(m.getCursoId()).getNome();
+            String texto = status == StatusMatricula.PENDENTE
+                    ? "Pendente de aprovação"
+                    : "Aguardando pagamento · " + nomeCurso;
             views.add(new AlunoPendenteView(
                     m.getAlunoId(),
                     aluno != null ? aluno.getNome() : m.getNomeAluno(),
                     aluno != null ? aluno.getFotoPerfil() : null,
                     aluno != null ? aluno.getEmail() : null,
                     m.getId(),
-                    "Pendente de aprovação",
-                    cursos.get(m.getCursoId()).getNome()));
+                    texto,
+                    nomeCurso));
         }
         return views;
     }

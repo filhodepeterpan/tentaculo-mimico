@@ -200,6 +200,7 @@ public class CursoController {
             List<AlunoPendenteView> alunosPendentes = matriculaService.listarAlunosPendentesDoCurso(id);
             model.addAttribute("alunosPendentes", alunosPendentes);
             model.addAttribute("totalPendentes", alunosPendentes.size());
+            model.addAttribute("alunosAguardandoPagamento", matriculaService.listarAlunosAguardandoPagamentoDoCurso(id));
         }
 
         return "curso-detalhes";

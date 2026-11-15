@@ -184,6 +184,9 @@
               class="gestao-matriculas__notificacao"
               th:text="${totalPendentes > 9} ? '9+' : ${totalPendentes}">0</span>
       </button>
+      <button type="button" role="tab" id="aba-aguardando" aria-controls="painel-aguardando" aria-selected="false" class="gestao-matriculas__aba">
+        Aguardando pagamento
+      </button>
     </div>
 
     <div id="painel-matriculados" role="tabpanel" aria-labelledby="aba-matriculados" class="gestao-matriculas__painel">
@@ -208,6 +211,19 @@
       <div class="gestao-matriculas__lista">
         <th:block th:each="item : ${alunosPendentes}">
           <div th:replace="~{fragments/aluno-item :: item(id=${item.alunoId}, nome=${item.alunoNome}, fotoPerfil=${item.alunoFotoPerfil}, modo='pendente', cursosTexto='', statusTexto=${item.statusTexto}, matriculaId=${item.matriculaId})}"></div>
+        </th:block>
+      </div>
+    </div>
+
+    <div id="painel-aguardando" role="tabpanel" aria-labelledby="aba-aguardando" class="gestao-matriculas__painel" hidden>
+      <div th:replace="~{fragments/inputs :: input(id='busca-alunos-aguardando', tipo='search', rotulo='Buscar aluno', placeholder='Nome do aluno...', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>
+
+      <p th:if="${alunosAguardandoPagamento == null or alunosAguardandoPagamento.isEmpty()}" class="gestao-matriculas__vazio">Nenhum aluno aguardando pagamento.</p>
+      <p id="aguardando-vazio" class="gestao-matriculas__vazio" hidden>Nenhum aluno encontrado.</p>
+
+      <div class="gestao-matriculas__lista">
+        <th:block th:each="item : ${alunosAguardandoPagamento}">
+          <div th:replace="~{fragments/aluno-item :: item(id=${item.alunoId}, nome=${item.alunoNome}, fotoPerfil=${item.alunoFotoPerfil}, modo='aguardando', cursosTexto='', statusTexto=${item.statusTexto}, matriculaId=${item.matriculaId})}"></div>
         </th:block>
       </div>
     </div>

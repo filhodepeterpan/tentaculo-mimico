@@ -130,6 +130,7 @@ public class PerfilController {
             model.addAttribute("matriculas", matriculaService.listarCursosAtivosDoAluno(id));
             model.addAttribute("cursosDoLogado", cursosDoLogado);
         }
+        model.addAttribute("cpfFormatado", formatarCpf(aluno.getCpf()));
         model.addAttribute("dataNascimentoFormatada", formatarData(aluno));
 
         return "perfil-aluno";
@@ -157,6 +158,7 @@ public class PerfilController {
         model.addAttribute("ehPerfilProprio", ehPerfilProprio);
         model.addAttribute("podeVerDadosSensiveis", podeVerDadosSensiveis);
         model.addAttribute("cursosDoProfessor", cursosDoProfessor);
+        model.addAttribute("cpfFormatado", formatarCpf(professor.getCpf()));
         model.addAttribute("dataNascimentoFormatada", formatarData(professor));
 
         if (ehPerfilProprio) {

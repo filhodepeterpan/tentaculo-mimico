@@ -31,11 +31,12 @@ public class PerfilService {
     private final SessaoService sessaoService;
     private final ImagemService imagemService;
     private final PasswordEncoder passwordEncoder;
+    private final LogService logService;
 
     public PerfilService(UsuarioRepository usuarioRepository, CursoRepository cursoRepository,
                          CursoService cursoService, MatriculaService matriculaService,
                          SessaoService sessaoService, ImagemService imagemService,
-                         PasswordEncoder passwordEncoder) {
+                         PasswordEncoder passwordEncoder,LogService logService) {
         this.usuarioRepository = usuarioRepository;
         this.cursoRepository = cursoRepository;
         this.cursoService = cursoService;
@@ -43,6 +44,7 @@ public class PerfilService {
         this.sessaoService = sessaoService;
         this.imagemService = imagemService;
         this.passwordEncoder = passwordEncoder;
+        this.logService = logService;
     }
 
     /**
@@ -202,6 +204,7 @@ public class PerfilService {
         }
 
         apagarUsuarioComDependencias(usuario);
+        logService.registrarComo(usuario, "REMOVIDO", "Excluiu a própria conta", usuario.getTipoUsuario().name(), usuario.getId(), usuario.getNome());
         sessaoService.encerrarSessao();
     }
 
@@ -219,6 +222,7 @@ public class PerfilService {
         Usuario alvo = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
         apagarUsuarioComDependencias(alvo);
+        logService.registrar("REMOVIDO", "Removeu o usuário " + alvo.getNome(), alvo.getTipoUsuario().name(), alvo.getId(), alvo.getNome());
     }
 
     private void apagarUsuarioComDependencias(Usuario usuario) {

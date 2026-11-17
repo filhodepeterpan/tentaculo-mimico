@@ -30,15 +30,17 @@ public class MatriculaService {
     private final CursoRepository cursoRepository;
     private final SessaoService sessaoService;
     private final UsuarioRepository usuarioRepository;
+    private final LogService logService;
 
     public MatriculaService(MatriculaRepository matriculaRepository,
                             CursoRepository cursoRepository,
                             SessaoService sessaoService,
-                            UsuarioRepository usuarioRepository) {
+                            UsuarioRepository usuarioRepository,LogService logService) {
         this.matriculaRepository = matriculaRepository;
         this.cursoRepository = cursoRepository;
         this.sessaoService = sessaoService;
         this.usuarioRepository = usuarioRepository;
+        this.logService = logService;
     }
 
     // =========================================================================
@@ -72,6 +74,7 @@ public class MatriculaService {
 
         // o construtor de Matricula já define status PENDENTE e horarioMatricula
         matriculaRepository.save(new Matricula(cursoId, alunoId, alunoNome));
+        logService.registrar("SOLICITADO", alunoNome + " solicitou matrícula em " + curso.getNome(), "ALUNO", alunoId, alunoNome);
     }
 
     /** Professor aceita: reserva a vaga e fica aguardando o pagamento. Devolve o cursoId. */
@@ -93,6 +96,7 @@ public class MatriculaService {
 
         cursoRepository.save(curso);
         matriculaRepository.save(matricula);
+        logService.registrar("ACEITO", "Aceitou " + matricula.getNomeAluno() + " em " + curso.getNome(), "ALUNO", matricula.getAlunoId(), matricula.getNomeAluno());
         return curso.getId();
     }
 
@@ -109,6 +113,7 @@ public class MatriculaService {
         matricula.setStatusMatricula(StatusMatricula.RECUSADA);
         matricula.setDataRespostaProfessor(LocalDateTime.now());
         matriculaRepository.save(matricula);
+        logService.registrar("RECUSADO", "Recusou " + matricula.getNomeAluno() + " em " + curso.getNome(), "ALUNO", matricula.getAlunoId(), matricula.getNomeAluno());
         return curso.getId();
     }
 
@@ -147,6 +152,8 @@ public class MatriculaService {
         matricula.setStatusMatricula(StatusMatricula.ATIVA);
         matricula.setAcessoLiberado(true);
         matriculaRepository.save(matricula);
+        Curso curso = buscarCurso(matricula.getCursoId());
+        logService.registrar("PAGAMENTO", matricula.getNomeAluno() + " pagou R$ " + curso.getPreco() + " pelo curso " + curso.getNome(), "ALUNO", matricula.getAlunoId(), matricula.getNomeAluno());
         return matricula.getCursoId();
     }
 
@@ -162,6 +169,7 @@ public class MatriculaService {
             throw new RuntimeException("Esta matrícula não pode mais ser cancelada.");
         }
         cancelarInterno(matricula);
+        logService.registrar("CANCELADO", matricula.getNomeAluno() + " cancelou a matrícula", "ALUNO", matricula.getAlunoId(), matricula.getNomeAluno());
     }
 
     /**
@@ -185,7 +193,10 @@ public class MatriculaService {
             matriculas.add(matricula);
         }
 
-        matriculas.forEach(this::cancelarInterno);
+        matriculas.forEach(m -> {
+            cancelarInterno(m);
+            logService.registrar("CANCELADO", "Cancelou a matrícula de " + m.getNomeAluno(), "ALUNO", m.getAlunoId(), m.getNomeAluno());
+        });
         return matriculas.get(0).getCursoId();
     }
 

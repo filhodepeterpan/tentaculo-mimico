@@ -39,15 +39,17 @@ public class CursoService {
     private final MatriculaRepository matriculaRepository;
     private final ProfessorLogadoProvider professorLogadoProvider;
     private final SessaoService sessaoService;
+    private final LogService logService;
 
     public CursoService(CursoRepository cursoRepository,
                         MatriculaRepository matriculaRepository,
                         ProfessorLogadoProvider professorLogadoProvider,
-                        SessaoService sessaoService) {
+                        SessaoService sessaoService, LogService logService) {
         this.cursoRepository = cursoRepository;
         this.matriculaRepository = matriculaRepository;
         this.professorLogadoProvider = professorLogadoProvider;
         this.sessaoService = sessaoService;
+        this.logService = logService;
     }
 
     // =========================================================================
@@ -321,7 +323,9 @@ public class CursoService {
         validarPrimeiraAulaNoFuturo(curso);
         validarSemConflito(curso);
 
-        return cursoRepository.save(curso);
+        Curso salvo = cursoRepository.save(curso);
+        logService.registrar("CRIADO", "Criou o curso " + salvo.getNome(), "CURSO", salvo.getId(), salvo.getNome());
+        return salvo;
     }
 
     // =========================================================================
@@ -391,7 +395,9 @@ public class CursoService {
 
         validarSemConflito(curso);
 
-        return cursoRepository.save(curso);
+        Curso salvo = cursoRepository.save(curso);
+        logService.registrar("EDITADO", "Editou o curso " + salvo.getNome(), "CURSO", salvo.getId(), salvo.getNome());
+        return salvo;
     }
 
     // =========================================================================
@@ -432,5 +438,6 @@ public class CursoService {
         }
 
         cursoRepository.delete(curso);
+        logService.registrar("REMOVIDO", "Excluiu o curso " + curso.getNome(), "CURSO", curso.getId(), curso.getNome());
     }
 }

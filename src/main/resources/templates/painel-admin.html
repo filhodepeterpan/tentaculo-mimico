@@ -27,11 +27,9 @@
         </div>
     </div>
 
-
-
-    <p class="painel-admin__subtitulo">
+    <div class="painel-admin__faixa">
         Gerencie usuários, cursos e a segurança da plataforma em um só lugar.
-    </p>
+    </div>
 
     <p id="painel-erro" hidden></p>
 
@@ -140,6 +138,53 @@
             </div>
             <div th:replace="~{fragments/buttons :: botao_link(texto='Gerenciar', variante='primario', tamanho='pequeno', caminho='/admin-cursos')}"></div>
         </div>
+    </section>
+
+    <h2 class="painel-admin__secao-titulo">Histórico de atividades</h2>
+
+    <section class="painel-admin__historico">
+        <div class="painel-admin__filtros">
+            <label class="painel-admin__filtro">
+                <span>Tipo</span>
+                <select id="filtro-tipo">
+                    <option value="">Todos</option>
+                    <option value="CRIADO">Criado</option>
+                    <option value="EDITADO">Editado</option>
+                    <option value="REMOVIDO">Removido</option>
+                    <option value="SOLICITADO">Solicitado</option>
+                    <option value="ACEITO">Aceito</option>
+                    <option value="RECUSADO">Recusado</option>
+                    <option value="PAGAMENTO">Pagamento</option>
+                    <option value="CANCELADO">Cancelado</option>
+                </select>
+            </label>
+
+            <label class="painel-admin__filtro">
+                <span>Quem fez</span>
+                <select id="filtro-usuario">
+                    <option value="">Todos</option>
+                    <option value="ADMINISTRADOR">Administrador</option>
+                    <option value="PROFESSOR">Professor</option>
+                    <option value="ALUNO">Aluno</option>
+                </select>
+            </label>
+
+            <label class="painel-admin__filtro">
+                <span>De</span>
+                <input type="date" id="filtro-de">
+            </label>
+
+            <label class="painel-admin__filtro">
+                <span>Até</span>
+                <input type="date" id="filtro-ate">
+            </label>
+
+            <button type="button" id="filtro-limpar">Limpar</button>
+        </div>
+
+        <p id="historico-vazio" hidden>Nenhuma atividade registrada.</p>
+        <ul id="historico-lista"></ul>
+        <button type="button" id="historico-mais" hidden>Carregar mais</button>
     </section>
 
 </main>

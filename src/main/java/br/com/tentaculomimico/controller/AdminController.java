@@ -3,18 +3,23 @@ package br.com.tentaculomimico.controller;
 import br.com.tentaculomimico.dto.ResumoAdminResposta;
 import br.com.tentaculomimico.model.AlunoAdminResposta;
 import br.com.tentaculomimico.model.Curso;
+import br.com.tentaculomimico.model.Log;
 import br.com.tentaculomimico.model.ProfessorAdminResposta;
 import br.com.tentaculomimico.model.Usuario;
 import br.com.tentaculomimico.model.enums.TipoUsuario;
 import br.com.tentaculomimico.service.AdminService;
+import br.com.tentaculomimico.service.LogService;
 import br.com.tentaculomimico.service.SessaoService;
-import ch.qos.logback.core.model.Model;
+import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -23,10 +28,13 @@ public class AdminController {
 
     private final AdminService servicoAdmin;
     private final SessaoService sessaoService;
+    private final LogService logService; // <-- Novo campo
 
-    public AdminController(AdminService servicoAdmin, SessaoService sessaoService) {
+    // Construtor atualizado
+    public AdminController(AdminService servicoAdmin, SessaoService sessaoService, LogService logService) {
         this.servicoAdmin = servicoAdmin;
         this.sessaoService = sessaoService;
+        this.logService = logService;
     }
 
     @GetMapping("/resumo")
@@ -41,19 +49,27 @@ public class AdminController {
         return servicoAdmin.listarAlunos();
     }
 
-
     @GetMapping("/professores")
     public List<ProfessorAdminResposta> listaDeProfessores() {
         exigirAdministrador();
         return servicoAdmin.listarProfessores();
     }
 
-
-
     @GetMapping("/cursos")
     public List<Curso> listaDeCursos() {
         exigirAdministrador();
         return servicoAdmin.listarCursos();
+    }
+
+
+    @GetMapping("/logs")
+    public Page<Log> listaDeLogs(@RequestParam(defaultValue = "0") int pagina,
+                                 @RequestParam(required = false) String tipo,
+                                 @RequestParam(required = false) String usuario,
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate de,
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ate) {
+        exigirAdministrador();
+        return logService.listar(pagina, tipo, usuario, de, ate);
     }
 
     private void exigirAdministrador() {
@@ -62,7 +78,4 @@ public class AdminController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acesso restrito a administradores.");
         }
     }
-
-
-
 }

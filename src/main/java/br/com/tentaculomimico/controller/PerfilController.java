@@ -7,6 +7,7 @@ import br.com.tentaculomimico.model.view.AlunoMatriculadoView;
 import br.com.tentaculomimico.model.view.AlunoPendenteView;
 import br.com.tentaculomimico.repository.CursoRepository;
 import br.com.tentaculomimico.repository.UsuarioRepository;
+import br.com.tentaculomimico.service.CadastroService;
 import br.com.tentaculomimico.service.MatriculaService;
 import br.com.tentaculomimico.service.PerfilService;
 import br.com.tentaculomimico.service.SessaoService;
@@ -19,6 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 public class PerfilController {
@@ -28,15 +31,88 @@ public class PerfilController {
     private final PerfilService perfilService;
     private final MatriculaService matriculaService;
     private final SessaoService sessaoService;
+    private final CadastroService cadastroService;
 
     public PerfilController(UsuarioRepository usuarioRepository, CursoRepository cursoRepository,
                             PerfilService perfilService, MatriculaService matriculaService,
-                            SessaoService sessaoService) {
+                            SessaoService sessaoService, CadastroService cadastroService) {
         this.usuarioRepository = usuarioRepository;
         this.cursoRepository = cursoRepository;
         this.perfilService = perfilService;
         this.matriculaService = matriculaService;
         this.sessaoService = sessaoService;
+        this.cadastroService = cadastroService;
+    }
+
+    // Recebe o modal "Complete seu cadastro" (fragments/modal-cpf.html), que fica no rodapé de
+    // todas as páginas. Salva só o que falta (CPF e/ou data de nascimento) e devolve a pessoa para
+    // a página onde ela estava (Referer). Se algo estiver inválido, volta para lá com o modal aberto.
+    @PostMapping("/perfil/completar-cadastro")
+    public String completarCadastro(
+            @RequestParam(name = "cpf-completar", defaultValue = "") String cpf,
+            @RequestParam(name = "data-nascimento-completar", defaultValue = "") String dataNascimento,
+            @RequestHeader(value = "Referer", required = false) String referer,
+            RedirectAttributes redirect
+    ) {
+        Usuario logado = sessaoService.usuarioLogado();
+        if (logado == null) {
+            return "redirect:/login";
+        }
+
+        String destino = "redirect:" + caminhoLocal(referer);
+        try {
+            cadastroService.completarCadastro(logado, cpf, dataNascimento);
+        } catch (CadastroService.CadastroInvalidoException e) {
+            redirect.addFlashAttribute("precisaCompletarCpf", true);
+            redirect.addFlashAttribute("cpfCompletarPreenchido", cpf);
+            redirect.addFlashAttribute("dataNascimentoCompletarPreenchida", dataNascimento);
+            if (e.getErros().get("cpf") != null) {
+                redirect.addFlashAttribute("erroCpf", e.getErros().get("cpf"));
+            }
+            if (e.getErros().get("dataNascimento") != null) {
+                redirect.addFlashAttribute("erroDataNascimento", e.getErros().get("dataNascimento"));
+            }
+        }
+        return destino;
+    }
+
+    // Troca de foto direto no perfil (clique na foto, só o dono). Volta para o próprio perfil;
+    // se algo falhar, o motivo vai no flash "erroFoto" (mostrado pelo fragments/perfil-cabecalho).
+    @PostMapping("/perfil/foto")
+    public String trocarFoto(
+            @RequestParam(value = "foto-perfil", required = false) MultipartFile fotoPerfil,
+            RedirectAttributes redirect
+    ) {
+        Usuario logado = sessaoService.usuarioLogado();
+        if (logado == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            perfilService.atualizarFoto(fotoPerfil);
+        } catch (RuntimeException e) {
+            redirect.addFlashAttribute("erroFoto", e.getMessage());
+        }
+        String tipo = "PROFESSOR".equalsIgnoreCase(logado.getTipoUsuario().name()) ? "professor" : "aluno";
+        return "redirect:/perfil/" + tipo + "/" + logado.getId();
+    }
+
+    // Só path + query do Referer, nunca o host: assim o redirect fica sempre neste site
+    // (sem redirecionamento aberto). Sem Referer, ou Referer estranho, vai para /cursos.
+    private String caminhoLocal(String referer) {
+        if (referer == null || referer.isBlank()) {
+            return "/cursos";
+        }
+        try {
+            java.net.URI uri = java.net.URI.create(referer);
+            String path = uri.getRawPath();
+            if (path == null || !path.startsWith("/") || path.startsWith("//") || path.contains("\\")) {
+                return "/cursos";
+            }
+            return uri.getRawQuery() != null ? path + "?" + uri.getRawQuery() : path;
+        } catch (IllegalArgumentException e) {
+            return "/cursos";
+        }
     }
 
     @GetMapping("/perfil/aluno/{id}")
@@ -63,7 +139,19 @@ public class PerfilController {
         model.addAttribute("ehPerfilProprio", ehPerfilProprio);
         model.addAttribute("podeEditar", ehPerfilProprio || ehAdmin);
         model.addAttribute("perfilId", id);
-        model.addAttribute("matriculas", matriculaService.listarCursosDoAluno(id));
+        if (ehPerfilProprio) {
+            // O próprio aluno vê pendente, aguardando pagamento e ativa, cada uma com seu botão.
+            model.addAttribute("matriculas", matriculaService.listarCursosDoAluno(id));
+        } else {
+            // Professor/admin vê só os cursos já pagos (ativa). Os cursos do professor logado
+            // ganham "Gerenciar"; os demais, "Saiba mais" (sem mostrar status).
+            Set<String> cursosDoLogado = cursoRepository.findByProfessorId(usuarioLogado.getId()).stream()
+                    .map(Curso::getId)
+                    .collect(Collectors.toSet());
+            model.addAttribute("matriculas", matriculaService.listarCursosAtivosDoAluno(id));
+            model.addAttribute("cursosDoLogado", cursosDoLogado);
+        }
+        model.addAttribute("cpfFormatado", formatarCpf(aluno.getCpf()));
         model.addAttribute("dataNascimentoFormatada", formatarData(aluno));
 
         return "perfil-aluno";
@@ -91,6 +179,7 @@ public class PerfilController {
         model.addAttribute("ehPerfilProprio", ehPerfilProprio);
         model.addAttribute("podeVerDadosSensiveis", podeVerDadosSensiveis);
         model.addAttribute("cursosDoProfessor", cursosDoProfessor);
+        model.addAttribute("cpfFormatado", formatarCpf(professor.getCpf()));
         model.addAttribute("dataNascimentoFormatada", formatarData(professor));
 
         if (ehPerfilProprio) {
@@ -99,7 +188,9 @@ public class PerfilController {
 
             model.addAttribute("alunosMatriculados", alunosMatriculados);
             model.addAttribute("alunosPendentes", alunosPendentes);
+            // A bolinha de notificação conta só quem espera resposta do professor.
             model.addAttribute("totalPendentes", alunosPendentes.size());
+            model.addAttribute("alunosAguardandoPagamento", matriculaService.listarAlunosAguardandoPagamento(id));
         }
 
         return "perfil-professor";

@@ -39,7 +39,7 @@
                 <form th:action="@{/admin/usuarios/{id}/excluir(id=${professor.id})}"
                       method="post"
                       style="display:inline"
-                      onsubmit="return confirm('Confirma a exclusão? O professor, seus cursos criados e o histórico de matrículas dessas turmas serão afetados permanentemente')">
+                      data-modal-confirmar="modal-excluir-professor">
                     <button type="submit" class="botao botao--perigo botao--pequeno">Remover Professor</button>
                 </form>
             </div>

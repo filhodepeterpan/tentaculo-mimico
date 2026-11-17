@@ -18,13 +18,6 @@
             <li>
                 <a class="title-medium" th:href="@{/}">Início</a>
             </li>
-            <li th:if="${usuarioLogado != null}">
-                <a class="title-medium" th:href="${usuarioLogado.tipoUsuario.name() == 'ADMINISTRADOR'}
-                        ? @{/admin}
-                        : (${usuarioLogado.tipoUsuario.name() == 'PROFESSOR'}
-                            ? @{/perfil/professor/{id}(id=${usuarioLogado.id})}
-                            : @{/perfil/aluno/{id}(id=${usuarioLogado.id})})">Meu perfil</a>
-            </li>
             <li>
                 <a class="title-medium" th:href="@{/sobre}">Sobre</a>
             </li>
@@ -50,31 +43,47 @@
             <div th:replace="~{fragments/buttons :: botao_link(texto='Registrar-se', variante='primario', tamanho='grande', caminho='/cadastro')}"></div>
         </th:block>
 
-        <!-- Se ESTIVER logado: administrador vai para o painel, professor e aluno para o perfil -->
-        <th:block th:if="${usuarioLogado != null}">
-            <a th:href="${usuarioLogado.tipoUsuario.name() == 'ADMINISTRADOR'}
-                        ? @{/admin}
-                        : (${usuarioLogado.tipoUsuario.name() == 'PROFESSOR'}
-                            ? @{/perfil/professor/{id}(id=${usuarioLogado.id})}
-                            : @{/perfil/aluno/{id}(id=${usuarioLogado.id})})"
-               class="user-profile-button"
-               style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit;">
+        <!-- Logado: nome + foto abrem um menu com "Meu perfil" e "Sair". O administrador (sem página de
+             perfil e sem foto) vê "Painel administrativo" no lugar do nome, e o menu tem "Gerenciar" e "Sair".
+             Abre/fecha com <details>; menu-usuario.js fecha ao clicar fora ou apertar ESC. -->
+        <details th:if="${usuarioLogado != null}" class="menu-usuario" data-menu-usuario>
+            <summary class="user-profile-button menu-usuario__gatilho" aria-label="Abrir menu do usuário">
+                <!-- Administrador: só o texto, sem foto. O texto fica visível também no mobile. -->
+                <span th:if="${usuarioLogado.tipoUsuario.name() == 'ADMINISTRADOR'}"
+                      class="menu-usuario__rotulo-admin title-medium">Painel administrativo</span>
 
-                <span class="user-profile-name title-medium" th:text="${usuarioLogado.nome}">Nome do Usuário</span>
+                <th:block th:if="${usuarioLogado.tipoUsuario.name() != 'ADMINISTRADOR'}">
+                    <span class="user-profile-name title-medium" th:text="${usuarioLogado.nome}">Nome do Usuário</span>
 
-                <!-- Com foto: mostra a foto -->
-                <img th:if="${usuarioLogado.fotoPerfil != null and !#strings.isEmpty(usuarioLogado.fotoPerfil)}"
-                     th:src="${usuarioLogado.fotoPerfil}"
-                     alt="Foto de perfil"
-                     style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color, #4A90E2);" />
+                    <!-- Com foto: mostra a foto -->
+                    <img th:if="${usuarioLogado.fotoPerfil != null and !#strings.isEmpty(usuarioLogado.fotoPerfil)}"
+                         th:src="${usuarioLogado.fotoPerfil}"
+                         alt="Foto de perfil"
+                         class="menu-usuario__foto" />
 
-                <!-- Sem foto: mostra a inicial do nome num círculo -->
-                <span th:unless="${usuarioLogado.fotoPerfil != null and !#strings.isEmpty(usuarioLogado.fotoPerfil)}"
-                      th:text="${#strings.toUpperCase(#strings.substring(usuarioLogado.nome, 0, 1))}"
-                      aria-hidden="true"
-                      style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: #e6d3f7; color: #5a1fa0; font-weight: 700; border: 2px solid var(--primary-color, #4A90E2);">A</span>
-            </a>
-        </th:block>
+                    <!-- Sem foto: mostra a inicial do nome num círculo -->
+                    <span th:unless="${usuarioLogado.fotoPerfil != null and !#strings.isEmpty(usuarioLogado.fotoPerfil)}"
+                          th:text="${#strings.toUpperCase(#strings.substring(usuarioLogado.nome, 0, 1))}"
+                          aria-hidden="true"
+                          class="menu-usuario__foto menu-usuario__foto--inicial">A</span>
+                </th:block>
+            </summary>
+
+            <ul class="menu-usuario__lista">
+                <li th:if="${usuarioLogado.tipoUsuario.name() == 'ADMINISTRADOR'}">
+                    <a th:href="@{/admin}" class="menu-usuario__item">Gerenciar</a>
+                </li>
+                <li th:if="${usuarioLogado.tipoUsuario.name() != 'ADMINISTRADOR'}">
+                    <a th:href="${usuarioLogado.tipoUsuario.name() == 'PROFESSOR'}
+                                ? @{/perfil/professor/{id}(id=${usuarioLogado.id})}
+                                : @{/perfil/aluno/{id}(id=${usuarioLogado.id})}"
+                       class="menu-usuario__item">Meu perfil</a>
+                </li>
+                <li>
+                    <a th:href="@{/sair}" class="menu-usuario__item">Sair</a>
+                </li>
+            </ul>
+        </details>
     </div>
 </header>
 
@@ -102,7 +111,13 @@
                 <a class="title-medium" th:href="@{/cadastro}">Cadastro</a>
             </li>
             <li>
+                <a class="title-medium" th:href="@{/calendario}">Calendário</a>
+            </li>
+            <li>
                 <a class="title-medium" th:href="@{/contato}">Contato</a>
+            </li>
+            <li>
+                <a class="title-medium" th:href="@{/doacoes}">Doações</a>
             </li>
         </ul>
     </nav>
@@ -114,6 +129,7 @@
     </script>
     <script src="https://cdn.userway.org/widget.js" data-account="1PNOl5vsyO"></script>
     <script th:src="@{/js/navegacao-teclado.js}" defer></script>
+    <script type="module" th:src="@{/js/componentes/menu-usuario.js}"></script>
 </footer>
 </body>
 </html>

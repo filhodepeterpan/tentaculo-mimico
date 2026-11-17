@@ -123,19 +123,12 @@
 
       <th:block th:if="${ehProprietario != null and ehProprietario}">
         <a th:href="@{/cursos/{id}/editar(id=${curso.id})}" class="botao botao--neutro botao--pequeno">Editar</a>
+        <br><br>
         <button type="button" class="botao botao--perigo botao--pequeno" data-modal-abrir="modal-deletar-curso">Excluir curso</button>
       </th:block>
 
       <th:block th:if="${tipoUsuarioLogado == 'aluno' and (statusMatricula == null or statusMatricula == 'cancelada')}">
-        <button type="button" class="curso-detalhes__matricular" data-modal-abrir="modal-matricula" th:disabled="${curso.vagasDisponiveis == 0}">
-          <span class="curso-detalhes__matricular-icone" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="7" y1="17" x2="17" y2="7"/>
-              <polyline points="7 7 17 7 17 17"/>
-            </svg>
-          </span>
-          Matricule-se
-        </button>
+        <button th:replace="~{fragments/buttons :: botao_modal(texto='Matricule-se', variante='primario', tamanho='pequeno', modalId='modal-matricula', desabilitado=${curso.vagasDisponiveis == 0})}"></button>
       </th:block>
 
       <th:block th:if="${tipoUsuarioLogado == 'aluno' and statusMatricula == 'pendente'}">
@@ -149,6 +142,7 @@
       <th:block th:if="${tipoUsuarioLogado == 'aluno' and statusMatricula == 'aceita_aguardando_pagamento'}">
         <a th:href="@{/pagamentos/{id}(id=${matriculaId})}" class="botao botao--primario botao--pequeno">Pagar</a>
       </th:block>
+      <br><br>
 
       <!-- Desistir: em qualquer matrícula "viva" (aguardando aprovação, aguardando pagamento ou ativa). -->
       <th:block th:if="${tipoUsuarioLogado == 'aluno' and (statusMatricula == 'pendente' or statusMatricula == 'aceita_aguardando_pagamento' or statusMatricula == 'ativa')}">
@@ -160,6 +154,10 @@
 
   <th:block th:if="${erroExclusao != null}">
     <div th:replace="~{fragments/alert :: alerta(titulo='Não foi possível excluir o curso', mensagem=${erroExclusao}, variante='erro')}"></div>
+  </th:block>
+
+  <th:block th:if="${erroPagamento != null}">
+    <div th:replace="~{fragments/alert :: alerta(titulo='Não foi possível abrir o pagamento', mensagem=${erroPagamento}, variante='erro')}"></div>
   </th:block>
 
   <th:block th:if="${erroMatricula != null}">
@@ -186,6 +184,9 @@
               class="gestao-matriculas__notificacao"
               th:text="${totalPendentes > 9} ? '9+' : ${totalPendentes}">0</span>
       </button>
+      <button type="button" role="tab" id="aba-aguardando" aria-controls="painel-aguardando" aria-selected="false" class="gestao-matriculas__aba">
+        Aguardando pagamento
+      </button>
     </div>
 
     <div id="painel-matriculados" role="tabpanel" aria-labelledby="aba-matriculados" class="gestao-matriculas__painel">
@@ -210,6 +211,19 @@
       <div class="gestao-matriculas__lista">
         <th:block th:each="item : ${alunosPendentes}">
           <div th:replace="~{fragments/aluno-item :: item(id=${item.alunoId}, nome=${item.alunoNome}, fotoPerfil=${item.alunoFotoPerfil}, modo='pendente', cursosTexto='', statusTexto=${item.statusTexto}, matriculaId=${item.matriculaId})}"></div>
+        </th:block>
+      </div>
+    </div>
+
+    <div id="painel-aguardando" role="tabpanel" aria-labelledby="aba-aguardando" class="gestao-matriculas__painel" hidden>
+      <div th:replace="~{fragments/inputs :: input(id='busca-alunos-aguardando', tipo='search', rotulo='Buscar aluno', placeholder='Nome do aluno...', valor='', obrigatorio=false, mensagemErro='', desabilitado=false)}"></div>
+
+      <p th:if="${alunosAguardandoPagamento == null or alunosAguardandoPagamento.isEmpty()}" class="gestao-matriculas__vazio">Nenhum aluno aguardando pagamento.</p>
+      <p id="aguardando-vazio" class="gestao-matriculas__vazio" hidden>Nenhum aluno encontrado.</p>
+
+      <div class="gestao-matriculas__lista">
+        <th:block th:each="item : ${alunosAguardandoPagamento}">
+          <div th:replace="~{fragments/aluno-item :: item(id=${item.alunoId}, nome=${item.alunoNome}, fotoPerfil=${item.alunoFotoPerfil}, modo='aguardando', cursosTexto='', statusTexto=${item.statusTexto}, matriculaId=${item.matriculaId})}"></div>
         </th:block>
       </div>
     </div>

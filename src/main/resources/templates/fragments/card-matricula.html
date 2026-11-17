@@ -14,9 +14,30 @@
 
     <a th:if="${statusMatricula == 'aceita_aguardando_pagamento'}" th:href="@{/pagamentos/{id}(id=${matriculaId})}" class="botao botao--primario botao--pequeno">Pagar</a>
 
-    <a th:if="${statusMatricula == 'pendente'}" th:href="@{/cursos/{id}(id=${id})}" class="botao botao--atencao botao--pequeno">Ver status</a>
+    <a th:if="${statusMatricula == 'pendente'}" th:href="@{/cursos/{id}(id=${id})}" class="botao botao--atencao botao--pequeno">Pendente</a>
 
     <a th:if="${statusMatricula == 'ativa'}" th:href="@{/cursos/{id}(id=${id})}" class="botao botao--sucesso botao--pequeno">Ver curso</a>
+  </div>
+
+</div>
+
+<!-- cardCursoDoAluno(id, nome, cargaHoraria, indice, imagemCapa, ehDono)
+     Visão de terceiros (professor/admin) sobre um curso do aluno: sem status.
+     ehDono: true quando o curso é do professor logado ("Gerenciar"); senão "Saiba mais". -->
+<div th:fragment="cardCursoDoAluno(id, nome, cargaHoraria, indice, imagemCapa, ehDono)" class="curso-card">
+
+  <a th:href="@{/cursos/{id}(id=${id})}" class="curso-card__link">
+    <img th:if="${imagemCapa != null and !imagemCapa.isEmpty()}" th:src="@{${imagemCapa}}" th:alt="'Capa do curso ' + ${nome}" class="curso-card__banner">
+    <div th:unless="${imagemCapa != null and !imagemCapa.isEmpty()}" class="curso-card__banner" th:classappend="'curso-card__banner--cor-' + ${indice % 6}"></div>
+    <div class="curso-card__conteudo">
+      <h3 class="curso-card__titulo" th:text="${nome}">Nome do curso</h3>
+      <p class="curso-card__info" th:text="${cargaHoraria} + ' horas'">Info</p>
+    </div>
+  </a>
+
+  <div class="curso-card__rodape">
+    <a th:if="${ehDono}" th:href="@{/cursos/{id}(id=${id})}" class="botao botao--neutro botao--pequeno">Gerenciar</a>
+    <a th:unless="${ehDono}" th:href="@{/cursos/{id}(id=${id})}" class="botao botao--primario botao--pequeno">Saiba mais</a>
   </div>
 
 </div>

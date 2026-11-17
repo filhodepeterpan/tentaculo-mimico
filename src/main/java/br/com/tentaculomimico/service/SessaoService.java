@@ -1,6 +1,7 @@
 package br.com.tentaculomimico.service;
 
 import br.com.tentaculomimico.model.Usuario;
+import br.com.tentaculomimico.model.enums.TipoUsuario;
 import br.com.tentaculomimico.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -40,6 +41,36 @@ public class SessaoService {
         }
         return usuario;
     }
+
+    /** Lançada quando a ação exige CPF e data de nascimento e a conta ainda não tem (conta Google). */
+    public static class CadastroIncompletoException extends RuntimeException {
+        public CadastroIncompletoException() {
+            super("Complete seu cadastro (CPF e data de nascimento) para continuar.");
+        }
+    }
+
+    /** true se há usuário logado (não administrador) sem CPF ou sem data de nascimento. */
+    public static boolean cadastroIncompleto(Usuario usuario) {
+        if (usuario == null || usuario.getTipoUsuario() == TipoUsuario.ADMINISTRADOR) {
+            return false;
+        }
+        return usuario.getCpf() == null || usuario.getCpf().isBlank()
+                || usuario.getDataNascimento() == null;
+    }
+
+    public boolean cadastroIncompleto() {
+        return cadastroIncompleto(usuarioLogado());
+    }
+
+    /** Igual a exigirUsuarioLogado, mas também lança CadastroIncompletoException se faltar CPF/data. */
+    public Usuario exigirCadastroCompleto() {
+        Usuario usuario = exigirUsuarioLogado();
+        if (cadastroIncompleto(usuario)) {
+            throw new CadastroIncompletoException();
+        }
+        return usuario;
+    }
+
     public void iniciarSessao(Usuario usuario) {
         // Troca o ID da sessão no login (evita session fixation).
         // changeSessionId() exige que a sessão exista, por isso o getSession(true) antes.

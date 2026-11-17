@@ -15,6 +15,20 @@
     th:text="${texto}"
 ></button>
 
+<!--
+  Variante do botão que abre um modal (usa o atributo data-modal-abrir).
+    modalId      -> id do modal a ser aberto
+    desabilitado -> true/false
+-->
+<button
+    th:fragment="botao_modal(texto, variante, tamanho, modalId, desabilitado)"
+    type="button"
+    th:class="'botao botao--' + ${variante} + ' botao--' + ${tamanho}"
+    th:attr="data-modal-abrir=${modalId}"
+    th:disabled="${desabilitado}"
+    th:text="${texto}"
+></button>
+
 <a
     th:fragment="botao_link(texto, variante, tamanho, caminho)"
     th:type="${tipoBotao}"

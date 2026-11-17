@@ -23,7 +23,7 @@
             </div>
             <div class="perfil-info__item">
                 <span class="perfil-info__rotulo">CPF</span>
-                <span class="perfil-info__valor" th:text="${aluno.cpf}">cpf</span>
+                <span class="perfil-info__valor" th:text="${cpfFormatado}">cpf</span>
             </div>
             <div class="perfil-info__item">
                 <span class="perfil-info__rotulo">Data de nascimento</span>
@@ -36,7 +36,8 @@
         <div class="perfil-aluno__cursos-cabecalho">
             <!-- Perfil próprio: "Meus cursos". Visto por professor (ou admin): "Cursos do(a) aluno(a)". -->
             <h2 class="perfil-info__titulo" th:text="${ehPerfilProprio} ? 'Meus cursos' : 'Cursos do(a) aluno(a)'">Meus cursos</h2>
-            <div th:with="opcoesStatus=${T(java.util.List).of('Todos','Pendente','Aguardando pagamento','Matriculado','Recusada','Cancelada')}" class="perfil-aluno__filtro">
+            <!-- Filtro só no perfil próprio: quem vê o perfil de outro aluno (professor/admin) só recebe cursos já pagos. -->
+            <div th:if="${ehPerfilProprio}" th:with="opcoesStatus=${T(java.util.List).of('Todos','Pendente','Aguardando pagamento','Matriculado')}" class="perfil-aluno__filtro">
                 <div th:replace="~{fragments/select :: select(id='filtro-status', rotulo='Filtrar por status', placeholder='', opcoes=${opcoesStatus}, valorSelecionado='Todos', obrigatorio=false, desabilitado=false)}"></div>
             </div>
         </div>
@@ -44,9 +45,16 @@
         <p th:if="${matriculas == null or matriculas.isEmpty()}" class="perfil-aluno__vazio"
            th:text="${ehPerfilProprio} ? 'Você ainda não se matriculou em nenhum curso.' : 'Este aluno não está ativamente matriculado em nenhum curso.'">Você ainda não se matriculou em nenhum curso.</p>
 
+        <p id="filtro-vazio" class="perfil-aluno__vazio" hidden>Nenhum curso com esse status.</p>
+
         <div class="cursos__grid">
             <th:block th:each="matricula, matriculaStat : ${matriculas}">
-                <div th:replace="~{fragments/card-matricula :: cardMatricula(id=${matricula.cursoId}, nome=${matricula.cursoNome}, cargaHoraria=${matricula.cursoCargaHoraria}, indice=${matriculaStat.index}, imagemCapa=${matricula.cursoImagemCapa}, statusMatricula=${matricula.status}, matriculaId=${matricula.id})}"></div>
+                <th:block th:if="${ehPerfilProprio}">
+                    <div th:replace="~{fragments/card-matricula :: cardMatricula(id=${matricula.cursoId}, nome=${matricula.cursoNome}, cargaHoraria=${matricula.cursoCargaHoraria}, indice=${matriculaStat.index}, imagemCapa=${matricula.cursoImagemCapa}, statusMatricula=${matricula.status}, matriculaId=${matricula.id})}"></div>
+                </th:block>
+                <th:block th:unless="${ehPerfilProprio}">
+                    <div th:replace="~{fragments/card-matricula :: cardCursoDoAluno(id=${matricula.cursoId}, nome=${matricula.cursoNome}, cargaHoraria=${matricula.cursoCargaHoraria}, indice=${matriculaStat.index}, imagemCapa=${matricula.cursoImagemCapa}, ehDono=${cursosDoLogado != null and cursosDoLogado.contains(matricula.cursoId)})}"></div>
+                </th:block>
             </th:block>
         </div>
     </section>

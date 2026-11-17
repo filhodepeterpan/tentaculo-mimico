@@ -1,31 +1,54 @@
 <!--
   modalCpf() — sem parâmetros; controla a própria exibição via
-  precisaCompletarCpf no model (setado pelo back quando o usuário logado
-  não tem CPF salvo, ex: cadastro feito via Google).
+  precisaCompletarCpf no model. Quem liga esse flag (flash attribute) é o back quando
+  uma conta sem CPF e/ou sem data de nascimento (ex.: conta criada via Google) tenta uma
+  ação que exige cadastro completo: matricular, pagar, cadastrar curso.
+
+  Só pede o que falta: o campo de CPF aparece se a conta não tem CPF, e o de data de
+  nascimento se não tem data. O formulário envia para POST /perfil/completar-cadastro,
+  que volta para a página onde a pessoa estava.
+
+  Valores opcionais do model (preenchidos pelo back quando o envio falhou):
+  cpfCompletarPreenchido, dataNascimentoCompletarPreenchida, erroCpf, erroDataNascimento.
 -->
 <div th:fragment="modalCpf()"
-     th:if="${precisaCompletarCpf != null and precisaCompletarCpf}"
+     th:if="${precisaCompletarCpf != null and precisaCompletarCpf and usuarioLogado != null}"
+     th:with="precisaCpf=${usuarioLogado.cpf == null or #strings.isEmpty(usuarioLogado.cpf)},
+              precisaData=${usuarioLogado.dataNascimento == null}"
      id="modal-completar-cpf"
-     class="modal modal--bloqueante"
+     class="modal"
      role="dialog"
      aria-modal="true"
      aria-labelledby="modal-completar-cpf-titulo">
 
-  <div class="modal__overlay"></div>
+  <div class="modal__overlay" data-completar-fechar></div>
 
   <div class="modal__caixa">
     <div class="modal__cabecalho">
       <h2 id="modal-completar-cpf-titulo" class="modal__titulo">Complete seu cadastro</h2>
     </div>
 
-    <p class="modal__mensagem">Pra continuar usando a plataforma, precisamos do seu CPF.</p>
+    <p class="modal__mensagem">
+      Para continuar, precisamos de mais
+      <span th:text="${precisaCpf and precisaData} ? 'algumas informações' : 'uma informação'">algumas informações</span>
+      da sua conta.
+    </p>
 
-    <form id="form-completar-cpf" method="post" th:action="@{/perfil/completar-cadastro}">
-      <div th:replace="~{fragments/inputs :: input(id='cpf-completar', tipo='text', rotulo='CPF', placeholder='000.000.000-00', valor='', obrigatorio=true, mensagemErro=${erroCpf ?: ''}, desabilitado=false)}"></div>
+    <form id="form-completar-cpf" method="post" th:action="@{/perfil/completar-cadastro}" data-completar-cpf>
+      <th:block th:if="${precisaCpf}">
+        <div th:replace="~{fragments/inputs :: input(id='cpf-completar', tipo='text', rotulo='CPF', placeholder='000.000.000-00', valor=${cpfCompletarPreenchido ?: ''}, obrigatorio=true, mensagemErro=${erroCpf ?: ''}, desabilitado=false)}"></div>
+      </th:block>
+
+      <th:block th:if="${precisaData}">
+        <div th:replace="~{fragments/inputs :: input(id='data-nascimento-completar', tipo='date', rotulo='Data de nascimento', placeholder='', valor=${dataNascimentoCompletarPreenchida ?: ''}, obrigatorio=true, mensagemErro=${erroDataNascimento ?: ''}, desabilitado=false)}"></div>
+      </th:block>
 
       <div class="modal__acoes">
+        <button type="button" class="botao botao--neutro botao--pequeno" data-completar-fechar>Agora não</button>
         <div th:replace="~{fragments/buttons :: botao(texto='Confirmar', variante='primario', tamanho='pequeno', tipoBotao='submit')}"></div>
       </div>
     </form>
   </div>
+
+  <script type="module" th:src="@{/js/componentes/modal-cpf.js}"></script>
 </div>

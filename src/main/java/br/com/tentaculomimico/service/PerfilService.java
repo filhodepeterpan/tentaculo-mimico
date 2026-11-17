@@ -81,6 +81,24 @@ public class PerfilService {
     }
 
     /**
+     * Troca só a foto do usuário logado (clique na foto do perfil), sem passar pela edição completa:
+     * não exige CPF, e-mail etc., então funciona também para contas Google ainda incompletas.
+     */
+    public void atualizarFoto(MultipartFile fotoPerfil) {
+        Usuario usuario = sessaoService.exigirUsuarioLogado();
+
+        if (fotoPerfil == null || fotoPerfil.isEmpty()) {
+            throw new RuntimeException("Escolha uma imagem para a foto de perfil.");
+        }
+        String urlFoto = imagemService.enviar(fotoPerfil, "perfis");
+        if (urlFoto == null) {
+            throw new RuntimeException("Não foi possível enviar a imagem. Tente outro arquivo.");
+        }
+        usuario.setFotoPerfil(urlFoto);
+        usuarioRepository.save(usuario);
+    }
+
+    /**
      * Edição completa do perfil do usuário logado ou alvo (via Admin).
      */
     public void atualizarPerfil(String usuarioId, String nome, String email, String cpf, String dataNascimento,

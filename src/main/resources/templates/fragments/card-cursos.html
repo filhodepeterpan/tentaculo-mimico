@@ -23,7 +23,7 @@
         <form class="admin-cursos__acoes"
               th:action="@{/admin-cursos/{id}/remover(id=${item.curso.id})}"
               method="post"
-              onsubmit="return confirm('Confirma a exclusão deste curso? Essa ação não pode ser desfeita.')">
+              data-modal-confirmar="modal-excluir-curso">
             <a th:href="@{/cursos/{id}/editar(id=${item.curso.id})}"
                class="botao botao--neutro botao--pequeno"
                th:aria-label="'Editar curso ' + ${item.curso.nome}">Editar</a>

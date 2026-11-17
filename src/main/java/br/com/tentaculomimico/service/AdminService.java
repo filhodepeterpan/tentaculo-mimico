@@ -21,17 +21,20 @@ public class AdminService {
     private final MatriculaRepository matriculaRepository;
     private final MatriculaService matriculaService;
     private final SessaoService sessaoService;
+    private final LogService logService;
 
     public AdminService(UsuarioRepository usuarioRepository,
                         CursoRepository cursoRepository,
                         MatriculaRepository matriculaRepository,
                         MatriculaService matriculaService,
-                        SessaoService sessaoService) {
+                        SessaoService sessaoService,
+                        LogService logService) {
         this.usuarioRepository = usuarioRepository;
         this.cursoRepository = cursoRepository;
         this.matriculaRepository = matriculaRepository;
         this.matriculaService = matriculaService;
         this.sessaoService = sessaoService;
+        this.logService = logService;
     }
 
     public ResumoAdminResposta resumo() {
@@ -116,6 +119,7 @@ public class AdminService {
 
         matriculaService.cancelarEmAbertoDoAluno(alunoId);
         usuarioRepository.delete(aluno);
+        logService.registrar("REMOVIDO", "Removeu o aluno " + aluno.getNome(), "ALUNO", aluno.getId(), aluno.getNome());
     }
 
     //===============================================================================
